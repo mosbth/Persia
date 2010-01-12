@@ -16,8 +16,8 @@
 define('DB_HOST', 		'localhost');	// The database host
 define('DB_USER', 		'Mikael');		// The username of the database
 define('DB_PASSWORD', 	'hemligt');		// The users password
-define('DB_DATABASE', 	'blog');		// The name of the database to use
-define('DB_PREFIX', 	'v01_');		// Prefix to use infront of tablename and views
+define('DB_DATABASE', 	'persia');		// The name of the database to use
+define('DB_PREFIX', 	'pe_');		// Prefix to use infront of tablename and views
 
 
 // -------------------------------------------------------------------------------------------
