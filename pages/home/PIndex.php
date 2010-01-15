@@ -5,6 +5,8 @@
 //
 // Documenting my small template-site.
 //
+// Author: Mikael Roos, mos@bth.se
+//
 
 
 // -------------------------------------------------------------------------------------------

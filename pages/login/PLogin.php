@@ -13,7 +13,7 @@
 //
 require_once(TP_SOURCEPATH . 'CPagecontroller.php');
 
-$pc = new CPagecontroller();
+$pc = new CPageController();
 $pc->LoadLanguage(__FILE__);
 
 
