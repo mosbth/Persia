@@ -42,25 +42,17 @@ $gPage = isset($_GET['p']) ? $_GET['p'] : 'home';
 switch($gPage) {
 
 	//
-	// Blog
-	//
-	case 'install':		require_once(TP_PAGESPATH . 'blog/install/PInstall.php'); break;
-	case 'installp':	require_once(TP_PAGESPATH . 'blog/install/PInstallProcess.php'); break;
-	case 'home':		require_once(TP_PAGESPATH . 'blog/PHome.php'); break;
-	case 'post':		require_once(TP_PAGESPATH . 'blog/PPost.php'); break;
-	case 'poste':		require_once(TP_PAGESPATH . 'blog/PPostEdit.php'); break;
-
-	//
 	// The home-page
 	//
-	//case 'home':		require_once(TP_PAGESPATH . 'home/PIndex.php'); break;
+	case 'home':		require_once(TP_PAGESPATH . 'home/PIndex.php'); break;
+	case 'about':		require_once(TP_PAGESPATH . 'home/PAbout.php'); break;
 	case 'template':	require_once(TP_PAGESPATH . 'home/PTemplate.php'); break;
 	
 	//
 	// Install database
 	//
-	//case 'install':		require_once(TP_PAGESPATH . 'install/PInstall.php'); break;
-	//case 'installp':	require_once(TP_PAGESPATH . 'install/PInstallProcess.php'); break;
+	case 'install':		require_once(TP_PAGESPATH . 'install/PInstall.php'); break;
+	case 'installp':	require_once(TP_PAGESPATH . 'install/PInstallProcess.php'); break;
 	
 	//
 	// Login, logout
@@ -77,12 +69,17 @@ switch($gPage) {
 	//
 	// User Profile
 	//
-	case 'account-details':			require_once(TP_PAGESPATH . 'account/PAccount.php'); break;
-	case 'style-details':			require_once(TP_PAGESPATH . 'style/PStyle.php'); break;
+	case 'account-details':		require_once(TP_PAGESPATH . 'account/PAccount.php'); break;
+	case 'style-details':		require_once(TP_PAGESPATH . 'style/PStyle.php'); break;
 	//
 	case 'settingsprofile':		require_once(TP_PAGESPATH . 'userprofile/PProfileShow.php'); break;
-	case 'account':			require_once(TP_PAGESPATH . 'account/PAccount.php'); break;
+	case 'account':				require_once(TP_PAGESPATH . 'account/PAccount.php'); break;
 
+	//
+	// Directory listning
+	//
+	case 'ls':	require_once(TP_PAGESPATH . 'viewfiles/PListDirectory.php'); break;
+	
 	//
 	// Style Your Web, app_syw
 	// Example for working with stylesheets
@@ -118,16 +115,22 @@ switch($gPage) {
 	case 'kommenterap':		require_once(TP_PAGESPATH . 'app_rmp/PSattBetygLarareProcess.php'); break;
 	*/
 	
+	/*
 	//
-	// Directory listning
+	// Blog
 	//
-	case 'ls':	require_once(TP_PAGESPATH . 'viewfiles/PListDirectory.php'); break;
+	case 'install':		require_once(TP_PAGESPATH . 'blog/install/PInstall.php'); break;
+	case 'installp':	require_once(TP_PAGESPATH . 'blog/install/PInstallProcess.php'); break;
+	case 'home':		require_once(TP_PAGESPATH . 'blog/PHome.php'); break;
+	case 'post':		require_once(TP_PAGESPATH . 'blog/PPost.php'); break;
+	case 'poste':		require_once(TP_PAGESPATH . 'blog/PPostEdit.php'); break;
+	*/
 	
 	//
 	// Default case, trying to access some unknown page, should present some error message
 	// or show the home-page
 	//
-	default:			require_once(TP_PAGESPATH . 'home/PIndex.php'); break;
+	default:			require_once(TP_PAGESPATH . 'home/P404.php'); break;
 }
 
 

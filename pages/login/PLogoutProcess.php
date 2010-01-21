@@ -23,9 +23,9 @@ require_once(TP_SOURCEPATH . 'FDestroySession.php');
 // -------------------------------------------------------------------------------------------
 //
 // Redirect to another page
+// Support $redirect to be local uri within site or external site (starting with http://)
 //
-$redirect = isset($_POST['redirect']) ? $_POST['redirect'] : 'login';
-header('Location: ' . WS_SITELINK . "?p={$redirect}");
+CHTMLPage::redirectTo(CPageController::POSTisSetOrSetDefault('redirect', 'login'));
 exit;
 
 

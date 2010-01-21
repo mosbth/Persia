@@ -3,10 +3,29 @@
 //
 // PIndex.php
 //
-// Documenting my small template-site.
+// The home-page
 //
 // Author: Mikael Roos, mos@bth.se
 //
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Get pagecontroller helpers. Useful methods to use in most pagecontrollers
+//
+$pc = new CPageController();
+//$pc->LoadLanguage(__FILE__);
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Interception Filter, controlling access, authorithy and other checks.
+//
+$intFilter = new CInterceptionFilter();
+
+$intFilter->FrontControllerIsVisitedOrDie();
+//$intFilter->UserIsSignedInOrRecirectToSignIn();
+//$intFilter->UserIsMemberOfGroupAdminOrDie();
 
 
 // -------------------------------------------------------------------------------------------
@@ -15,12 +34,10 @@
 //
 
 $html = <<<EOD
-<h2>Välkommen</h2>
-<h3>Introduktion</h3>
+<h1>Welcome</h1>
 <p>
-I vår strävan efter maximal kvalitet vill vi få direktkoppling till vad studenterna anser om 
-lärarnas prestation. Resultaten från denna site kommer att ha en direkt påverkan av löneutvecklingen 
-hos läraren.
+This is the index-page (page/home/PIndex.php). Change it to get going. Review the PTemplate.php
+(page/home/PTemplate.php) for a more complete pagecontroller.
 </p>
 EOD;
 
@@ -29,14 +46,10 @@ EOD;
 //
 // Create and print out the resulting page
 //
-require_once(TP_SOURCEPATH . 'CHTMLPage.php');
-
 $page = new CHTMLPage();
 
-$page->printHTMLHeader('Välkommen');
-$page->printPageHeader();
-$page->printPageBody($html);
-$page->printPageFooter();
+$page->printPage('Index (change this)', "", $html, "");
+exit;
 
  
 ?>

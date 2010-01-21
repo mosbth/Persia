@@ -9,44 +9,62 @@
 
 // -------------------------------------------------------------------------------------------
 //
-// Interception Filter, access, authorithy and other checks.
+// Get pagecontroller helpers. Useful methods to use in most pagecontrollers
 //
-if(!isset($indexIsVisited)) die('No direct access to pagecontroller is allowed.');
+$pc = new CPageController();
+//$pc->LoadLanguage(__FILE__);
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Interception Filter, controlling access, authorithy and other checks.
+//
+$intFilter = new CInterceptionFilter();
+
+$intFilter->FrontControllerIsVisitedOrDie();
+//$intFilter->UserIsSignedInOrRecirectToSignIn();
+//$intFilter->UserIsMemberOfGroupAdminOrDie();
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Page specific code
 //
-$database = DB_DATABASE;
-$prefix	= DB_PREFIX;
+$database 	= DB_DATABASE;
+$prefix		= DB_PREFIX;
 
-$html = <<<EOD
-<h2>Installation</h2>
-<h3>Skapa tabeller</h3>
+$htmlMain = <<<EOD
+<h1>Install database</h1>
 <p>
-Klicka på nedanstående länk för att radera databasen på allt innehåll och skapa nya tabeller. 
-Du har valt databasen '{$database}' och tabellerna kommer skapas med prefixet '{$prefix}'. Ändra i
-config.php om detta inte stämmer.
+Click below link to remove all contents from the database and create new tables and content from
+scratch.
 </p>
 <p>
-<a href='?p=installp'>Töm databasen och skapa nya tabeller</a>.
+You are currently working with the database: '{$database}'
+</p>
+<p>
+The tables will be created using the prefix: '{$prefix}'
+</p>
+<p>
+Update the file config.php to change the values.
+</p>
+<p>
+&not; <a href='?p=installp'>Destroy current database and create from scratch</a>
 </p>
 EOD;
+
+$htmlLeft 	= "";
+$htmlRight 	= "";
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Create and print out the resulting page
 //
-require_once(TP_SOURCEPATH . 'CHTMLPage.php');
-
 $page = new CHTMLPage();
 
-$page->printHTMLHeader('Installation');
-$page->printPageHeader();
-$page->printPageBody($html);
-$page->printPageFooter();
+$page->printPage('Install database', $htmlLeft, $htmlMain, $htmlRight);
+exit;
 
  
 ?>

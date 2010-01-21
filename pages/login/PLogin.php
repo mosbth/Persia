@@ -5,37 +5,26 @@
 //
 // Show a login-form, ask for user name and password.
 //
-
+// Author: Mikael Roos
+//
 
 // -------------------------------------------------------------------------------------------
 //
 // Get pagecontroller helpers. Useful methods to use in most pagecontrollers
 //
-require_once(TP_SOURCEPATH . 'CPagecontroller.php');
-
 $pc = new CPageController();
 $pc->LoadLanguage(__FILE__);
 
 
 // -------------------------------------------------------------------------------------------
 //
-// Interception Filter, access, authorithy and other checks.
+// Interception Filter, controlling access, authorithy and other checks.
 //
-require_once(TP_SOURCEPATH . 'CInterceptionFilter.php');
-
 $intFilter = new CInterceptionFilter();
 
-$intFilter->frontcontrollerIsVisitedOrDie();
-//$intFilter->userIsSignedInOrRecirectToSign_in();
-//$intFilter->userIsMemberOfGroupAdminOrDie();
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Take care of global pageController settings, can exist for several pagecontrollers.
-// Decide how page is displayed, review CHTMLPage for supported types.
-//
-$displayAs = $pc->GETisSetOrSetDefault('pc_display', '');
+$intFilter->FrontControllerIsVisitedOrDie();
+//$intFilter->UserIsSignedInOrRecirectToSignIn();
+//$intFilter->UserIsMemberOfGroupAdminOrDie();
 
 
 // -------------------------------------------------------------------------------------------
@@ -45,15 +34,9 @@ $displayAs = $pc->GETisSetOrSetDefault('pc_display', '');
 //
 $redirectTo = 'home';
 if($gPage != 'login') {
-	$refToThisPage	= "http://" . $_SERVER['HTTP_HOST'] . ":" . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
+	$refToThisPage	= CHTMLPage::CurrentURL();
 	$redirectTo 	= $refToThisPage;
 }
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Page specific code
-//
 
 
 // -------------------------------------------------------------------------------------------
@@ -117,11 +100,10 @@ EOD;
 //
 // Create and print out the resulting page
 //
-require_once(TP_SOURCEPATH . 'CHTMLPage.php');
+$page = new CHTMLPage();
 
-$page = new CHTMLPage(WS_STYLESHEET);
-
-$page->printPage($htmlLeft, $htmlMain, $htmlRight, $pc->lang['LOGIN'], $displayAs);
+$page->printPage('Template', $htmlLeft, $htmlMain, $htmlRight);
 exit;
+
 
 ?>

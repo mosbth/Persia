@@ -211,7 +211,7 @@ div.pageBodyMain3 {
  */
  
 div.errorMessage {
-	border: #333333 4px solid;
+	border: #333333 4px dashed;
 	padding: 5px;
 	margin: 5px;
 	text-align: center;
@@ -269,4 +269,16 @@ a:hover {}
  
 th {}
 td {}
+
+/* -------------------------------------------------------------------------------------
+ *
+ * Display source code
+ *
+ */
+div.sourcecode {
+	border: 4px solid #eeeeee;
+	overflow: auto;
+	background: white;
+	padding-left: 10px;
+}
 

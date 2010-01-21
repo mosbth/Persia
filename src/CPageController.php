@@ -59,50 +59,17 @@ class CPageController {
 	//
 	public static function GETisSetOrSetDefault($aEntry, $aDefault = '') {
 
-		$val = isset($_GET["$aEntry"]) ? $_GET["$aEntry"] : $aDefault;
+		return isset($_GET["$aEntry"]) ? $_GET["$aEntry"] : $aDefault;
 	}
 
 
 	// ------------------------------------------------------------------------------------
 	//
-	// Connect to the database, return a database object.
+	// Check if corresponding $_POST[''] is set, then use it or return the default value.
 	//
-	public function ConnectToDatabase() {
+	public static function POSTisSetOrSetDefault($aEntry, $aDefault = '') {
 
-		$this->iMysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
-
-		if (mysqli_connect_error()) {
-   			echo "Connect failed: ".mysqli_connect_error()."<br>";
-   			exit();
-		}
-
-		return $this->iMysqli;
-	}
-
-
-	// ------------------------------------------------------------------------------------
-	//
-	// Execute a database multi_query
-	//
-	public function MultiQuery($aQuery) {
-
-		$res = $this->iMysqli->multi_query($aQuery) 
-                    or die("<p>Could not query database,</p><pre>{$aQuery}</pre>");
-
-		return $res;
-	}
-	
-
-	// ------------------------------------------------------------------------------------
-	//
-	// Execute a database query
-	//
-	public function Query($aQuery) {
-
-		$res = $this->iMysqli->query($aQuery) 
-                    or die("<p>Could not query database,</p><pre>{$aQuery}</pre>");
-
-		return $res;
+		return isset($_POST["$aEntry"]) ? $_POST["$aEntry"] : $aDefault;
 	}
 
 

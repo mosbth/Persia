@@ -5,6 +5,10 @@
 //
 // Used in each pagecontroller to check access, authority.
 //
+//
+// Author: Mikael Roos
+//
+
 
 class CInterceptionFilter {
 
@@ -36,7 +40,7 @@ class CInterceptionFilter {
 	// Check if index.php (frontcontroller) is visited, disallow direct access to 
 	// pagecontrollers
 	//
-	public function frontcontrollerIsVisitedOrDie() {
+	public function FrontControllerIsVisitedOrDie() {
 		
 		global $gPage; // Always defined in frontcontroller
 		
@@ -50,7 +54,7 @@ class CInterceptionFilter {
 	//
 	// Check if user has signed in or redirect user to sign in page
 	//
-	public function userIsSignedInOrRecirectToSign_in() {
+	public function UserIsSignedInOrRecirectToSignIn() {
 		
 		if(!isset($_SESSION['accountUser'])) {
 		
@@ -65,12 +69,12 @@ class CInterceptionFilter {
 	// Check if index.php (frontcontroller) is visited, disallow direct access to 
 	// pagecontrollers
 	//
-	public function userIsMemberOfGroupAdminOrDie() {
+	public function UserIsMemberOfGroupAdminOrDie() {
 		
-// User must be member of group adm or die
-if($_SESSION['groupMemberUser'] != 'adm') die('You do not have the authourity to access this page');
+		// User must be member of group adm or die
+		if($_SESSION['groupMemberUser'] != 'adm') 
+			die('You do not have the authourity to access this page');
 	}
-
 
 
 } // End of Of Class

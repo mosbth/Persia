@@ -26,9 +26,19 @@ $pc->LoadLanguage(__FILE__);
 //
 $intFilter = new CInterceptionFilter();
 
-$intFilter->frontcontrollerIsVisitedOrDie();
-//$intFilter->userIsSignedInOrRecirectToSign_in();
-//$intFilter->userIsMemberOfGroupAdminOrDie();
+$intFilter->FrontControllerIsVisitedOrDie();
+//$intFilter->UserIsSignedInOrRecirectToSignIn();
+//$intFilter->UserIsMemberOfGroupAdminOrDie();
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Take care of _GET/_POST variables. Store them in a variable (if they are set).
+//
+
+// To show off the template and display the flexible 1-2-3 column layout used.
+$showLeft 	= $pc->GETisSetOrSetDefault('showLeft', '1');
+$showRight 	= $pc->GETisSetOrSetDefault('showRight', '1');
 
 
 // -------------------------------------------------------------------------------------------
@@ -38,75 +48,70 @@ $intFilter->frontcontrollerIsVisitedOrDie();
 
 $htmlMain = <<<EOD
 <h1>Template</h1>
-<h2>Introduktion</h2>
+<h2>Introduction</h2>
 <p>
-Kopiera denna template sida för att skapa nya pagecontrollers. 
+Copy this file, PTemplate.php, to create new pacecontrollers.
 </p>
 <p>
-<a href='?p=ls&amp;dir=pages/home&amp;file=PTemplate.php'>Källkoden till sidan ser du här</a>.
+<a href='?p=ls&amp;dir=pages/home&amp;file=PTemplate.php'>Review sourcecode for PTemplate.php</a>.
 </p>
 <p>
 {$pc->lang['TEXT1']}
 </p>
+<p>
+<a href='?p=template&amp;showLeft=1&amp;showRight=1'>Show all 3 columns</a>
+</p>
 EOD;
 
 $htmlLeft = <<<EOD
-<h3 class='columnMenu'>Bra att ha vänster</h3>
+<h3 class='columnMenu'>Left column</h3>
 <p>
-Här finns nu en meny kolumn som går att använda till bra att ha saker.
+This is HTML for the left column. Use it or loose it. 
 </p>
 <p>
 {$pc->lang['TEXT2']}
 </p>
+<p>
+<a href='?p=template&amp;showLeft=2&amp;showRight={$showRight}'>Do not display this column</a>
+</p>
 EOD;
 
 $htmlRight = <<<EOD
-<h3 class='columnMenu'>Bra att ha höger</h3>
+<h3 class='columnMenu'>Right column</h3>
 <p>
-Här finns nu en meny kolumn som går att använda till bra att ha saker.
+This is HTML for the right column. Use it or loose it. 
 </p>
 <p>
 {$pc->lang['TEXT3']}
 </p>
+<p>
+<a href='?p=template&amp;showLeft={$showLeft}&amp;showRight=2'>Do not display this column</a>
+</p>
 EOD;
 
+// Display only thos column thats choosen
+$htmlLeft 	= (($showLeft == 1) ? $htmlLeft : "");
+$htmlRight 	= (($showRight == 1) ? $htmlRight : "");
+
 
 // -------------------------------------------------------------------------------------------
 //
-// Create a new database object, connect to the database.
+// Create a new database object, connect to the database, get the query and execute it.
+// Relates to files in directory TP_SQLPATH.
 //
 /*
-$mysqli = $pc->ConnectToDatabase();
+$db 	= new CDatabaseController();
+$mysqli = $db->Connect();
+$query 	= $db->LoadSQL('SQLCreateUserAndGroupTables.php');
+$res 	= $db->MultiQuery($query); 
+$no		= $db->RetrieveAndIgnoreResultsFromMultiQuery();
 */
 
-
-// -------------------------------------------------------------------------------------------
-//
-// Take care of _GET/_POST variables. Store them in a variable (if they are set).
-//
 /*
-$user 		= isset($_POST['nameUser']) ? $_POST['nameUser'] : '';
-$password 	= isset($_POST['passwordUser']) ? $_POST['passwordUser'] : '';
-
-// Prevent SQL injections
-$user 		= $mysqli->real_escape_string($user);
-$password 	= $mysqli->real_escape_string($password);
-*/
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Prepare and perform a SQL query.
-//
-/*
-$tableTable	= DB_PREFIX . 'Table';
-
-$query = <<< EOD
-;
-EOD;
-
-$res = $mysqli->query($query) 
-                    or die("<p>Could not query database,</p><code>{$query}</code>");
+$db 	= new CDatabaseController();
+$mysqli = $db->Connect();
+$query 	= $db->LoadSQL('SQLLoginUser.php');
+$res 	= $db->Query($query); 
 */
 
 
@@ -117,6 +122,7 @@ $res = $mysqli->query($query)
 /*
 $res->close();
 */
+
 
 // -------------------------------------------------------------------------------------------
 //
@@ -133,11 +139,7 @@ $mysqli->close();
 // Support $redirect to be local uri within site or external site (starting with http://)
 //
 /*
-require_once(TP_SOURCEPATH . 'CHTMLPage.php');
-
-$redirect = isset($_POST['redirect']) ? $_POST['redirect'] : 'home';
-
-CHTMLPage::redirectTo($redirect);
+CHTMLPage::redirectTo(CPageController::POSTisSetOrSetDefault('redirect', 'home'));
 exit;
 */
 

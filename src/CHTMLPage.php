@@ -5,9 +5,6 @@
 //
 // Create and print a HTML page.
 //
-// Global $_GET:
-// ['display']: Vary how CHTMLPage prints out the resulting page. Look in CHTMLPage for 
-// supported arguments.
 //
 // Author: Mikael Roos, mos@bth.se
 //
@@ -18,13 +15,18 @@ class CHTMLPage {
 	//
 	// Internal variables
 	//
-	
+	protected $iPc;
+
 
 	// ------------------------------------------------------------------------------------
 	//
 	// Constructor
 	//
-	public function __construct() { ; }
+	public function __construct() { 
+	
+		$this->iPc = new CPageController();
+		$this->iPc->LoadLanguage(__FILE__);
+	}
 
 
 	// ------------------------------------------------------------------------------------
@@ -38,7 +40,7 @@ class CHTMLPage {
 	//
 	// Print out a resulting page according to arguments
 	//
-	public function printPage($aTitle="", $aHTMLLeft="", $aHTMLMain="", $aHTMLRight="") {
+	public function PrintPage($aTitle="", $aHTMLLeft="", $aHTMLMain="", $aHTMLRight="") {
 
 		$titlePage	= $aTitle;
 		$titleSite	= WS_TITLE;
@@ -90,9 +92,10 @@ EOD;
 	//
 	// Prepare the login-menu, changes look if user is logged in or not
 	//
-	public function prepareLoginLogoutMenu() {
-
-		$html		= "";
+	public function PrepareLoginLogoutMenu() {
+		
+		$pc = $this->iPc;
+		$html = "";
 
 		// If user is logged in, show details about user and some links.
 		// If user is not logged in, show link to login-page
@@ -100,16 +103,18 @@ EOD;
         
         	$admHtml = "";
         	if(isset($_SESSION['groupMemberUser']) && $_SESSION['groupMemberUser'] == 'adm') {
-        		$admHtml = "<a href='?p=admin'>Admin</a> ";
+        		$admHtml = "<a href='?p=admin'>{$pc->lang['ADMIN']}</a> ";
         	}
         
 			$html = <<<EOD
 <div id='loginbar'>
 	<p>
 	{$_SESSION['accountUser']}   
-	<a href='?p=account-details'>Inställningar</a>  
+	<!--
+	<a href='?p=account-details'>{$pc->lang['SETTINGS']}</a>  
 	{$admHtml} 
-	<a href='?p=logoutp'>Logga ut</a>
+	-->
+	<a href='?p=logoutp'>{$pc->lang['LOGOUT']}</a>
 	</p>
 </div>
 
@@ -119,7 +124,9 @@ EOD;
 		
 			$html = <<<EOD
 <div id='loginbar'>
-	<a href='?p=login'>Logga in</a>
+	<p>
+	<a href='?p=login'>{$pc->lang['LOGIN']}</a>
+	</p>
 </div>
 
 EOD;
@@ -133,7 +140,7 @@ EOD;
 	//
 	// Prepare the header-div of the page
 	//
-	public function prepareNavigationBar() {
+	public function PrepareNavigationBar() {
 	
 		global $gPage;
 		$menu = unserialize(MENU_NAVBAR);
@@ -154,7 +161,7 @@ EOD;
 	// Prepare everything within the body-div
 	//
 	//
-	public function preparePageBody($aBodyLeft, $aBodyMain, $aBodyRight) {
+	public function PreparePageBody($aBodyLeft, $aBodyMain, $aBodyRight) {
 
 		// General error message from session
 		$htmlErrorMessage = $this->getErrorMessage();
@@ -198,16 +205,17 @@ EOD;
 	//
 	// Prepare html for validator tools
 	//
-	public function prepareValidatorTools() {
+	public function PrepareValidatorTools() {
 
-		$refToThisPage 			= "http://" . $_SERVER['HTTP_HOST'] . ":" . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
-		$linkToCSSValidator	 	= "<a href='http://jigsaw.w3.org/css-validator/check/referer'>CSS</a>";
+		if(!WS_VALIDATORS) { return ""; }
+
+ 		$refToThisPage 			= CHTMLPage::CurrentURL();
+ 		$linkToCSSValidator	 	= "<a href='http://jigsaw.w3.org/css-validator/check/referer'>CSS</a>";
 		$linkToMarkupValidator 	= "<a href='http://validator.w3.org/check/referer'>XHTML</a>";
 		$linkToCheckLinks	 	= "<a href='http://validator.w3.org/checklink?uri={$refToThisPage}'>Links</a>";
-
-		if(WS_VALIDATORS) {
-			return "<br />{$linkToCSSValidator} {$linkToMarkupValidator} {$linkToCheckLinks}";
-		}
+ 		$linkToHTML5Validator	= "<a href='http://html5.validator.nu/?doc={$refToThisPage}'>HTML5</a>";
+ 
+		return "<br />{$linkToCSSValidator} {$linkToMarkupValidator} {$linkToCheckLinks} {$linkToHTML5Validator}";
 	}
 
 
@@ -215,7 +223,7 @@ EOD;
 	//
 	// Prepare html for the timer
 	//
-	public function prepareTimer() {
+	public function PrepareTimer() {
 	
 		if(WS_TIMER) {
 			global $gTimerStart;
@@ -228,7 +236,7 @@ EOD;
 	//
 	// Create a errormessage if its set in the SESSION
 	//
-	public function getErrorMessage() {
+	public function GetErrorMessage() {
 
         $html = "";
 
@@ -253,7 +261,7 @@ EOD;
 	// Redirect to another page
 	// Support $aUri to be local uri within site or external site (starting with http://)
 	//
-	public static function redirectTo($aUri) {
+	public static function RedirectTo($aUri) {
 
 		if(strncmp($aUri, "http://", 7)) {
 			$aUri = WS_SITELINK . "?p={$aUri}";
@@ -261,6 +269,24 @@ EOD;
 
 		header("Location: {$aUri}");
 		exit;
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Static function
+	// Create a URL to the current page.
+	//
+	public static function CurrentURL() {
+
+		// Create link to current page
+		$refToThisPage = "http";
+		$refToThisPage .= (@$_SERVER["HTTPS"] == "on") ? 's' : '';
+		$refToThisPage .= "://";
+		$serverPort = ($_SERVER["SERVER_PORT"] == "80") ? '' : ":{$_SERVER['SERVER_PORT']}";
+		$refToThisPage .= $serverPort . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
+		
+		return $refToThisPage;
 	}
 
 

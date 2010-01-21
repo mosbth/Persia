@@ -24,9 +24,35 @@ $HIDE_DB_USER_PASSWORD = TRUE;
 // Which directory to use as basedir, end with separator
 $BASEDIR = TP_PAGESPATH . '..' . $SEPARATOR;
 
+// Show syntax of the code, currently only supporting PHP or DEFAULT.
+// PHP uses PHP built-in function highlight_string.
+// DEFAULT performs <pre> and htmlspecialchars.
+// HTML to be done.
+// CSS to be done.
+$SYNTAX = 'PHP';
+ 
 // The link to this page, usefull to change when using this pagecontroller for other things,
 // such as showing stylesheets in a separate directory, for example.
 $HREF = '?p=ls';
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Get pagecontroller helpers. Useful methods to use in most pagecontrollers
+//
+$pc = new CPageController();
+//$pc->LoadLanguage(__FILE__);
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Interception Filter, controlling access, authorithy and other checks.
+//
+$intFilter = new CInterceptionFilter();
+
+$intFilter->FrontControllerIsVisitedOrDie();
+//$intFilter->UserIsSignedInOrRecirectToSignIn();
+//$intFilter->UserIsMemberOfGroupAdminOrDie();
 
 
 // -------------------------------------------------------------------------------------------
@@ -35,10 +61,12 @@ $HREF = '?p=ls';
 //
 
 $html = <<<EOD
-<h2>Innehåll</h2>
+<header>
+<h1>Show files and sourcecode</h1>
 <p>
-Nedanstående filer finns i denna katalogen. Klicka på en fil för att visa dess innehåll.
+Click a file to show its content.
 </p>
+</header>
 EOD;
 
 
@@ -67,7 +95,7 @@ $start		= basename($fullpath1);
 $dirname 	= basename($fullpath);
 $html .= <<<EOD
 <p>
-> <a href='{$HREF}&amp;dir='>{$start}</a>{$SEPARATOR}{$currpath}
+<a href='{$HREF}&amp;dir='>{$start}</a>{$SEPARATOR}{$currpath}
 </p>
 EOD;
 
@@ -85,7 +113,7 @@ $list = Array();
 if(is_dir($dir)) {
     if ($dh = opendir($dir)) {
         while (($file = readdir($dh)) !== false) {
-        	if($file != '.' && $file != '..' && $file != '.svn') {
+        	if($file != '.' && $file != '..' && $file != '.svn' && $file != '.git') {
         		$curfile = $fullpath . $SEPARATOR . $file;
         		if(is_dir($curfile)) {
           	  		$list[$file] = "<a href='{$HREF}&amp;dir={$curdir1}{$file}'>{$file}{$SEPARATOR}</a>";
@@ -117,7 +145,7 @@ $file	= "";
 if(isset($_GET['file'])) {
 	$file = basename($_GET['file']);
 
-	$content = htmlspecialchars(file_get_contents($dir . $SEPARATOR . $file, 'FILE_TEXT'));
+	$content = file_get_contents($dir . $SEPARATOR . $file, 'FILE_TEXT');
 
 	// Remove password and user from config.php, if enabled
 	if($HIDE_DB_USER_PASSWORD == TRUE && $file == 'config.php') {
@@ -128,13 +156,21 @@ if(isset($_GET['file'])) {
 		$content = preg_replace($pattern, $replace, $content);
 	}
 	
+	 // Show syntax if defined
+	if($SYNTAX == 'PHP') {
+		$content = highlight_string($content, TRUE);
+	} else {
+		$content = htmlspecialchars($content);
+		$content = "<pre>{$content}</pre>";
+	}
+
 	$html .= <<<EOD
-<fieldset class=code>
-<legend><a href='{$HREF}'>{$file}</a></legend>
+<h3><a href='{$HREF}'>{$file}</a></h3>
+<div class="sourcecode">
 <pre>
 {$content}
 </pre>
-</fieldset>
+</div>
 EOD;
 }
 
@@ -143,14 +179,10 @@ EOD;
 //
 // Create and print out the resulting page
 //
-require_once(TP_SOURCEPATH . 'CHTMLPage.php');
-
 $page = new CHTMLPage();
 
-$page->printHTMLHeader('Visa innehåll i biblioteket och filer');
-$page->printPageHeader();
-$page->printPageBody($html);
-$page->printPageFooter();
+$page->printPage('Show files and source code', "", $html, "");
+exit;
 
 
 ?>

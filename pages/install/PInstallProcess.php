@@ -3,155 +3,66 @@
 //
 // PInstallProcess.php
 //
-// Creates new tables in the database. Redirects to a response-page using _GET['r'].
+// Executes SQL statments in database, displays the results.
+//
+// Author: Mikael Roos
 //
 
 
 // -------------------------------------------------------------------------------------------
 //
-// Interception Filter, access, authorithy and other checks.
+// Get pagecontroller helpers. Useful methods to use in most pagecontrollers
 //
-if(!isset($indexIsVisited)) die('No direct access to pagecontroller is allowed.');
+$pc = new CPageController();
+//$pc->LoadLanguage(__FILE__);
 
 
 // -------------------------------------------------------------------------------------------
 //
-// Page specific code
+// Interception Filter, controlling access, authorithy and other checks.
 //
+$intFilter = new CInterceptionFilter();
 
-// -------------------------------------------------------------------------------------------
-//
-// Create a new database object, connect to the database.
-//
-$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
-
-if (mysqli_connect_error()) {
-   echo "Connect failed: ".mysqli_connect_error()."<br>";
-   exit();
-}
+$intFilter->FrontControllerIsVisitedOrDie();
+//$intFilter->UserIsSignedInOrRecirectToSignIn();
+//$intFilter->UserIsMemberOfGroupAdminOrDie();
 
 
 // -------------------------------------------------------------------------------------------
 //
-// Prepare SQL for User & Group structure.
+// Create a new database object, connect to the database, get the query and execute it.
 //
-$tableUser 			= DB_PREFIX . 'User';
-$tableGroup			= DB_PREFIX . 'Group';
-$tableGroupMember	= DB_PREFIX . 'GroupMember';
-
-$query = <<<EOD
-DROP TABLE IF EXISTS {$tableUser};
-DROP TABLE IF EXISTS {$tableGroup};
-DROP TABLE IF EXISTS {$tableGroupMember};
-
---
--- Table for the User
---
-CREATE TABLE {$tableUser} (
-
-  -- Primary key(s)
-  idUser INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-
-  -- Attributes
-  accountUser CHAR(20) NOT NULL UNIQUE,
-  emailUser CHAR(100) NOT NULL,
-  passwordUser CHAR(32) NOT NULL
-);
-
-
---
--- Table for the Group
---
-CREATE TABLE {$tableGroup} (
-
-  -- Primary key(s)
-  idGroup CHAR(3) NOT NULL PRIMARY KEY,
-
-  -- Attributes
-  nameGroup CHAR(40) NOT NULL
-);
-
-
---
--- Table for the GroupMember
---
-CREATE TABLE {$tableGroupMember} (
-
-  -- Primary key(s)
-  --
-  -- The PK is the combination of the two foreign keys, see below.
-  --
-  
-  -- Foreign keys
-  GroupMember_idUser INT NOT NULL,
-  GroupMember_idGroup CHAR(3) NOT NULL,
-	
-  FOREIGN KEY (GroupMember_idUser) REFERENCES {$tableUser}(idUser),
-  FOREIGN KEY (GroupMember_idGroup) REFERENCES {$tableGroup}(idGroup),
-
-  PRIMARY KEY (GroupMember_idUser, GroupMember_idGroup)
-  
-  -- Attributes
-
-);
-
---
--- Add default user(s) 
---
-INSERT INTO {$tableUser} (accountUser, emailUser, passwordUser)
-VALUES ('mikael', 'mos@bth.se', md5('hemligt'));
-INSERT INTO {$tableUser} (accountUser, emailUser, passwordUser)
-VALUES ('doe', 'doe@bth.se', md5('doe'));
-
---
--- Add default groups
---
-INSERT INTO {$tableGroup} (idGroup, nameGroup) VALUES ('adm', 'Administrators of the site');
-INSERT INTO {$tableGroup} (idGroup, nameGroup) VALUES ('usr', 'Regular users of the site');
-
---
--- Add default groupmembers
---
-INSERT INTO {$tableGroupMember} (GroupMember_idUser, GroupMember_idGroup) 
-VALUES ((SELECT idUser FROM {$tableUser} WHERE accountUser = 'doe'), 'usr');
-INSERT INTO {$tableGroupMember} (GroupMember_idUser, GroupMember_idGroup) 
-VALUES ((SELECT idUser FROM {$tableUser} WHERE accountUser = 'mikael'), 'adm');
-
-EOD;
-
-$res = $mysqli->multi_query($query) 
-                    or die("Could not query database");
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Retrieve and ignore the results from the above query
-// Some may succed and some may fail. Lets count the number of succeded 
-// statements to really know.
-//
-$statements = 0;
-do {
-	$res = $mysqli->store_result();
-	$statements++;
-} while($mysqli->next_result());
+$db 	= new CDatabaseController();
+$mysqli = $db->Connect();
+$query 	= $db->LoadSQL('SQLCreateUserAndGroupTables.php');
+$res 	= $db->MultiQuery($query); 
+$no		= $db->RetrieveAndIgnoreResultsFromMultiQuery();
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Prepare the text
 //
-$html = "<h2>Installera databas</h2>";
-$html .= "<p>Query=<br/><pre>{$query}</pre></p>";
-$html .= "<p>Antal lyckade statements: {$statements}</p>";
-$html .= "<p>Error code: {$mysqli->errno} ({$mysqli->error})</p>";
-$html .= "<p><a href='?p=home'>Hem</a></p>";
+$htmlMain = <<< EOD
+<h1>Database installed</h1>
+<p>
+SQL Query was:
+<div class="sourcecode">
+<pre>{$query}</pre>
+</div>
+</p>
+<p>Statements that succeeded: {$no}</p>
+<p>Error code: {$mysqli->errno} ({$mysqli->error})</p>
+EOD;
+
+$htmlLeft 	= "";
+$htmlRight	= "";
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Close the connection to the database
 //
-
 $mysqli->close();
 
 
@@ -159,15 +70,9 @@ $mysqli->close();
 //
 // Create and print out the resulting page
 //
-require_once(TP_SOURCEPATH . 'CHTMLPage.php');
-
 $page = new CHTMLPage();
 
-$page->printHTMLHeader('Installation av databas');
-$page->printPageHeader();
-$page->printPageBody($html);
-$page->printPageFooter();
-
-
+$page->printPage('Database installed', $htmlLeft, $htmlMain, $htmlRight);
+exit;
 
 ?>
