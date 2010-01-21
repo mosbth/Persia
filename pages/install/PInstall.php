@@ -30,6 +30,9 @@ $intFilter->FrontControllerIsVisitedOrDie();
 //
 // Page specific code
 //
+require_once(TP_SQLPATH . 'config.php');
+
+$host		= DB_HOST;
 $database 	= DB_DATABASE;
 $prefix		= DB_PREFIX;
 
@@ -40,13 +43,16 @@ Click below link to remove all contents from the database and create new tables 
 scratch.
 </p>
 <p>
-You are currently working with the database: '{$database}'
+Database host: '{$host}'
 </p>
 <p>
-The tables will be created using the prefix: '{$prefix}'
+Database name: '{$database}'
 </p>
 <p>
-Update the file config.php to change the values.
+Prefix for tables: '{$prefix}'
+</p>
+<p>
+Update the database config-file (usually sql/config.php) to change the values.
 </p>
 <p>
 &not; <a href='?p=installp'>Destroy current database and create from scratch</a>
