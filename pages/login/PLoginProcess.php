@@ -80,7 +80,7 @@ $mysqli->close();
 // Redirect to another page
 // Support $redirect to be local uri within site or external site (starting with http://)
 //
-CHTMLPage::redirectTo(CPageController::POSTisSetOrSetDefault('redirect', 'home'));
+CPageController::RedirectTo(CPageController::POSTisSetOrSetDefault('redirect', 'home'));
 exit;
 
 

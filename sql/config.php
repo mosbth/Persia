@@ -27,6 +27,7 @@ define('DB_PREFIX', 	'pe_');		    // Prefix to use infront of tablename and view
 define('DBT_User', 			DB_PREFIX . 'User');
 define('DBT_Group', 		DB_PREFIX . 'Group');
 define('DBT_GroupMember',	DB_PREFIX . 'GroupMember');
+define('DBT_Article',		DB_PREFIX . 'Article');
 
 
 ?>

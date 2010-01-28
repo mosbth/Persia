@@ -11,14 +11,12 @@
 //
 
 
-// -------------------------------------------------------------------------------------------
-//
-// SQL for User & Group structure.
-//
+// Get the tablenames
 $tUser 			= DBT_User;
 $tGroup 		= DBT_Group;
 $tGroupMember 	= DBT_GroupMember;
 
+// Create the query
 $query = <<<EOD
 DROP TABLE IF EXISTS {$tUser};
 DROP TABLE IF EXISTS {$tGroup};
@@ -34,6 +32,7 @@ CREATE TABLE {$tUser} (
 
   -- Attributes
   accountUser CHAR(20) NOT NULL UNIQUE,
+  nameUser CHAR(100) NOT NULL,
   emailUser CHAR(100) NOT NULL,
   passwordUser CHAR(32) NOT NULL
 );
@@ -78,10 +77,10 @@ CREATE TABLE {$tGroupMember} (
 --
 -- Add default user(s) 
 --
-INSERT INTO {$tUser} (accountUser, emailUser, passwordUser)
-VALUES ('mikael', 'mos@bth.se', md5('hemligt'));
-INSERT INTO {$tUser} (accountUser, emailUser, passwordUser)
-VALUES ('doe', 'doe@bth.se', md5('doe'));
+INSERT INTO {$tUser} (accountUser, emailUser, nameUser, passwordUser)
+VALUES ('mikael', 'mos@bth.se', 'Mikael Roos', md5('hemligt'));
+INSERT INTO {$tUser} (accountUser, emailUser, nameUser, passwordUser)
+VALUES ('doe', 'doe@bth.se', 'John/Jane Doe', md5('doe'));
 
 --
 -- Add default groups

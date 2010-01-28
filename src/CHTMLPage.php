@@ -209,7 +209,7 @@ EOD;
 
 		if(!WS_VALIDATORS) { return ""; }
 
- 		$refToThisPage 			= CHTMLPage::CurrentURL();
+ 		$refToThisPage 			= CPageController::CurrentURL();
  		$linkToCSSValidator	 	= "<a href='http://jigsaw.w3.org/css-validator/check/referer'>CSS</a>";
 		$linkToMarkupValidator 	= "<a href='http://validator.w3.org/check/referer'>XHTML</a>";
 		$linkToCheckLinks	 	= "<a href='http://validator.w3.org/checklink?uri={$refToThisPage}'>Links</a>";
@@ -254,41 +254,6 @@ EOD;
         return $html;   
 	}
 	
-
-	// ------------------------------------------------------------------------------------
-	//
-	// Static function
-	// Redirect to another page
-	// Support $aUri to be local uri within site or external site (starting with http://)
-	//
-	public static function RedirectTo($aUri) {
-
-		if(strncmp($aUri, "http://", 7)) {
-			$aUri = WS_SITELINK . "?p={$aUri}";
-		}
-
-		header("Location: {$aUri}");
-		exit;
-	}
-
-
-	// ------------------------------------------------------------------------------------
-	//
-	// Static function
-	// Create a URL to the current page.
-	//
-	public static function CurrentURL() {
-
-		// Create link to current page
-		$refToThisPage = "http";
-		$refToThisPage .= (@$_SERVER["HTTPS"] == "on") ? 's' : '';
-		$refToThisPage .= "://";
-		$serverPort = ($_SERVER["SERVER_PORT"] == "80") ? '' : ":{$_SERVER['SERVER_PORT']}";
-		$refToThisPage .= $serverPort . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
-		
-		return $refToThisPage;
-	}
-
 
 } // End of Of Class
 

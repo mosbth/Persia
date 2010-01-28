@@ -56,10 +56,8 @@ class CInterceptionFilter {
 	//
 	public function UserIsSignedInOrRecirectToSignIn() {
 		
-		if(!isset($_SESSION['accountUser'])) {
-		
-			require_once(TP_SOURCEPATH . 'CHTMLPage.php');
-			CHTMLPage::redirectTo('login');
+		if(!isset($_SESSION['accountUser'])) { 
+			require(TP_PAGESPATH . 'login/PLogin.php');
 		}
 	}
 

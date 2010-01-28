@@ -72,6 +72,25 @@ class CDatabaseController {
 
 	// ------------------------------------------------------------------------------------
 	//
+	// Retrieve and store results from multiquery in an array.
+	//
+	public function RetrieveAndStoreResultsFromMultiQuery(&$aResults) {
+
+		$mysqli = $this->iMysqli;
+		
+		$i = 0;
+		do {
+			$aResults[$i++] = $mysqli->store_result();
+		} while($mysqli->next_result());
+		
+		// Check if there is a database error
+        !$mysqli->errno 
+        	or die("<p>Failed retrieving resultsets.</p><p>Query =<br/><pre>{$query}</pre><br/>Error code: {$this->iMysqli->errno} ({$this->iMysqli->error})</p>");
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
 	// Retrieve and ignore results from multiquery, count number of successful statements
 	// Some succeed and some fail, must count to really know.
 	//

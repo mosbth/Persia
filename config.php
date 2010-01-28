@@ -23,7 +23,7 @@
 //
 // PERHAPS SPLIT THIS WHEN UPDATING CHTMLPAGE
 //
-define('WS_SITELINK',   'http://dev.phpersia.org/persia//'); // Link to site.
+define('WS_SITELINK',   'http://dev.phpersia.org/persia/'); // Link to site.
 define('WS_TITLE', 		'Persia');		    // The title of this site.
 define('WS_STYLESHEET', 'style/plain/stylesheet_liquid.css');	// Default stylesheet of the site.
 define('WS_FAVICON', 	'img/favicon.ico'); // Small icon to display in browser

@@ -48,13 +48,7 @@ h3.columnMenu {
 	font-size: small;
 }
 
-div#body h1 {
-	text-transform: uppercase;
-	border-bottom: double #333333 4px;
-}
-
-h2 { }
-h3 { }
+h1, h2, h3 { }
 
 p.small {
 	font-size: x-small;

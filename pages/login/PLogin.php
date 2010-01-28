@@ -33,8 +33,8 @@ $intFilter->FrontControllerIsVisitedOrDie();
 // Try access a protected file, redirect to login, redirect back to protected page.
 //
 $redirectTo = 'home';
-if($gPage != 'login') {
-	$refToThisPage	= CHTMLPage::CurrentURL();
+if($pc->iPage != 'login') {
+	$refToThisPage	= CPageController::CurrentURL();
 	$redirectTo 	= $refToThisPage;
 }
 

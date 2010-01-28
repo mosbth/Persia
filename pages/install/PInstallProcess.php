@@ -30,23 +30,39 @@ $intFilter->FrontControllerIsVisitedOrDie();
 
 // -------------------------------------------------------------------------------------------
 //
-// Create a new database object, connect to the database, get the query and execute it.
-//
-$db 	= new CDatabaseController();
-$mysqli = $db->Connect();
-$query 	= $db->LoadSQL('SQLCreateUserAndGroupTables.php');
-$res 	= $db->MultiQuery($query); 
-$no		= $db->RetrieveAndIgnoreResultsFromMultiQuery();
-
-
-// -------------------------------------------------------------------------------------------
-//
 // Prepare the text
 //
 $htmlMain = <<< EOD
 <h1>Database installed</h1>
+EOD;
+
+$htmlLeft 	= "";
+$htmlRight	= "";
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Create a new database object, connect to the database, get the query and execute it.
+//
+$db 	= new CDatabaseController();
+$mysqli = $db->Connect();
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Execute several queries and print out the result.
+//
+$queries = Array('SQLCreateUserAndGroupTables.php', 'SQLCreateArticleTable.php');
+
+foreach($queries as $val) {
+
+	$query 	= $db->LoadSQL($val);
+	$res 	= $db->MultiQuery($query); 
+	$no		= $db->RetrieveAndIgnoreResultsFromMultiQuery();
+
+	$htmlMain .= <<< EOD
+<h3>SQL Query '{$val}'</h3>
 <p>
-SQL Query was:
 <div class="sourcecode">
 <pre>{$query}</pre>
 </div>
@@ -54,9 +70,7 @@ SQL Query was:
 <p>Statements that succeeded: {$no}</p>
 <p>Error code: {$mysqli->errno} ({$mysqli->error})</p>
 EOD;
-
-$htmlLeft 	= "";
-$htmlRight	= "";
+}
 
 
 // -------------------------------------------------------------------------------------------

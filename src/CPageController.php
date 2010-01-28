@@ -13,16 +13,14 @@ class CPageController {
 	// Internal variables
 	//
 	public $lang = Array();
-	protected $iMysqli;
-
+	
 
 	// ------------------------------------------------------------------------------------
 	//
 	// Constructor
 	//
 	public function __construct() {
-
-		$this->iMysqli = FALSE;		
+		;
 	}
 
 
@@ -59,7 +57,7 @@ class CPageController {
 	//
 	public static function GETisSetOrSetDefault($aEntry, $aDefault = '') {
 
-		return isset($_GET["$aEntry"]) ? $_GET["$aEntry"] : $aDefault;
+		return isset($_GET["$aEntry"]) && !empty($_GET["$aEntry"]) ? $_GET["$aEntry"] : $aDefault;
 	}
 
 
@@ -69,7 +67,21 @@ class CPageController {
 	//
 	public static function POSTisSetOrSetDefault($aEntry, $aDefault = '') {
 
-		return isset($_POST["$aEntry"]) ? $_POST["$aEntry"] : $aDefault;
+		return isset($_POST["$aEntry"]) && !empty($_POST["$aEntry"]) ? $_POST["$aEntry"] : $aDefault;
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Check if the value is numeric and optional in the range.
+	//
+	public static function IsNumericOrDie($aVar, $aRangeLow = '', $aRangeHigh = "") {
+
+		$inRangeH = empty($aRangeHigh) ? TRUE : ($aVar <= $aRangeHigh);
+		$inRangeL = empty($aRangeLow)  ? TRUE : ($aVar >= $aRangeLow);
+		if(!(is_numeric($aVar) && $inRangeH && inRangeL)) {
+			die(sprintf("The variable value '$s' is not numeric or it is out of range.", $aVar));
+		}
 	}
 
 
@@ -92,6 +104,41 @@ class CPageController {
 		$menu .= '</ul>';
 		
 		return $menu;
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Static function
+	// Redirect to another page
+	// Support $aUri to be local uri within site or external site (starting with http://)
+	//
+	public static function RedirectTo($aUri) {
+
+		if(strncmp($aUri, "http://", 7)) {
+			$aUri = WS_SITELINK . "?p={$aUri}";
+		}
+
+		header("Location: {$aUri}");
+		exit;
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Static function
+	// Create a URL to the current page.
+	//
+	public static function CurrentURL() {
+
+		// Create link to current page
+		$refToThisPage = "http";
+		$refToThisPage .= (@$_SERVER["HTTPS"] == "on") ? 's' : '';
+		$refToThisPage .= "://";
+		$serverPort = ($_SERVER["SERVER_PORT"] == "80") ? '' : ":{$_SERVER['SERVER_PORT']}";
+		$refToThisPage .= $serverPort . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
+		
+		return $refToThisPage;
 	}
 
 

@@ -40,6 +40,10 @@ $intFilter->FrontControllerIsVisitedOrDie();
 $showLeft 	= $pc->GETisSetOrSetDefault('showLeft', '1');
 $showRight 	= $pc->GETisSetOrSetDefault('showRight', '1');
 
+// Always check whats coming in...
+$pc->IsNumericOrDie($showLeft, 0, 2);
+$pc->IsNumericOrDie($showRight, 0, 2);
+
 
 // -------------------------------------------------------------------------------------------
 //
@@ -139,7 +143,8 @@ $mysqli->close();
 // Support $redirect to be local uri within site or external site (starting with http://)
 //
 /*
-CHTMLPage::redirectTo(CPageController::POSTisSetOrSetDefault('redirect', 'home'));
+//CPageController::RedirectTo(CPageController::POSTisSetOrSetDefault('redirect', 'home'));
+$pc->RedirectTo($pc->POSTisSetOrSetDefault('redirect', 'home'));
 exit;
 */
 

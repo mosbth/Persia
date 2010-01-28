@@ -81,6 +81,14 @@ switch($gPage) {
 	case 'ls':	require_once(TP_PAGESPATH . 'viewfiles/PListDirectory.php'); break;
 	
 	//
+	// Forum
+	//
+	case 'article-edit':		require_once(TP_PAGESPATH . 'forum/PArticleEdit.php'); break;
+	case 'article-save':		require_once(TP_PAGESPATH . 'forum/PArticleSave.php'); break;
+	case 'article-delete':		require_once(TP_PAGESPATH . 'forum/PArticleDelete.php'); break;
+	case 'article-show':		require_once(TP_PAGESPATH . 'forum/PArticleShow.php'); break;
+
+	//
 	// Style Your Web, app_syw
 	// Example for working with stylesheets
 	//
