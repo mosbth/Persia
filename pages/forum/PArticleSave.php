@@ -42,6 +42,11 @@ $userId		= $_SESSION['idUser'];
 // Always check whats coming in...
 $pc->IsNumericOrDie($articleId, 0);
 
+// Clean up HTML-tags
+$tagsAllowed = '<h1><h2><h3><h4><h5><h6><p><a><br><i><em><li><ol><ul>';
+$title 		= strip_tags($title, $tagsAllowed);
+$content 	= strip_tags($content, $tagsAllowed);
+
 
 // -------------------------------------------------------------------------------------------
 //
