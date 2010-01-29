@@ -47,8 +47,11 @@ $pc->IsNumericOrDie($articleId, 0);
 $db 	= new CDatabaseController();
 $mysqli = $db->Connect();
 
+// Get the SP names
+$spPGetArticleDetailsAndArticleList	= DBSP_PGetArticleDetailsAndArticleList;
+
 $query = <<< EOD
-CALL PGetArticleDetailsAndArticleList({$articleId}, '{$userId}');
+CALL {$spPGetArticleDetailsAndArticleList}({$articleId}, '{$userId}');
 EOD;
 
 // Perform the query
@@ -102,6 +105,20 @@ $htmlRight	= <<<EOD
 {$list} 
 </p>
 EOD;
+
+// Do not show articles that does not exists.
+if(empty($username)) {
+	$htmlRight 	= "";
+	$htmlMain = <<<EOD
+<article class="general">
+<h1 class="nostyle">Article does not exists</h1>
+<p>
+<a href="?p=article-edit">Create new article...</a>
+<p>
+</article>
+EOD;
+}
+
 
 
 // -------------------------------------------------------------------------------------------

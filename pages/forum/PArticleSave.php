@@ -51,10 +51,13 @@ $pc->IsNumericOrDie($articleId, 0);
 $db 	= new CDatabaseController();
 $mysqli = $db->Connect();
 
+// Get the SP names
+$spPInsertOrUpdateArticle			= DBSP_PInsertOrUpdateArticle;
+
 // Create the query
 $query = <<< EOD
 SET @aArticleId = {$articleId}; 
-CALL PInsertOrUpdateArticle(@aArticleId, '{$userId}', '{$title}', '{$content}');
+CALL {$spPInsertOrUpdateArticle}(@aArticleId, '{$userId}', '{$title}', '{$content}');
 SELECT @aArticleId AS id;
 EOD;
 

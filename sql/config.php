@@ -27,7 +27,21 @@ define('DB_PREFIX', 	'pe_');		    // Prefix to use infront of tablename and view
 define('DBT_User', 			DB_PREFIX . 'User');
 define('DBT_Group', 		DB_PREFIX . 'Group');
 define('DBT_GroupMember',	DB_PREFIX . 'GroupMember');
+define('DBT_Statistics',	DB_PREFIX . 'Statistics');
 define('DBT_Article',		DB_PREFIX . 'Article');
+
+// Stored procedures
+define('DBSP_PGetArticleDetailsAndArticleList',	DB_PREFIX . 'PGetArticleDetailsAndArticleList');
+define('DBSP_PGetArticleDetails',				DB_PREFIX . 'PGetArticleDetails');
+define('DBSP_PInsertOrUpdateArticle',			DB_PREFIX . 'PInsertOrUpdateArticle');
+
+// User Defined Functions UDF
+define('DBUDF_FCheckUserIsOwnerOrAdmin',	DB_PREFIX . 'FCheckUserIsOwnerOrAdmin');
+
+// Triggers
+define('DBTR_TInsertUser',		DB_PREFIX . 'TInsertUser');
+define('DBTR_TAddArticle',		DB_PREFIX . 'TAddArticle');
+
 
 
 ?>

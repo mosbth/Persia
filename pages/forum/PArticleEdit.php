@@ -46,14 +46,16 @@ $pc->IsNumericOrDie($articleId, 0);
 //
 $title 		= "";
 $content 	= "";
-$saved 		= "Click button to save.";
 
 // Connect
 $db 	= new CDatabaseController();
 $mysqli = $db->Connect();
 
+// Get the SP names
+$spPGetArticleDetailsAndArticleList	= DBSP_PGetArticleDetailsAndArticleList;
+
 $query = <<< EOD
-CALL PGetArticleDetailsAndArticleList({$articleId}, '{$userId}');
+CALL {$spPGetArticleDetailsAndArticleList}({$articleId}, '{$userId}');
 EOD;
 
 // Perform the query
@@ -65,7 +67,7 @@ $db->RetrieveAndStoreResultsFromMultiQuery($results);
 $row = $results[0]->fetch_object();
 $title 		= $row->title;
 $content 	= $row->content;
-$saved	 	= $row->latest;
+$saved	 	= empty($row->latest) ? 'Not yet' : $row->latest;
 $results[0]->close(); 
 
 // Get the list of articles

@@ -14,6 +14,20 @@
 // Get the tablenames
 $tArticle 		= DBT_Article;
 $tUser 			= DBT_User;
+$tGroup 		= DBT_Group;
+$tGroupMember 	= DBT_GroupMember;
+$tStatistics	= DBT_Statistics;
+
+// Get the SP names
+$spPGetArticleDetailsAndArticleList	= DBSP_PGetArticleDetailsAndArticleList;
+$spPGetArticleDetails				= DBSP_PGetArticleDetails;
+$spPInsertOrUpdateArticle			= DBSP_PInsertOrUpdateArticle;
+
+// Get the UDF names
+$udfFCheckUserIsOwnerOrAdmin	= DBUDF_FCheckUserIsOwnerOrAdmin;
+
+// Get the trigger names
+$trAddArticle					= DBTR_TAddArticle;
 
 // Create the query
 $query = <<<EOD
@@ -44,8 +58,8 @@ CREATE TABLE {$tArticle} (
 -- SP to insert or update article
 -- If article id is 0 then insert, else update
 --
-DROP PROCEDURE IF EXISTS PInsertOrUpdateArticle;
-CREATE PROCEDURE PInsertOrUpdateArticle
+DROP PROCEDURE IF EXISTS {$spPInsertOrUpdateArticle};
+CREATE PROCEDURE {$spPInsertOrUpdateArticle}
 (
 	INOUT aArticleId INT, 
 	IN aUserId INT, 
@@ -68,8 +82,8 @@ BEGIN
 			contentArticle 	= aContent,
 			modifiedArticle	= NOW()
 		WHERE
-			idArticle = aArticleId AND
-			Article_idUser = aUserId
+			idArticle = aArticleId  AND
+			{$udfFCheckUserIsOwnerOrAdmin}(aArticleId, aUserId)
 		LIMIT 1;
 	END;
 	END IF;
@@ -79,8 +93,8 @@ END;
 --
 -- SP to get the contents of an article
 --
-DROP PROCEDURE IF EXISTS PGetArticleDetails;
-CREATE PROCEDURE PGetArticleDetails
+DROP PROCEDURE IF EXISTS {$spPGetArticleDetails};
+CREATE PROCEDURE {$spPGetArticleDetails}
 (
 	IN aArticleId INT, 
 	IN aUserId INT
@@ -98,8 +112,8 @@ BEGIN
 			ON A.Article_idUser = U.idUser
 	WHERE
 		idArticle = aArticleId AND
-		Article_idUser = aUserId AND
-		deletedArticle IS NULL;
+		deletedArticle IS NULL AND
+		{$udfFCheckUserIsOwnerOrAdmin}(aArticleId, aUserId);
 END;
 
 
@@ -109,14 +123,14 @@ END;
 -- Limit does not accept a varible
 -- http://bugs.mysql.com/bug.php?id=11918
 --
-DROP PROCEDURE IF EXISTS PGetArticleDetailsAndArticleList;
-CREATE PROCEDURE PGetArticleDetailsAndArticleList
+DROP PROCEDURE IF EXISTS {$spPGetArticleDetailsAndArticleList};
+CREATE PROCEDURE {$spPGetArticleDetailsAndArticleList}
 (
 	IN aArticleId INT, 
 	IN aUserId INT
 )
 BEGIN
-	CALL PGetArticleDetails(aArticleId, aUserId);
+	CALL {$spPGetArticleDetails}(aArticleId, aUserId);
 
 	SELECT 
 		idArticle AS id,
@@ -129,6 +143,61 @@ BEGIN
 	ORDER BY modifiedArticle, createdArticle
 	LIMIT 20;
 END;
+
+
+--
+--  Create UDF that checks if user owns article or is member of group adm.
+--
+DROP FUNCTION IF EXISTS {$udfFCheckUserIsOwnerOrAdmin};
+CREATE FUNCTION {$udfFCheckUserIsOwnerOrAdmin}
+(
+	aArticleId INT,
+	aUserId INT
+)
+RETURNS BOOLEAN
+BEGIN
+	DECLARE isAdmin INT;
+	DECLARE isOwner INT;
+	
+	SELECT idUser INTO isAdmin
+	FROM {$tUser} AS U
+		INNER JOIN {$tGroupMember} AS GM
+			ON U.idUser = GM.GroupMember_idUser
+		INNER JOIN {$tGroup} AS G
+			ON G.idGroup = GM.GroupMember_idGroup
+	WHERE
+		idGroup = 'adm' AND
+		idUser = aUserId;
+
+	SELECT idUser INTO isOwner
+	FROM {$tUser} AS U
+		INNER JOIN {$tArticle} AS A
+			ON U.idUser = A.Article_idUser
+	WHERE
+		idArticle = aArticleId AND
+		idUser = aUserId;
+		
+	RETURN (isAdmin OR isOwner);		
+END;
+
+
+--
+-- Create trigger for Statistics
+-- Add +1 when new article is created
+--
+DROP TRIGGER IF EXISTS {$trAddArticle};
+CREATE TRIGGER {$trAddArticle}
+AFTER INSERT ON {$tArticle}
+FOR EACH ROW
+BEGIN
+  UPDATE {$tStatistics} 
+  SET 
+  	numOfArticlesStatistics = numOfArticlesStatistics + 1
+  WHERE 
+  	Statistics_idUser = NEW.Article_idUser;
+END;
+
+
 
 EOD;
 

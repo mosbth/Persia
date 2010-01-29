@@ -15,6 +15,10 @@
 $tUser 			= DBT_User;
 $tGroup 		= DBT_Group;
 $tGroupMember 	= DBT_GroupMember;
+$tStatistics 	= DBT_Statistics;
+
+// Get the SP/UDF/trigger names
+$trInsertUser	= DBTR_TInsertUser;
 
 // Create the query
 $query = <<<EOD
@@ -74,6 +78,38 @@ CREATE TABLE {$tGroupMember} (
 
 );
 
+
+--
+-- Table for the Statistics
+--
+DROP TABLE IF EXISTS {$tStatistics};
+CREATE TABLE {$tStatistics} (
+
+  -- Primary key(s)
+  -- Foreign keys
+  Statistics_idUser INT NOT NULL,
+	
+  FOREIGN KEY (Statistics_idUser) REFERENCES {$tUser}(idUser),
+  PRIMARY KEY (Statistics_idUser),
+  
+  -- Attributes
+  numOfArticlesStatistics INT NOT NULL DEFAULT 0
+);
+
+
+--
+-- Create trigger for Statistics
+-- Add row when new user is created
+--
+DROP TRIGGER IF EXISTS {$trInsertUser};
+CREATE TRIGGER {$trInsertUser}
+AFTER INSERT ON {$tUser}
+FOR EACH ROW
+BEGIN
+  INSERT INTO {$tStatistics} (Statistics_idUser) VALUES (NEW.idUser);
+END;
+
+
 --
 -- Add default user(s) 
 --
@@ -82,11 +118,13 @@ VALUES ('mikael', 'mos@bth.se', 'Mikael Roos', md5('hemligt'));
 INSERT INTO {$tUser} (accountUser, emailUser, nameUser, passwordUser)
 VALUES ('doe', 'doe@bth.se', 'John/Jane Doe', md5('doe'));
 
+
 --
 -- Add default groups
 --
 INSERT INTO {$tGroup} (idGroup, nameGroup) VALUES ('adm', 'Administrators of the site');
 INSERT INTO {$tGroup} (idGroup, nameGroup) VALUES ('usr', 'Regular users of the site');
+
 
 --
 -- Add default groupmembers
@@ -95,6 +133,7 @@ INSERT INTO {$tGroupMember} (GroupMember_idUser, GroupMember_idGroup)
 	VALUES ((SELECT idUser FROM {$tUser} WHERE accountUser = 'doe'), 'usr');
 INSERT INTO {$tGroupMember} (GroupMember_idUser, GroupMember_idGroup) 
 	VALUES ((SELECT idUser FROM {$tUser} WHERE accountUser = 'mikael'), 'adm');
+
 
 EOD;
 
