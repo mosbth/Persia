@@ -56,6 +56,8 @@ class CHTMLPage {
 		$w3c	= $this->prepareValidatorTools();
 		$timer	= $this->prepareTimer();
 		
+		$tpJavaScript = TP_JAVASCRIPT;
+		
 		$html = <<<EOD
 <!DOCTYPE html>
 <html lang="{$language}">
@@ -64,6 +66,12 @@ class CHTMLPage {
 		<title>{$titlePage}</title>
 		<link rel="shortcut icon" href="{$favicon}" />
 		<link rel="stylesheet" href="{$stylesheet}" />
+		
+<!-- markItUp! skin --> 
+<link rel="stylesheet" type="text/css" href="{$tpJavaScript}/markitup/markitup/skins/markitup/style.css" /> 
+<!--  markItUp! toolbar skin --> 
+<link rel="stylesheet" type="text/css" href="{$tpJavaScript}/markitup/markitup/sets/html/style.css" /> 
+
 		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	</head>
 	<body>

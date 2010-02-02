@@ -61,6 +61,7 @@ define('TP_SOURCEPATH',		dirname(__FILE__) . '/src/');	// Classes, functions, co
 define('TP_PAGESPATH',		dirname(__FILE__) . '/pages/');	// Pagecontrollers and modules
 define('TP_LANGUAGEPATH',	dirname(__FILE__) . '/lang/');	// Multi-language support
 define('TP_SQLPATH',		dirname(__FILE__) . '/sql/');	// SQL code
+define('TP_JAVASCRIPT',		WS_SITELINK . '/js/');	// SQL code
 
 
 ?>

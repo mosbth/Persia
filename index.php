@@ -83,10 +83,16 @@ switch($gPage) {
 	//
 	// Forum
 	//
-	case 'article-edit':		require_once(TP_PAGESPATH . 'forum/PArticleEdit.php'); break;
+	//case 'article-edit':		require_once(TP_PAGESPATH . 'forum/PArticleEdit.php'); break;
 	case 'article-save':		require_once(TP_PAGESPATH . 'forum/PArticleSave.php'); break;
 	case 'article-delete':		require_once(TP_PAGESPATH . 'forum/PArticleDelete.php'); break;
 	case 'article-show':		require_once(TP_PAGESPATH . 'forum/PArticleShow.php'); break;
+
+	// Testing JavaScript editors
+	case 'article-edit':		require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEdit.php'); break;
+	case 'article-nicedit':		require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEdit_NicEdit.php'); break;
+	case 'article-wymeditor':	require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEdit_WYMeditor.php'); break;
+	case 'article-markitup':	require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEdit_markItUp.php'); break;
 
 	//
 	// Style Your Web, app_syw
