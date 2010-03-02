@@ -101,6 +101,7 @@ switch($editor) {
 
 	case 'WYMeditor': {
 		$jseditor = new CWYSIWYGEditor_WYMeditor('text', 'text');
+		$jseditor_submit = 'class="wymupdate"'; 
 	}
 	break;
 
@@ -122,8 +123,8 @@ switch($editor) {
 //
 $htmlMain = <<<EOD
 <form class='article' action='?p=article-save' method='POST'>
-<input type='hidden' name='redirect_on_success' value='article-edit-all&amp;article-id=%1\$d'>
-<input type='hidden' name='redirect_on_failure' value='article-edit-all&amp;article-id=%1\$d'>
+<input type='hidden' name='redirect_on_success' value='article-edit-all&amp;editor={$editor}&amp;article-id=%1\$d'>
+<input type='hidden' name='redirect_on_failure' value='article-edit-all&amp;editor={$editor}&amp;article-id=%1\$d'>
 <input type='hidden' name='article_id' value='{$articleId}'>
 <p>
 Title: <input class='title' type='text' name='title' value='{$title}'>
@@ -135,7 +136,8 @@ Title: <input class='title' type='text' name='title' value='{$title}'>
 Saved: {$saved}
 </p>
 <p>
-<input type='button' value='Save' onClick='submit();'>
+<input type='submit' {$jseditor_submit} value='Save'>
+<input type='button' value='Delete' onClick='if(confirm("Do you REALLY want to delete it?")) {form.action="?p=article-delete"; submit();}'>
 </p>
 <p class='small'>
 Edit this using 
