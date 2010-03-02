@@ -1,11 +1,35 @@
 /* =====================================================================================
  *
  * 
- * All definitions related to WYSIWYG editor 
+ * All definitions related to WYSIWYG JavaScript textarea editor and forms. 
  *
  * 
  */
  
+/* -------------------------------------------------------------------------------------
+/* article */
+
+form.article {
+}
+
+form.article input.title {
+	font-family: Verdana, Sans-serif;
+	font-size: 1.5em;
+	width: 400px;
+}
+
+form.article textarea.size98percentx300 {
+	font-family: Verdana, Sans-serif;
+	font-size: 1em;
+	width: 98%;
+	height: 300px;
+}
+
+form.article p.notice {
+	font-size: x-small;
+	font-style: italic;
+}
+
 
 /* -------------------------------------------------------------------------------------
 /* editor1 */

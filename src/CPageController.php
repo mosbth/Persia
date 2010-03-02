@@ -87,6 +87,18 @@ class CPageController {
 
 	// ------------------------------------------------------------------------------------
 	//
+	// Check if the value is a string.
+	//
+	public static function IsStringOrDie($aVar) {
+
+		if(!is_string($aVar)) {
+			die(sprintf("The variable value '$s' is not a string.", $aVar));
+		}
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
 	// Static function, HTML helper
 	// Create a horisontal sidebar menu
 	//

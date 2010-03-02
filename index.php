@@ -90,6 +90,7 @@ switch($gPage) {
 
 	// Testing JavaScript editors
 	case 'article-edit':		require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEdit.php'); break;
+	case 'article-edit-all':	require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEditAll.php'); break;
 	case 'article-nicedit':		require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEdit_NicEdit.php'); break;
 	case 'article-wymeditor':	require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEdit_WYMeditor.php'); break;
 	case 'article-markitup':	require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEdit_markItUp.php'); break;

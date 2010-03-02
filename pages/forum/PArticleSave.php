@@ -43,9 +43,9 @@ $userId		= $_SESSION['idUser'];
 $pc->IsNumericOrDie($articleId, 0);
 
 // Clean up HTML-tags
-$tagsAllowed = '<h1><h2><h3><h4><h5><h6><p><a><br><i><em><li><ol><ul>';
+$tagsAllowed = '<h1><h2><h3><h4><h5><h6><p><a><br><i><em><b><strong><li><ol><ul><a><style>';
 $title 		= strip_tags($title, $tagsAllowed);
-//$content 	= strip_tags($content, $tagsAllowed);
+$content 	= strip_tags($content, $tagsAllowed);
 
 
 // -------------------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ $db 	= new CDatabaseController();
 $mysqli = $db->Connect();
 
 // Get the SP names
-$spPInsertOrUpdateArticle			= DBSP_PInsertOrUpdateArticle;
+$spPInsertOrUpdateArticle = DBSP_PInsertOrUpdateArticle;
 
 // Create the query
 $query = <<< EOD

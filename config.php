@@ -64,4 +64,11 @@ define('TP_SQLPATH',		dirname(__FILE__) . '/sql/');	// SQL code
 define('TP_JAVASCRIPT',		WS_SITELINK . '/js/');	// SQL code
 
 
+// -------------------------------------------------------------------------------------------
+//
+// Settings for commonly used external resources, for example javascripts.
+//
+define('JS_JQUERY', 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js');		
+
+
 ?>
