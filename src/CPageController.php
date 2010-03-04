@@ -43,7 +43,7 @@ class CPageController {
 		$langFile = TP_LANGUAGEPATH . WS_LANGUAGE . '/' . substr($aFilename, strlen(TP_ROOT));
 
 		if(!file_exists($langFile)) {
-			die(sprintf("Language file does not exists: $s", $langFile));
+			die(sprintf("Language file does not exists: %s", $langFile));
 		}
 
 		require_once($langFile);
@@ -75,11 +75,11 @@ class CPageController {
 	//
 	// Check if the value is numeric and optional in the range.
 	//
-	public static function IsNumericOrDie($aVar, $aRangeLow = '', $aRangeHigh = "") {
+	public static function IsNumericOrDie($aVar, $aRangeLow = 0, $aRangeHigh = 0) {
 
 		$inRangeH = empty($aRangeHigh) ? TRUE : ($aVar <= $aRangeHigh);
 		$inRangeL = empty($aRangeLow)  ? TRUE : ($aVar >= $aRangeLow);
-		if(!(is_numeric($aVar) && $inRangeH && inRangeL)) {
+		if(!(is_numeric($aVar) && $inRangeH && $inRangeL)) {
 			die(sprintf("The variable value '$s' is not numeric or it is out of range.", $aVar));
 		}
 	}
@@ -127,7 +127,11 @@ class CPageController {
 	//
 	public static function RedirectTo($aUri) {
 
-		if(strncmp($aUri, "http://", 7)) {
+		if(!strncmp($aUri, "http://", 7)) {
+			;
+		} else if(!strncmp($aUri, "?", 1)) {
+			$aUri = WS_SITELINK . "{$aUri}";
+		} else {
 			$aUri = WS_SITELINK . "?p={$aUri}";
 		}
 

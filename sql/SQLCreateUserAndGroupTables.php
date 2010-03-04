@@ -22,10 +22,22 @@ $trInsertUser	= DBTR_TInsertUser;
 
 // Create the query
 $query = <<<EOD
+-- =============================================================================================
+--
+-- SQL for User
+--
+-- =============================================================================================
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- Drop all tables first
+--
+DROP TABLE IF EXISTS {$tGroupMember};
 DROP TABLE IF EXISTS {$tUser};
 DROP TABLE IF EXISTS {$tGroup};
-DROP TABLE IF EXISTS {$tGroupMember};
 
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- Table for the User
 --
@@ -42,6 +54,7 @@ CREATE TABLE {$tUser} (
 );
 
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- Table for the Group
 --
@@ -55,6 +68,7 @@ CREATE TABLE {$tGroup} (
 );
 
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- Table for the GroupMember
 --
@@ -79,6 +93,7 @@ CREATE TABLE {$tGroupMember} (
 );
 
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- Table for the Statistics
 --
@@ -97,6 +112,7 @@ CREATE TABLE {$tStatistics} (
 );
 
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- Create trigger for Statistics
 -- Add row when new user is created
@@ -110,6 +126,7 @@ BEGIN
 END;
 
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- Add default user(s) 
 --
@@ -119,6 +136,7 @@ INSERT INTO {$tUser} (accountUser, emailUser, nameUser, passwordUser)
 VALUES ('doe', 'doe@bth.se', 'John/Jane Doe', md5('doe'));
 
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- Add default groups
 --
@@ -126,6 +144,7 @@ INSERT INTO {$tGroup} (idGroup, nameGroup) VALUES ('adm', 'Administrators of the
 INSERT INTO {$tGroup} (idGroup, nameGroup) VALUES ('usr', 'Regular users of the site');
 
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- Add default groupmembers
 --

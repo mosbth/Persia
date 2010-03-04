@@ -32,8 +32,9 @@ $intFilter->FrontControllerIsVisitedOrDie();
 // Enable access to protected pages through direct-links.
 // Try access a protected file, redirect to login, redirect back to protected page.
 //
+global $gPage;
 $redirectTo = 'home';
-if($pc->iPage != 'login') {
+if($gPage != 'login') {
 	$refToThisPage	= CPageController::CurrentURL();
 	$redirectTo 	= $refToThisPage;
 }

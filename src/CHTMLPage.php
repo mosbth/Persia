@@ -56,7 +56,7 @@ class CHTMLPage {
 		$w3c	= $this->prepareValidatorTools();
 		$timer	= $this->prepareTimer();
 		
-		$tpJavaScript = TP_JAVASCRIPT;
+		$wsJavaScript = WS_JAVASCRIPT;
 		
 		$html = <<<EOD
 <!DOCTYPE html>

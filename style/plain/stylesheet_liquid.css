@@ -181,6 +181,10 @@ h3.columnMenu {
 
 p.small {}
 
+p.intendent {
+    padding-left: 2em;
+} 
+
 div#title p {
 	text-align: left;
 }
@@ -225,3 +229,15 @@ div.sourcecode {
 	padding-left: 10px;
 }
 
+
+/* -------------------------------------------------------------------------------------
+ *
+ * Show aside-box, various settings.
+ *
+ */
+aside.float_right {
+    float: right;
+    border: solid 1px #dddddd;
+    padding: 1em;
+    font-size: x-small;
+} 

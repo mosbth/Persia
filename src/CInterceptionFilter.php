@@ -64,14 +64,25 @@ class CInterceptionFilter {
 
 	// ------------------------------------------------------------------------------------
 	//
-	// Check if index.php (frontcontroller) is visited, disallow direct access to 
-	// pagecontrollers
+	// Check if user belongs to the admin group, or die.
 	//
 	public function UserIsMemberOfGroupAdminOrDie() {
 		
-		// User must be member of group adm or die
 		if($_SESSION['groupMemberUser'] != 'adm') 
 			die('You do not have the authourity to access this page');
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Check if user belongs to the admin group or is a specific user.
+	//
+	public function IsUserMemberOfGroupAdminOrIsCurrentUser($aUserId) {
+		
+		$isAdmGroup 	= ($_SESSION['groupMemberUser'] == 'adm') ? TRUE : FALSE;
+		$isCurrentUser	= ($_SESSION['idUser'] == $aUserId) ? TRUE : FALSE;
+
+		return $isAdmGroup || $isCurrentUser;
 	}
 
 

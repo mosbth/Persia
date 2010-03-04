@@ -45,7 +45,7 @@ class CWYSIWYGEditor_markItUp extends CWYSIWYGEditor {
 	//
 	public function GetHTMLHead() {
 	
-		$tpJavaScript 	= TP_JAVASCRIPT;
+		$tpJavaScript 	= WS_JAVASCRIPT;
 		$jquery 		= JS_JQUERY;
 
 		$head = <<<EOD

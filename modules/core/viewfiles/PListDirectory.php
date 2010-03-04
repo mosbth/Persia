@@ -1,11 +1,12 @@
 <?php
 // ===========================================================================================
 //
-// PListDirectory.php
+// Filename: PListDirectory.php
 //
-// An implementation of a PHP pagecontroller for a web-site.
+// Description: Shows a directory listning and view content of files.
 //
-// Shows a directory listning.
+// Author: Mikael Roos, mos@bth.se
+//
 //
 
 // -------------------------------------------------------------------------------------------
@@ -14,7 +15,8 @@
 //
 
 // Separator between directories and files, change between Unix/Windows
-$SEPARATOR = '/'; 	// Unix, Linux, MacOS, Solaris
+$SEPARATOR = DIRECTORY_SEPARATOR; // Using built-in PHP-constant for separator.
+//$SEPARATOR = '/'; 	// Unix, Linux, MacOS, Solaris
 //$SEPARATOR = '\\'; 	// Windows 
 
 // Show the content of files named config.php, except the rows containing DB_USER, DB_PASSWORD
@@ -22,7 +24,7 @@ $SEPARATOR = '/'; 	// Unix, Linux, MacOS, Solaris
 $HIDE_DB_USER_PASSWORD = TRUE; 
 
 // Which directory to use as basedir, end with separator
-$BASEDIR = TP_PAGESPATH . '..' . $SEPARATOR;
+$BASEDIR = TP_ROOT . $SEPARATOR;
 
 // Show syntax of the code, currently only supporting PHP or DEFAULT.
 // PHP uses PHP built-in function highlight_string.
@@ -33,7 +35,8 @@ $SYNTAX = 'PHP';
  
 // The link to this page, usefull to change when using this pagecontroller for other things,
 // such as showing stylesheets in a separate directory, for example.
-$HREF = '?p=ls';
+global $gModule;
+$HREF = "?m={$gModule}&p=ls";
 
 
 // -------------------------------------------------------------------------------------------

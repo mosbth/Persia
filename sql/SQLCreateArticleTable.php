@@ -13,6 +13,7 @@
 
 // Get the tablenames
 $tArticle 		= DBT_Article;
+$tTopic 		= DBT_Topic;
 $tUser 			= DBT_User;
 $tGroup 		= DBT_Group;
 $tGroupMember 	= DBT_GroupMember;
@@ -20,8 +21,12 @@ $tStatistics	= DBT_Statistics;
 
 // Get the SP names
 $spPGetArticleDetailsAndArticleList	= DBSP_PGetArticleDetailsAndArticleList;
+$spPGetArticleList					= DBSP_PGetArticleList;
 $spPGetArticleDetails				= DBSP_PGetArticleDetails;
 $spPInsertOrUpdateArticle			= DBSP_PInsertOrUpdateArticle;
+$spPGetTopicList					= DBSP_PGetTopicList;
+$spPGetTopicDetails					= DBSP_PGetTopicDetails;
+$spPGetPostDetails					= DBSP_PGetPostDetails;
 
 // Get the UDF names
 $udfFCheckUserIsOwnerOrAdmin	= DBUDF_FCheckUserIsOwnerOrAdmin;
@@ -32,6 +37,14 @@ $trAddArticle					= DBTR_TAddArticle;
 // Create the query
 $query = <<<EOD
 
+-- =============================================================================================
+--
+-- SQL for Article
+--
+-- =============================================================================================
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- Table for the Article
 --
@@ -54,6 +67,7 @@ CREATE TABLE {$tArticle} (
 );
 
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- SP to insert or update article
 -- If article id is 0 then insert, else update
@@ -90,6 +104,7 @@ BEGIN
 END;
 
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- SP to get the contents of an article
 --
@@ -117,21 +132,19 @@ BEGIN
 END;
 
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
--- SP to get the contents of an article and provide a list of the latest articles 
+-- SP to provide a list of the latest articles 
 --
 -- Limit does not accept a varible
 -- http://bugs.mysql.com/bug.php?id=11918
 --
-DROP PROCEDURE IF EXISTS {$spPGetArticleDetailsAndArticleList};
-CREATE PROCEDURE {$spPGetArticleDetailsAndArticleList}
+DROP PROCEDURE IF EXISTS {$spPGetArticleList};
+CREATE PROCEDURE {$spPGetArticleList}
 (
-	IN aArticleId INT, 
 	IN aUserId INT
 )
 BEGIN
-	CALL {$spPGetArticleDetails}(aArticleId, aUserId);
-
 	SELECT 
 		idArticle AS id,
 		titleArticle AS title,
@@ -145,6 +158,23 @@ BEGIN
 END;
 
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to get the contents of an article and provide a list of the latest articles 
+--
+DROP PROCEDURE IF EXISTS {$spPGetArticleDetailsAndArticleList};
+CREATE PROCEDURE {$spPGetArticleDetailsAndArticleList}
+(
+	IN aArticleId INT, 
+	IN aUserId INT
+)
+BEGIN
+	CALL {$spPGetArticleDetails}(aArticleId, aUserId);
+	CALL {$spPGetArticleList}(aUserId);
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 --  Create UDF that checks if user owns article or is member of group adm.
 --
@@ -181,6 +211,7 @@ BEGIN
 END;
 
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- Create trigger for Statistics
 -- Add +1 when new article is created
@@ -197,6 +228,122 @@ BEGIN
   	Statistics_idUser = NEW.Article_idUser;
 END;
 
+
+-- =============================================================================================
+--
+-- SQL for Forum
+--
+-- =============================================================================================
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- Table for Topic
+--
+DROP TABLE IF EXISTS {$tTopic};
+CREATE TABLE {$tTopic} (
+
+  -- Primary key(s)
+  idTopic INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+
+  -- Foreign keys
+  Topic_idArticle INT NOT NULL,
+  FOREIGN KEY (Topic_idArticle) REFERENCES {$tArticle}(idArticle)
+  
+  -- Attributes
+
+);
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to get a list of Topics
+--
+DROP PROCEDURE IF EXISTS {$spPGetTopicList};
+CREATE PROCEDURE {$spPGetTopicList} ()
+BEGIN
+	SELECT 
+		A.idArticle AS id,
+		A.titleArticle AS title,
+		A.createdArticle AS latest,
+		U.idUser AS userid,
+		U.nameUser AS username
+	FROM {$tArticle} AS A
+		INNER JOIN {$tUser} AS U
+			ON A.Article_idUser = U.idUser
+	WHERE 
+		deletedArticle IS NULL
+	ORDER BY createdArticle DESC
+	LIMIT 20;
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to get the contents of a topic
+--
+DROP PROCEDURE IF EXISTS {$spPGetTopicDetails};
+CREATE PROCEDURE {$spPGetTopicDetails}
+(
+	IN aTopicId INT
+)
+BEGIN
+	SELECT 
+		A.titleArticle AS title,
+		A.contentArticle AS content,
+		A.createdArticle AS created,
+		A.modifiedArticle AS modified,
+		COALESCE(A.modifiedArticle, A.createdArticle) AS latest,
+		U.nameUser AS username,		
+		U.idUser AS userid		
+	FROM {$tArticle} AS A
+		INNER JOIN {$tUser} AS U
+			ON A.Article_idUser = U.idUser
+	WHERE
+		idArticle = aTopicId AND
+		deletedArticle IS NULL
+	;
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to get the details of a specific post
+--
+DROP PROCEDURE IF EXISTS {$spPGetPostDetails};
+CREATE PROCEDURE {$spPGetPostDetails}
+(
+	IN aPostId INT
+)
+BEGIN
+	SELECT 
+		A.titleArticle AS title,
+		A.contentArticle AS content,
+		A.createdArticle AS created,
+		A.modifiedArticle AS modified,
+		COALESCE(A.modifiedArticle, A.createdArticle) AS latest,
+		U.nameUser AS username,		
+		U.idUser AS userid		
+	FROM {$tArticle} AS A
+		INNER JOIN {$tUser} AS U
+			ON A.Article_idUser = U.idUser
+	WHERE
+		idArticle = aPostId AND
+		deletedArticle IS NULL
+	;
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- Insert some default topics
+--
+SET @id = 0;
+CALL {$spPInsertOrUpdateArticle} (@id, 1, 'My first topic', 'Some nice text');
+SET @id = 0;
+CALL {$spPInsertOrUpdateArticle} (@id, 2, 'My second topic', 'Some nice text');
+SET @id = 0;
+CALL {$spPInsertOrUpdateArticle} (@id, 1, 'My third topic', 'Some nice text');
 
 
 EOD;

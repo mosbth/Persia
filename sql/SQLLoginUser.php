@@ -22,7 +22,7 @@ $user 		= $mysqli->real_escape_string($user);
 $password 	= $mysqli->real_escape_string($password);
 
 // Create the query
-$query .= <<< EOD
+$query = <<< EOD
 SELECT 
 	idUser AS id, 
 	accountUser AS account,
