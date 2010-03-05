@@ -48,10 +48,10 @@ $db 	= new CDatabaseController();
 $mysqli = $db->Connect();
 
 // Get the SP names
-$spPGetTopicDetailsAndPosts = DBSP_PGetTopicDetailsAndPosts;
+$spPGetTopicDetails = DBSP_PGetTopicDetails;
 
 $query = <<< EOD
-CALL {$spPGetTopicDetailsAndPosts}({$topicId});
+CALL {$spPGetTopicDetails}({$topicId});
 EOD;
 
 // Perform the query
@@ -61,50 +61,21 @@ $db->RetrieveAndStoreResultsFromMultiQuery($results);
 	
 // Get article details
 $row = $results[0]->fetch_object();
-$title 			= $row->title;
-$createdBy		= $row->creator;
-$createdWhen	= $row->created;
-$lastPostBy 	= $row->lastpostby;
-$lastPostWhen	= $row->lastpostwhen;
-$numPosts		= $row->postcounter;
+$title 		= $row->title;
+$content 	= $row->content;
+$saved	 	= $row->latest;
+$username 	= $row->username;
+$owner	 	= $row->userid;
 $results[0]->close(); 
 
-// Get the list of posts
-$list = <<<EOD
-<table width='99%'>
-<tr>
-<th width='60%'>
-Topic
-</th>
-<th>
-Posts
-</th>
-<th colspan='2'>
-Most recent
-</th>
-</tr>
-EOD;
+// Get the list of articles
+/*
+$list = "";
 while($row = $results[1]->fetch_object()) {    
-	$list .= <<<EOD
-<tr>
-<td>
-<a href='?m=rom&amp;p=topic&amp;id={$row->postid}'>{$row->title}</a>
-</td>
-<td>
-{$row->content}
-</td>
-<td>
-{$row->username}
-</td>
-<td>
-{$row->created}
-</td>
-</tr>
-EOD;
+	$list .= "<a title='{$row->info}' href='?p=article-show&amp;article-id={$row->id}'>{$row->title}</a><br>";
 }
-$list .= "</table>";
-
 $results[1]->close(); 
+*/
 $mysqli->close();
 
 
@@ -112,31 +83,33 @@ $mysqli->close();
 //
 // User is admin or is owner of this topic
 //
-/*
 $ownerMenu = "";
 if($intFilter->IsUserMemberOfGroupAdminOrIsCurrentUser($owner)) {
 	$ownerMenu = <<<EOD
 [
-<a href="?m=rom&amp;p=post-edit&amp;editor=markItUp&amp;id={$topicId}">edit</a>
+<a href="?p=post-edit&amp;editor=markItUp&amp;id={$topicId}">edit</a>
 ]
 EOD;
 }
-*/
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Page specific code
 //
-/*
-<p>{$content}</p>
-<p class='notice'>
-By {$username}. Updated: {$saved}. {$ownerMenu}
-</p>
-*/
-
 $htmlMain = <<<EOD
-<h1>{$title}</h1>
+<p class='small'>
+<a href="?p=topics">Discussions</a> |
+<a href="?p=article-edit-all&amp;editor=markItUp">Create new topic</a>
+</p>
+
+<article class="general">
+<h1 class="nostyle">{$title}</h1>
+<p>{$content}</p>
+<p class="notice">
+Created by {$username}. Updated: {$saved}. {$ownerMenu}
+</p>
+</article>
 
 EOD;
 
@@ -144,12 +117,7 @@ $htmlLeft 	= "";
 $htmlRight	= <<<EOD
 <h3 class='columnMenu'>About This Topic</h3>
 <p>
-Created by {$createdBy} {$createdWhen}.<br>
-Last reply {$lastPostBy} {$lastPostWhen}
-$numPosts posts.<br>
-</p>
-
-Later...num viewed, latest accessed. Tags.
+Later...Created by, num posts, num viewed, latest accessed. Tags.
 </p>
 <h3 class='columnMenu'>Related Topics</h3>
 <p>
@@ -165,6 +133,20 @@ Later...
 </p>
 EOD;
 
+// Do not show articles that does not exists.
+if(empty($username)) {
+	$htmlRight 	= "";
+	$htmlMain = <<<EOD
+<article class="general">
+<h1 class="nostyle">Article does not exists</h1>
+<p>
+<a href="?p=article-edit">Create new article...</a>
+<p>
+</article>
+EOD;
+}
+
+
 
 // -------------------------------------------------------------------------------------------
 //
@@ -172,7 +154,7 @@ EOD;
 //
 $page = new CHTMLPage();
 
-$page->PrintPage("Topic: {$title}", $htmlLeft, $htmlMain, $htmlRight);
+$page->printPage("Article: {$title}", $htmlLeft, $htmlMain, $htmlRight);
 exit;
 
 ?>

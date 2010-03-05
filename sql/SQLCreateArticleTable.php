@@ -25,8 +25,9 @@ $spPGetArticleList					= DBSP_PGetArticleList;
 $spPGetArticleDetails				= DBSP_PGetArticleDetails;
 $spPInsertOrUpdateArticle			= DBSP_PInsertOrUpdateArticle;
 $spPGetTopicList					= DBSP_PGetTopicList;
-$spPGetTopicDetails					= DBSP_PGetTopicDetails;
+$spPGetTopicDetailsAndPosts			= DBSP_PGetTopicDetailsAndPosts;
 $spPGetPostDetails					= DBSP_PGetPostDetails;
+$spPInsertOrUpdatePost				= DBSP_PInsertOrUpdatePost;
 
 // Get the UDF names
 $udfFCheckUserIsOwnerOrAdmin	= DBUDF_FCheckUserIsOwnerOrAdmin;
@@ -59,11 +60,15 @@ CREATE TABLE {$tArticle} (
   FOREIGN KEY (Article_idUser) REFERENCES {$tUser}(idUser),
   
   -- Attributes
+  parentArticle INT NULL,
+  FOREIGN KEY (parentArticle) REFERENCES {$tArticle}(idArticle),
+
   titleArticle VARCHAR(256) NOT NULL,
   contentArticle BLOB NOT NULL,
   createdArticle DATETIME NOT NULL,
   modifiedArticle DATETIME NULL,
   deletedArticle DATETIME NULL
+
 );
 
 
@@ -243,15 +248,20 @@ END;
 DROP TABLE IF EXISTS {$tTopic};
 CREATE TABLE {$tTopic} (
 
-  -- Primary key(s)
-  idTopic INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	-- Primary key(s)
+	idTopic INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
 
-  -- Foreign keys
-  Topic_idArticle INT NOT NULL,
-  FOREIGN KEY (Topic_idArticle) REFERENCES {$tArticle}(idArticle)
+	-- Foreign keys
+	Topic_idArticle INT NOT NULL,
+	FOREIGN KEY (Topic_idArticle) REFERENCES {$tArticle}(idArticle),
   
-  -- Attributes
+	-- Attributes
+	counterTopic INT NOT NULL,
+	lastPostWhenTopic DATETIME NOT NULL,
 
+	lastPostByTopic INT NOT NULL,
+	FOREIGN KEY (lastPostByTopic) REFERENCES {$tUser}(idUser)
+	
 );
 
 
@@ -263,18 +273,22 @@ DROP PROCEDURE IF EXISTS {$spPGetTopicList};
 CREATE PROCEDURE {$spPGetTopicList} ()
 BEGIN
 	SELECT 
-		A.idArticle AS id,
+		T.idTopic AS topicid,
+		T.counterTopic AS postcounter,
+		A.idArticle AS postid,
 		A.titleArticle AS title,
 		A.createdArticle AS latest,
 		U.idUser AS userid,
-		U.nameUser AS username
-	FROM {$tArticle} AS A
+		U.accountUser AS username
+	FROM {$tTopic} AS T
+		INNER JOIN {$tArticle} AS A
+			ON T.Topic_idArticle = A.idArticle
 		INNER JOIN {$tUser} AS U
 			ON A.Article_idUser = U.idUser
 	WHERE 
 		deletedArticle IS NULL
 	ORDER BY createdArticle DESC
-	LIMIT 20;
+	;
 END;
 
 
@@ -282,27 +296,60 @@ END;
 --
 -- SP to get the contents of a topic
 --
-DROP PROCEDURE IF EXISTS {$spPGetTopicDetails};
-CREATE PROCEDURE {$spPGetTopicDetails}
+DROP PROCEDURE IF EXISTS {$spPGetTopicDetailsAndPosts};
+CREATE PROCEDURE {$spPGetTopicDetailsAndPosts}
 (
 	IN aTopicId INT
 )
 BEGIN
+	DECLARE aTopPost INT;
+
+	-- Get the top post
+	SELECT Topic_idArticle INTO aTopPost FROM {$tTopic} WHERE idTopic = aTopPost;
+	
+	-- First get the topic details
 	SELECT 
+		T.idTopic AS topicid,
+		T.counterTopic AS postcounter,
+		T.lastPostWhenTopic AS lastpostwhen,
 		A.titleArticle AS title,
-		A.contentArticle AS content,
 		A.createdArticle AS created,
 		A.modifiedArticle AS modified,
-		COALESCE(A.modifiedArticle, A.createdArticle) AS latest,
-		U.nameUser AS username,		
-		U.idUser AS userid		
-	FROM {$tArticle} AS A
+		U.accountUser AS creator,		
+		U.idUser AS creatorid,
+		U1.accountUser AS lastpostby
+	FROM {$tTopic} AS T
+		INNER JOIN {$tArticle} AS A
+			ON T.Topic_idArticle = A.idArticle
 		INNER JOIN {$tUser} AS U
 			ON A.Article_idUser = U.idUser
+		INNER JOIN {$tUser} AS U1
+			ON T.lastPostByTopic = U1.idUser
 	WHERE
 		idArticle = aTopicId AND
 		deletedArticle IS NULL
 	;
+	
+	-- Then get the list of all posts related to this topic
+	SELECT 
+		A.idArticle AS postid,
+		A.titleArticle AS title,
+		A.contentArticle AS content,
+		A.createdArticle AS created,
+		U.idUser AS userid,
+		U.accountUser AS username
+	FROM {$tArticle} AS A
+		INNER JOIN {$tUser} AS U
+			ON A.Article_idUser = U.idUser
+	WHERE 
+		( 
+		A.idArticle = aTopPost OR
+		A.parentArticle = aTopPost
+		) AND
+		deletedArticle IS NULL
+	ORDER BY createdArticle DESC
+	;
+	
 END;
 
 
@@ -336,14 +383,96 @@ END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
+-- SP to insert or update post
+-- If aPostId is 0 then insert, else update
+-- aTopicId is the first post in the topic, all posts have this as a parent post
+-- If aTopicId is 0 then insert new entry into topic-table
+--
+DROP PROCEDURE IF EXISTS {$spPInsertOrUpdatePost};
+CREATE PROCEDURE {$spPInsertOrUpdatePost}
+(
+	INOUT aPostId INT,
+	INOUT aTopicId INT,
+	IN aUserId INT, 
+	IN aTitle VARCHAR(256), 
+	IN aContent BLOB
+)
+BEGIN
+	DECLARE aParent INT;
+	
+	IF aPostId = 0 THEN
+	BEGIN
+		-- Insert new post
+		INSERT INTO {$tArticle}	
+			(Article_idUser, parentArticle, titleArticle, contentArticle, createdArticle) 
+			VALUES 
+			(aUserId, aTopicId, aTitle, aContent, NOW());
+
+		SET aPostId = LAST_INSERT_ID();
+
+		-- Is this a new topic?
+		IF aTopicId = 0 THEN
+		BEGIN
+			-- Insert new topic
+			INSERT INTO {$tTopic}	
+				(Topic_idArticle, counterTopic, lastPostWhenTopic, lastPostByTopic) 
+				VALUES 
+				(aPostId, 1, NOW(), aUserId);
+
+			SET aTopicId = LAST_INSERT_ID();
+		END;
+		ELSE
+			-- Update topic post counter
+			UPDATE {$tTopic} SET
+				counterTopic 		= counterTopic + 1,
+				lastPostWhenTopic 	= NOW(), 
+				lastPostByTopic		= aUserId
+			WHERE 
+				idTopic = aTopicId
+			LIMIT 1;
+		END IF;
+		
+	END;
+	ELSE
+	BEGIN
+		-- Update existing post
+		UPDATE {$tArticle} SET
+			titleArticle 	= aTitle,
+			contentArticle 	= aContent,
+			modifiedArticle	= NOW()
+		WHERE
+			idArticle = aPostId  AND
+			{$udfFCheckUserIsOwnerOrAdmin}(aPostId, aUserId)
+		LIMIT 1;
+	END;
+	END IF;
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
 -- Insert some default topics
 --
-SET @id = 0;
-CALL {$spPInsertOrUpdateArticle} (@id, 1, 'My first topic', 'Some nice text');
-SET @id = 0;
-CALL {$spPInsertOrUpdateArticle} (@id, 2, 'My second topic', 'Some nice text');
-SET @id = 0;
-CALL {$spPInsertOrUpdateArticle} (@id, 1, 'My third topic', 'Some nice text');
+SET @post=0;
+SET @topic=0;
+CALL {$spPInsertOrUpdatePost} (@post, @topic, 1, 'My first topic', 'Some nice text');
+
+SET @post=0;
+CALL {$spPInsertOrUpdatePost} (@post,  @topic, 2, '', 'Reply to topic one');
+
+SET @post=0;
+SET @topic=0;
+CALL {$spPInsertOrUpdatePost} (@post,  @topic, 2, 'My second topic', 'Some nice text');
+
+SET @post=0;
+CALL {$spPInsertOrUpdatePost} (@post,  @topic, 1, '', 'Reply to topic two');
+
+SET @post=0;
+CALL {$spPInsertOrUpdatePost} (@post,  @topic, 2, '', 'Another reply to topic two');
+
+SET @post=0;
+SET @topic=0;
+CALL {$spPInsertOrUpdatePost} (@post,  @topic, 1, 'My third topic', 'Some nice text');
 
 
 EOD;

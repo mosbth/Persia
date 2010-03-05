@@ -38,8 +38,9 @@ define('DBSP_PGetArticleList',					DB_PREFIX . 'PGetArticleList');
 define('DBSP_PGetArticleDetails',				DB_PREFIX . 'PGetArticleDetails');
 define('DBSP_PInsertOrUpdateArticle',			DB_PREFIX . 'PInsertOrUpdateArticle');
 define('DBSP_PGetTopicList',					DB_PREFIX . 'PGetTopicList');
-define('DBSP_PGetTopicDetails',					DB_PREFIX . 'PGetTopicDetails');
+define('DBSP_PGetTopicDetailsAndPosts',			DB_PREFIX . 'PGetTopicDetailsAndPosts');
 define('DBSP_PGetPostDetails',					DB_PREFIX . 'PGetPostDetails');
+define('DBSP_PInsertOrUpdatePost',				DB_PREFIX . 'PInsertOrUpdatepost');
 
 // User Defined Functions UDF
 define('DBUDF_FCheckUserIsOwnerOrAdmin',	DB_PREFIX . 'FCheckUserIsOwnerOrAdmin');

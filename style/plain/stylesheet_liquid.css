@@ -185,6 +185,11 @@ p.intendent {
     padding-left: 2em;
 } 
 
+p.notice {
+	font-size: x-small;
+	font-style: italic;
+}
+
 div#title p {
 	text-align: left;
 }
