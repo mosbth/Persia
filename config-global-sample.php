@@ -33,10 +33,10 @@ define('JS_JQUERY', 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.mi
 //
 // These modules (TP_MODULESPATH) are available.
 //
-$gModulesAvailableStandard = Array(
-		'core'	=> TP_MODULESPATH . 'core',
-		'rom'		=> TP_MODULESPATH . 'forum_romanum',
-		'dada'	=> TP_MODULESPATH . 'dada',
+$gModulesAvailable = Array(
+		'core'	=> TP_MODULESPATH . 'core',								// The core, always included
+		'rom'		=> TP_MODULESPATH . 'forum_romanum',			// Forum Romanum, included by default
+//		'dada'	=> TP_MODULESPATH . 'dada',							// Dada, optional module
 	);
 
 
