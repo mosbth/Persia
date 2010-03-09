@@ -46,11 +46,11 @@ define('WS_JAVASCRIPT',	WS_SITELINK . '/js/');	// JavaScript code
 //
 $menuNavBar = Array (
 	'Home' 				=> '?p=home',
-	'Template'	 		=> '?p=template',
+	'Template'	 	=> '?p=template',
 	'About' 			=> '?p=about',
 	'404' 				=> '?p=NOT_EXISTING',
-	'Install' 			=> '?p=install',
-	'Sourcecode' 		=> '?p=ls',
+	'Install' 		=> '?p=install',
+	'Sourcecode' 	=> '?p=ls',
 );
 define('MENU_NAVBAR', 		serialize($menuNavBar));
 

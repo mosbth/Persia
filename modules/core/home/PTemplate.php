@@ -57,7 +57,7 @@ $htmlMain = <<<EOD
 Copy this file, PTemplate.php, to create new pacecontrollers.
 </p>
 <p>
-<a href='?p=ls&amp;dir=pages/home&amp;file=PTemplate.php'>Review sourcecode for PTemplate.php</a>.
+<a href='?p=ls&amp;dir=modules/core/home&amp;file=PTemplate.php'>Review sourcecode for PTemplate.php</a>.
 </p>
 <p>
 {$pc->lang['TEXT1']}
