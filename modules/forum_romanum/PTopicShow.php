@@ -115,7 +115,7 @@ while($row = $results[1]->fetch_object()) {
 <td style='border-bottom: solid 2px #eee; text-align: left; vertical-align: top;'>
 <div style='float: right;'>
 {$isEditable}
-<a class='noUnderline' name='{$row->postid}' title='Link to this post' href='#post-{$row->postid}'>#</a>
+<a class='noUnderline' name='post-{$row->postid}' title='Link to this post' href='#post-{$row->postid}'>#</a>
 </div>
 {$row->content}
 </td>

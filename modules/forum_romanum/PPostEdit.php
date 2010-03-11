@@ -35,7 +35,7 @@ $intFilter->UserIsSignedInOrRecirectToSignIn();
 //
 global $gModule;
 
-$editor		= $pc->GETisSetOrSetDefault('editor', 'markItUp');
+$editor		= $pc->GETisSetOrSetDefault('editor', 'WYMeditor');
 $postId		= $pc->GETisSetOrSetDefault('id', 0);
 $topicId	= $pc->GETisSetOrSetDefault('topic', 0);
 $userId		= $_SESSION['idUser'];
@@ -76,6 +76,7 @@ $db->RetrieveAndStoreResultsFromMultiQuery($results);
 $row = $results[0]->fetch_object();
 $topicId 		= empty($row->topicid)	? $topicId : $row->topicid;
 $topicTitle	= empty($row->title) 		? '' : $row->title;
+$topPost		= empty($row->toppost) 	? 0 : $row->toppost;
 $results[0]->close(); 
 
 // Get post details
@@ -136,6 +137,9 @@ if($topicId == 0 && $postId == 0) {
 } else if($topicId != 0 && $postId == 0) {
 	$h1 				= 'Add reply';
 	$titleForm 	= "<h2>In topic: \"{$topicTitle}\"</h2>";
+} else if($postId != 0 && $topPost = $postId) {
+	$h1					= 'Edit post';
+	$titleForm 	= "Topic: <input class='title' type='text' name='title' value='{$title}'>";
 } else if($postId != 0) {
 	$h1					= 'Edit post';
 	$titleForm 	= "<h2>In topic: \"{$topicTitle}\"</h2>";
@@ -163,7 +167,10 @@ Saved: {$saved}
 </p>
 <p>
 <input type='submit' {$jseditor_submit} value='Save'>
+<input type='button' value='Cancel' onClick='history.back();'>
+<!--
 <input type='button' value='Delete' onClick='if(confirm("Do you REALLY want to delete it?")) {form.action="?p=article-delete"; form.redirect_on_success.value="?m=rom&amp;p=topics"; submit();}'>
+-->
 </p>
 </form>
 
@@ -173,10 +180,10 @@ $htmlLeft 	= "";
 $htmlRight	= <<<EOD
 <h3 class='columnMenu'>Change editor</h3>
 <p>
-<a href='?m={$gModule}&amp;p=post-edit&amp;editor=plain&amp;id={$postId}'>Plain</a> | 
-<a href='?m={$gModule}&amp;p=post-edit&amp;editor=NicEdit&amp;id={$postId}'>NicEdit</a> |
-<a href='?m={$gModule}&amp;p=post-edit&amp;editor=WYMeditor&amp;id={$postId}'>WYMeditor</a> |
-<a href='?m={$gModule}&amp;p=post-edit&amp;editor=markItUp&amp;id={$postId}'>markItUp!</a> 
+<a href='?m={$gModule}&amp;p=post-edit&amp;editor=plain&amp;id={$postId}&amp;topic={$topicId}'>Plain</a> | 
+<a href='?m={$gModule}&amp;p=post-edit&amp;editor=NicEdit&amp;id={$postId}&amp;topic={$topicId}'>NicEdit</a> |
+<a href='?m={$gModule}&amp;p=post-edit&amp;editor=WYMeditor&amp;id={$postId}&amp;topic={$topicId}'>WYMeditor</a> |
+<a href='?m={$gModule}&amp;p=post-edit&amp;editor=markItUp&amp;id={$postId}&amp;topic={$topicId}'>markItUp!</a> 
 </p>
 <!--
 <h3 class='columnMenu'>About This Topic</h3>

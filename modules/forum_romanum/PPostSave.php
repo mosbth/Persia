@@ -76,11 +76,16 @@ $res = $db->MultiQuery($query);
 $results = Array();
 $db->RetrieveAndStoreResultsFromMultiQuery($results);
 
-// Store inserted/updated article id
+// Get inserted/updated post id
 $row = $results[3]->fetch_object();
 $postId = $row->id;
+$results[3]->close();
 
-$results[3]->close(); 
+// Get inserted/updated topic id
+$row = $results[4]->fetch_object();
+$topicId = $row->id;
+$results[4]->close();
+
 $mysqli->close();
 
 

@@ -80,7 +80,7 @@ while($row = $results[0]->fetch_object()) {
 <td>
 <a href='?m=rom&amp;p=topic&amp;id={$row->topicid}'>{$row->title}</a>
 </td>
-<td>
+<td style='text-align: center;'>
 {$row->postcounter}
 </td>
 <td>
