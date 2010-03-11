@@ -20,6 +20,7 @@ define('DBT_GroupMember',	DB_PREFIX . 'GroupMember');
 define('DBT_Statistics',	DB_PREFIX . 'Statistics');
 define('DBT_Article',			DB_PREFIX . 'Article');
 define('DBT_Topic',				DB_PREFIX . 'Topic');
+define('DBT_Topic2Post',	DB_PREFIX . 'Topic2Post');
 
 // Stored procedures
 define('DBSP_PGetArticleDetailsAndArticleList',	DB_PREFIX . 'PGetArticleDetailsAndArticleList');
@@ -27,6 +28,7 @@ define('DBSP_PGetArticleList',									DB_PREFIX . 'PGetArticleList');
 define('DBSP_PGetArticleDetails',								DB_PREFIX . 'PGetArticleDetails');
 define('DBSP_PInsertOrUpdateArticle',						DB_PREFIX . 'PInsertOrUpdateArticle');
 define('DBSP_PGetTopicList',										DB_PREFIX . 'PGetTopicList');
+define('DBSP_PGetTopicDetails',									DB_PREFIX . 'PGetTopicDetails');
 define('DBSP_PGetTopicDetailsAndPosts',					DB_PREFIX . 'PGetTopicDetailsAndPosts');
 define('DBSP_PGetPostDetails',									DB_PREFIX . 'PGetPostDetails');
 define('DBSP_PInsertOrUpdatePost',							DB_PREFIX . 'PInsertOrUpdatepost');

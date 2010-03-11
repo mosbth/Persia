@@ -35,6 +35,7 @@ $intFilter->UserIsSignedInOrRecirectToSignIn();
 $title		= $pc->POSTisSetOrSetDefault('title', 'No title');
 $content	= $pc->POSTisSetOrSetDefault('content', 'No content');
 $postId		= $pc->POSTisSetOrSetDefault('post_id', 0);
+$topicId	= $pc->POSTisSetOrSetDefault('topic_id', 0);
 $success	= $pc->POSTisSetOrSetDefault('redirect_on_success', '');
 $failure	= $pc->POSTisSetOrSetDefault('redirect_on_failure', '');
 $userId		= $_SESSION['idUser'];
@@ -57,13 +58,15 @@ $db 	= new CDatabaseController();
 $mysqli = $db->Connect();
 
 // Get the SP names
-$spPInsertOrUpdateArticle = DBSP_PInsertOrUpdateArticle;
+$spPInsertOrUpdatePost = DBSP_PInsertOrUpdatePost;
 
 // Create the query
 $query = <<< EOD
 SET @aPostId = {$postId};
-CALL {$spPInsertOrUpdatePost}(@aPostId, '{$userId}', '{$title}', '{$content}');
+SET @aTopicId = {$topicId};
+CALL {$spPInsertOrUpdatePost}(@aPostId, @aTopicId, '{$userId}', '{$title}', '{$content}');
 SELECT @aPostId AS id;
+SELECT @aTopicId AS id;
 EOD;
 
 // Perform the query
@@ -74,19 +77,18 @@ $results = Array();
 $db->RetrieveAndStoreResultsFromMultiQuery($results);
 
 // Store inserted/updated article id
-$row = $results[2]->fetch_object();
+$row = $results[3]->fetch_object();
 $postId = $row->id;
 
-$results[2]->close(); 
+$results[3]->close(); 
 $mysqli->close();
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Redirect to another page
-// Support $redirect to be local uri within site or external site (starting with http://)
 //
-$pc->RedirectTo(sprintf($success, $postId));
+$pc->RedirectTo(sprintf($success, $topicId, $postId));
 exit;
 
 ?>

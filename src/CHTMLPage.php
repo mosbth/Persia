@@ -44,16 +44,17 @@ class CHTMLPage {
 
 		$titlePage	= $aTitle;
 		$titleSite	= WS_TITLE;
-		$language	= WS_LANGUAGE;
-		$charset	= WS_CHARSET;
+		$language		= WS_LANGUAGE;
+		$charset		= WS_CHARSET;
 		$stylesheet	= WS_STYLESHEET;
-		$favicon 	= WS_FAVICON;
-		$footer		= WS_FOOTER;
+		$favicon 		= WS_FAVICON;
+		$footer			= WS_FOOTER;
 		
-		$top 	= $this->prepareLoginLogoutMenu();
-		$nav 	= $this->prepareNavigationBar();
-		$body 	= $this->preparePageBody($aHTMLLeft, $aHTMLMain, $aHTMLRight);
-		$w3c	= $this->prepareValidatorTools();
+		$apps		= $this->PrepareApplicationMenu();
+		$login	= $this->prepareLoginLogoutMenu();
+		$nav 		= $this->prepareNavigationBar();
+		$body		= $this->preparePageBody($aHTMLLeft, $aHTMLMain, $aHTMLRight);
+		$w3c		= $this->prepareValidatorTools();
 		$timer	= $this->prepareTimer();
 		
 		$wsJavaScript = WS_JAVASCRIPT;
@@ -72,7 +73,7 @@ class CHTMLPage {
 	</head>
 	<body>
 		<div id='wrap'>
-			<div id='top'>{$top}</div>
+			<div id='top'>{$login}{$apps}</div>
 			<div id='head'>
 				<div id='title'><p>{$titleSite}</p></div>
 				<div id='nav'>{$nav}</div>
@@ -89,6 +90,24 @@ EOD;
 		// Print the header and page
 		header("Content-Type: text/html; charset={$charset}");
 		echo $html;
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Prepare the apps-menu
+	//
+	public function PrepareApplicationMenu() {
+	
+		$menu = unserialize(MENU_APPLICATION);
+
+		$apps = "<div id='apps'><p>";
+		foreach($menu as $key => $value) {
+			$apps .= "<a class='noUnderline' href='{$value}'>{$key}</a> ";
+		}
+		$apps .= "</p></div>";
+	
+		return $apps;	
 	}
 
 

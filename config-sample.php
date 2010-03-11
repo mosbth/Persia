@@ -42,6 +42,18 @@ define('WS_JAVASCRIPT',	WS_SITELINK . '/js/');	// JavaScript code
 
 // -------------------------------------------------------------------------------------------
 //
+// Define the application navigation menu.
+//
+$menuApps = Array (
+	'Persia' 				=> 'http://dev.phpersia.org/persia/',
+	'GitHub'	 			=> 'http://github.com/mosbth',
+	// 'Forum Romanum' => 'http://dev.phpersia.org/persia/?m=rom',
+);
+define('MENU_APPLICATION', 		serialize($menuApps));
+
+
+// -------------------------------------------------------------------------------------------
+//
 // Define the navigation menu.
 //
 $menuNavBar = Array (

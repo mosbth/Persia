@@ -15,6 +15,17 @@
 
 // -------------------------------------------------------------------------------------------
 //
+// Settings for the database connection
+//
+define('DB_HOST', 			'localhost');		// The database host
+define('DB_USER', 			'mos');					// The username of the database
+define('DB_PASSWORD', 	'secret');			// The users password
+define('DB_DATABASE', 	'persia');			// The name of the database to use
+define('DB_PREFIX', 		'pe_');		    	// Prefix to use infront of tablename and views
+
+
+// -------------------------------------------------------------------------------------------
+//
 // Settings for this website (WS), some used as default values in CHTMPLPage.php
 //
 define('WS_SITELINK',   'http://dev.phpersia.org/persia/'); 	// Link to site.
@@ -28,6 +39,18 @@ define('WS_TIMER', 			TRUE);              		// Time generation of a page and dis
 define('WS_CHARSET', 		'utf-8');           		// Use this charset
 define('WS_LANGUAGE', 	'en');              		// Default language
 define('WS_JAVASCRIPT',	WS_SITELINK . '/js/');	// JavaScript code
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Define the application navigation menu.
+//
+$menuApps = Array (
+	'Persia' 				=> 'http://dev.phpersia.org/persia/',
+	'GitHub'	 			=> 'http://github.com/mosbth',
+	'Forum Romanum' => 'http://dev.phpersia.org/persia/?m=rom',
+);
+define('MENU_APPLICATION', 		serialize($menuApps));
 
 
 //--------------------------------------------------------------------------------------

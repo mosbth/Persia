@@ -93,14 +93,19 @@ div.sidebox {
 }
 
 div#loginbar {
+	float: right;
 	margin: 0;
 	padding: 0;
 	text-align: right;
 }
 
+div#apps {
+	margin: 0;
+	padding: 0;
+}
 
 /* -------------------------------------------------------------------------------------
- * divs within #body, supporting felxible 1,2,3 column liquid layout 
+ * divs within #body, supporting flexibla 1,2,3 column liquid layout 
  *
  */
 
@@ -211,6 +216,11 @@ div#bottom p {
  
 a, a:visited {}
 a:hover {}
+
+a.noUnderline:link    { text-decoration:none; }
+a.noUnderline:visited { text-decoration:none; }
+a.noUnderline:hover   { text-decoration:underline; }
+a.noUnderline:active  { text-decoration:none; }
 
 
 /* -------------------------------------------------------------------------------------

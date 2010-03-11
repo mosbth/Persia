@@ -54,6 +54,7 @@ p.small {
 	font-size: x-small;
 }
 
+div#apps p,
 div#loginbar p {
 	margin: 0;
 	padding: 0;

@@ -12,13 +12,15 @@
 
 
 // Get the tablenames
-$tUser 			= DBT_User;
-$tGroup 		= DBT_Group;
-$tGroupMember 	= DBT_GroupMember;
+$tUser 				= DBT_User;
+$tGroup 			= DBT_Group;
+$tGroupMember = DBT_GroupMember;
 $tStatistics 	= DBT_Statistics;
 
 // Get the SP/UDF/trigger names
 $trInsertUser	= DBTR_TInsertUser;
+
+$imageLink = WS_IMAGES;
 
 // Create the query
 $query = <<<EOD
@@ -50,7 +52,8 @@ CREATE TABLE {$tUser} (
   accountUser CHAR(20) NOT NULL UNIQUE,
   nameUser CHAR(100) NOT NULL,
   emailUser CHAR(100) NOT NULL,
-  passwordUser CHAR(32) NOT NULL
+  passwordUser CHAR(32) NOT NULL,
+  avatarUser VARCHAR(256) NULL
 );
 
 
@@ -130,10 +133,10 @@ END;
 --
 -- Add default user(s) 
 --
-INSERT INTO {$tUser} (accountUser, emailUser, nameUser, passwordUser)
-VALUES ('mikael', 'mos@bth.se', 'Mikael Roos', md5('hemligt'));
-INSERT INTO {$tUser} (accountUser, emailUser, nameUser, passwordUser)
-VALUES ('doe', 'doe@bth.se', 'John/Jane Doe', md5('doe'));
+INSERT INTO {$tUser} (accountUser, emailUser, nameUser, passwordUser, avatarUser)
+VALUES ('mikael', 'mos@bth.se', 'Mikael Roos', md5('hemligt'), '{$imageLink}/man_60x60.png');
+INSERT INTO {$tUser} (accountUser, emailUser, nameUser, passwordUser, avatarUser)
+VALUES ('doe', 'doe@bth.se', 'John/Jane Doe', md5('doe'), '{$imageLink}/woman_60x60.png');
 
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

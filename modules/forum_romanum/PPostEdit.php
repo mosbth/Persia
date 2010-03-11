@@ -33,12 +33,16 @@ $intFilter->UserIsSignedInOrRecirectToSignIn();
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
-$editor		= $pc->GETisSetOrSetDefault('editor', 'plain');
+global $gModule;
+
+$editor		= $pc->GETisSetOrSetDefault('editor', 'markItUp');
 $postId		= $pc->GETisSetOrSetDefault('id', 0);
+$topicId	= $pc->GETisSetOrSetDefault('topic', 0);
 $userId		= $_SESSION['idUser'];
 
 // Always check whats coming in...
 $pc->IsNumericOrDie($postId, 0);
+$pc->IsNumericOrDie($topicId, 0);
 $pc->IsStringOrDie($editor);
 
 
@@ -55,9 +59,11 @@ $db 	= new CDatabaseController();
 $mysqli = $db->Connect();
 
 // Get the SP names
-$spPGetPostDetails = DBSP_PGetPostDetails;
+$spPGetTopicDetails = DBSP_PGetTopicDetails;
+$spPGetPostDetails	= DBSP_PGetPostDetails;
 
 $query = <<< EOD
+CALL {$spPGetTopicDetails}({$topicId}, {$postId});
 CALL {$spPGetPostDetails}({$postId});
 EOD;
 
@@ -66,12 +72,18 @@ $results = Array();
 $res = $db->MultiQuery($query); 
 $db->RetrieveAndStoreResultsFromMultiQuery($results);
 
-// Get article details
+// Get topic details
 $row = $results[0]->fetch_object();
-$title 		= empty($row->title) 	? 'New title' : $row->title;
-$content 	= empty($row->content) 	? '' : $row->content;
-$saved	 	= empty($row->latest) 	? 'Not yet' : $row->latest;
+$topicId 		= empty($row->topicid)	? $topicId : $row->topicid;
+$topicTitle	= empty($row->title) 		? '' : $row->title;
 $results[0]->close(); 
+
+// Get post details
+$row = $results[2]->fetch_object();
+$title 			= empty($row->title) 			? 'New title' : $row->title;
+$content 		= empty($row->content) 		? '' : $row->content;
+$saved	 		= empty($row->latest) 		? 'Not yet' : $row->latest;
+$results[2]->close(); 
 
 $mysqli->close();
 
@@ -101,10 +113,11 @@ switch($editor) {
 	}
 	break;
 
-	case 'plain':
+	case 'plain': 
 	default: {
 		$jseditor = new CWYSIWYGEditor_Plain('text', 'size98percentx300');
 	}
+	break;
 }
 
 
@@ -112,13 +125,35 @@ switch($editor) {
 //
 // Page specific code
 //
+
+// Change form depending on usage
+$h1 				= '';
+$titleForm 	= '';
+
+if($topicId == 0 && $postId == 0) {
+	$h1 				= 'Create new topic';
+	$titleForm 	= "Topic: <input class='title' type='text' name='title' value='{$title}'>";
+} else if($topicId != 0 && $postId == 0) {
+	$h1 				= 'Add reply';
+	$titleForm 	= "<h2>In topic: \"{$topicTitle}\"</h2>";
+} else if($postId != 0) {
+	$h1					= 'Edit post';
+	$titleForm 	= "<h2>In topic: \"{$topicTitle}\"</h2>";
+}
+
+// Only show title if new topic
+$formTitle = "";
+$formTitle = ($topicId == 0) ? $formTitle : '';
+
 $htmlMain = <<<EOD
+<h1>{$h1}</h1>
 <form class='article' action='?m=rom&p=post-save' method='POST'>
-<input type='hidden' name='redirect_on_success' value='?m=rom&amp;p=post-edit&amp;editor={$editor}&amp;id=%1\$d'>
-<input type='hidden' name='redirect_on_failure' value='?m=rom&amp;p=post-edit&amp;editor={$editor}&amp;id=%1\$d'>
+<input type='hidden' name='redirect_on_success' value='?m={$gModule}&amp;p=topic&amp;id=%1\$d#post-%2\$d'>
+<input type='hidden' name='redirect_on_failure' value='?m={$gModule}&amp;p=post-edit&amp;id=%1\$d'>
 <input type='hidden' name='post_id' value='{$postId}'>
+<input type='hidden' name='topic_id' value='{$topicId}'>
 <p>
-Title: <input class='title' type='text' name='title' value='{$title}'>
+{$titleForm}
 </p>
 <p>
 <textarea id='{$jseditor->iCSSId}' class='{$jseditor->iCSSClass}' name='content'>{$content}</textarea>
@@ -130,19 +165,20 @@ Saved: {$saved}
 <input type='submit' {$jseditor_submit} value='Save'>
 <input type='button' value='Delete' onClick='if(confirm("Do you REALLY want to delete it?")) {form.action="?p=article-delete"; form.redirect_on_success.value="?m=rom&amp;p=topics"; submit();}'>
 </p>
-<p class='small'>
-Edit this using 
-<a href='?m=rom&amp;p=post-edit&amp;editor=plain&amp;id={$postId}'>Plain</a> | 
-<a href='?m=rom&amp;p=post-edit&amp;editor=NicEdit&amp;id={$postId}'>NicEdit</a> |
-<a href='?m=rom&amp;p=post-edit&amp;editor=WYMeditor&amp;id={$postId}'>WYMeditor</a> |
-<a href='?m=rom&amp;p=post-edit&amp;editor=markItUp&amp;id={$postId}'>markItUp!</a> 
-</p>
 </form>
 
 EOD;
 
 $htmlLeft 	= "";
 $htmlRight	= <<<EOD
+<h3 class='columnMenu'>Change editor</h3>
+<p>
+<a href='?m={$gModule}&amp;p=post-edit&amp;editor=plain&amp;id={$postId}'>Plain</a> | 
+<a href='?m={$gModule}&amp;p=post-edit&amp;editor=NicEdit&amp;id={$postId}'>NicEdit</a> |
+<a href='?m={$gModule}&amp;p=post-edit&amp;editor=WYMeditor&amp;id={$postId}'>WYMeditor</a> |
+<a href='?m={$gModule}&amp;p=post-edit&amp;editor=markItUp&amp;id={$postId}'>markItUp!</a> 
+</p>
+<!--
 <h3 class='columnMenu'>About This Topic</h3>
 <p>
 Later...Created by, num posts, num viewed, latest accessed. Tags.
@@ -151,6 +187,7 @@ Later...Created by, num posts, num viewed, latest accessed. Tags.
 <p>
 Later...Do search, show equal (and hot/popular) topics
 </p>
+-->
 EOD;
 
 

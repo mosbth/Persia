@@ -33,7 +33,7 @@ $intFilter->FrontControllerIsVisitedOrDie();
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
 //$articleId	= $pc->GETisSetOrSetDefault('article-id', 0);
-$userId		= $_SESSION['idUser'];
+//$userId		= $_SESSION['idUser'];
 
 // Always check whats coming in...
 //$pc->IsNumericOrDie($articleId, 0);
@@ -84,7 +84,7 @@ while($row = $results[0]->fetch_object()) {
 {$row->postcounter}
 </td>
 <td>
-{$row->username}
+{$row->latestby}
 </td>
 <td>
 {$row->latest}
@@ -114,14 +114,22 @@ $htmlRight	= <<<EOD
 <p>
 Later...
 </p>
+<h3 class='columnMenu'>Tags</h3>
+<p>
+Later...
+</p>
+
+<!--
 <h3 class='columnMenu'>Hot Tags</h3>
 <p>
-Later... Complete Tag Cloud
+Later...<br>
+(Complete Tag Cloud)
 </p>
 <h3 class='columnMenu'>Recent Activity</h3>
 <p>
 Later...
 </p>
+-->
 EOD;
 
 

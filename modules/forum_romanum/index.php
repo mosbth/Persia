@@ -26,21 +26,21 @@ switch($gPage) {
 	// Forum Romanum
 	//
 	case 'home':			require_once($currentDir . 'PIndex.php'); break;
-	case 'topics':			require_once($currentDir . 'PTopics.php'); break;
+	case 'topics':		require_once($currentDir . 'PTopics.php'); break;
 	case 'topic':			require_once($currentDir . 'PTopicShow.php'); break;
-	case 'post-edit':		require_once($currentDir . 'PPostEdit.php'); break;
-	case 'post-save':		require_once($currentDir . 'PPostSave.php'); break;
+	case 'post-edit':	require_once($currentDir . 'PPostEdit.php'); break;
+	case 'post-save':	require_once($currentDir . 'PPostSave.php'); break;
 
 	//
 	// Using common files from modules/core
 	//
-	case 'ls':		require_once(TP_PAGESPATH . 'viewfiles/PListDirectory.php'); break;
+	case 'ls':	require_once(TP_MODULESPATH . '/core/viewfiles/PListDirectory.php'); break;
 
 	//
 	// Default case, trying to access some unknown page, should present some error message
 	// or show the home-page
 	//
-	default:			require_once(TP_PAGESPATH . 'home/P404.php'); break;
+	default:		require_once(TP_MODULESPATH . '/core/home/P404.php'); break;
 }
 
 
