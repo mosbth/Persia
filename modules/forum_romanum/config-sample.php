@@ -18,15 +18,15 @@
 // Settings for this website (WS), some used as default values in CHTMPLPage.php
 //
 define('WS_SITELINK',   'http://dev.phpersia.org/persia/'); 	// Link to site.
-define('WS_TITLE', 		'Forum Romanum');    					// The title of this site.
+define('WS_TITLE', 			'Forum Romanum');    									// The title of this site.
 define('WS_STYLESHEET', 'style/plain/stylesheet_liquid.css');	// Default stylesheet of the site.
-define('WS_IMAGES',		WS_SITELINK . 'img/'); 					// Images
-define('WS_FAVICON', 	WS_IMAGES . 'favicon.ico'); 			// Small icon to display in browser
-define('WS_FOOTER', 	'Persia &copy; 2010 by Mikael Roos Home Copyrights Privacy About');	// Footer at the end of the page.
-define('WS_VALIDATORS', TRUE);	            	// Show links to w3c validators tools.
-define('WS_TIMER', 		TRUE);              	// Time generation of a page and display in footer.
-define('WS_CHARSET', 	'utf-8');           	// Use this charset
-define('WS_LANGUAGE', 	'en');              	// Default language
+define('WS_IMAGES',			WS_SITELINK . 'img/'); 								// Images
+define('WS_FAVICON', 		WS_IMAGES . 'favicon.ico'); 					// Small icon to display in browser
+define('WS_FOOTER', 		'Persia &copy; 2010 by Mikael Roos Home Copyrights Privacy About');	// Footer at the end of the page.
+define('WS_VALIDATORS', TRUE);	            		// Show links to w3c validators tools.
+define('WS_TIMER', 			TRUE);              		// Time generation of a page and display in footer.
+define('WS_CHARSET', 		'utf-8');           		// Use this charset
+define('WS_LANGUAGE', 	'en');              		// Default language
 define('WS_JAVASCRIPT',	WS_SITELINK . '/js/');	// JavaScript code
 
 
@@ -34,11 +34,9 @@ define('WS_JAVASCRIPT',	WS_SITELINK . '/js/');	// JavaScript code
 //
 // Define the navigation menu.
 //
-// MOVE THIS TO CHTMLPAGE OR OTHER CONFIG-FILE OR LEAVE IT AS IT IS?
-//
 $menuNavBar = Array (
-	'Home'	 			=> '?m=rom&p=home',
-	'Latest'	 		=> '?m=rom&p=topics',
+	'Home'	 				=> '?m=rom&p=home',
+	'Latest'	 			=> '?m=rom&p=topics',
 	'New topic'	 		=> '?m=rom&p=post-edit&editor=markItUp',
 	'Sourcecode' 		=> '?m=rom&p=ls',
 );
