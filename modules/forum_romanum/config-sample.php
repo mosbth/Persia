@@ -60,7 +60,7 @@ define('MENU_APPLICATION', 		serialize($menuApps));
 $menuNavBar = Array (
 	'Home'	 				=> '?m=rom&p=home',
 	'Latest'	 			=> '?m=rom&p=topics',
-	'New topic'	 		=> '?m=rom&p=post-edit&editor=markItUp',
+	'New topic'	 		=> '?m=rom&p=post-edit',
 	'Sourcecode' 		=> '?m=rom&p=ls',
 );
 define('MENU_NAVBAR', 		serialize($menuNavBar));

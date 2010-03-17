@@ -137,7 +137,7 @@ if($topicId == 0 && $postId == 0) {
 } else if($topicId != 0 && $postId == 0) {
 	$h1 				= 'Add reply';
 	$titleForm 	= "<h2>In topic: \"{$topicTitle}\"</h2>";
-} else if($postId != 0 && $topPost = $postId) {
+} else if($postId != 0 && $topPost == $postId) {
 	$h1					= 'Edit post';
 	$titleForm 	= "Topic: <input class='title' type='text' name='title' value='{$title}'>";
 } else if($postId != 0) {

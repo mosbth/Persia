@@ -52,7 +52,7 @@ Database name: '{$database}'
 Prefix for tables: '{$prefix}'
 </p>
 <p>
-Update the database config-file (usually sql/config.php) to change the values.
+Update the database config-file (usually config.php) to change the values.
 </p>
 <p>
 &not; <a href='?p=installp'>Destroy current database and create from scratch</a>

@@ -379,7 +379,7 @@ BEGIN
 		T.idTopic AS topicid,
 		T.counterTopic AS postcounter,
 		T.lastPostWhenTopic AS lastpostwhen,
-		A.idArticle AS toppost,
+		T.Topic_idArticle AS toppost,
 		A.titleArticle AS title,
 		A.createdArticle AS created,
 		A.modifiedArticle AS modified,
