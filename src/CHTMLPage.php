@@ -117,6 +117,9 @@ EOD;
 	//
 	public function PrepareLoginLogoutMenu() {
 		
+		global $gModule;
+	
+		$m = "m={$gModule}&amp;";
 		$pc = $this->iPc;
 		$html = "";
 
@@ -126,7 +129,7 @@ EOD;
         
         	$admHtml = "";
         	if(isset($_SESSION['groupMemberUser']) && $_SESSION['groupMemberUser'] == 'adm') {
-        		$admHtml = "<a href='?p=admin'>{$pc->lang['ADMIN']}</a> ";
+        		$admHtml = "<a href='?{$m}p=admin'>{$pc->lang['ADMIN']}</a> ";
         	}
         
 			$html = <<<EOD
@@ -134,10 +137,10 @@ EOD;
 	<p>
 	{$_SESSION['accountUser']}   
 	<!--
-	<a href='?p=account-details'>{$pc->lang['SETTINGS']}</a>  
+	<a href='?{$m}p=account-details'>{$pc->lang['SETTINGS']}</a>  
 	{$admHtml} 
 	-->
-	<a href='?p=logoutp'>{$pc->lang['LOGOUT']}</a>
+	<a href='?{$m}p=logoutp'>{$pc->lang['LOGOUT']}</a>
 	</p>
 </div>
 
@@ -148,7 +151,7 @@ EOD;
 			$html = <<<EOD
 <div id='loginbar'>
 	<p>
-	<a href='?p=login'>{$pc->lang['LOGIN']}</a>
+	<a href='?{$m}p=login'>{$pc->lang['LOGIN']}</a>
 	</p>
 </div>
 

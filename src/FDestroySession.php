@@ -1,9 +1,11 @@
 <?php
 // ===========================================================================================
 //
-// Function DestroySession
+// File: FDestroySession.php
 //
-// Destroys the current session.
+// Description: Destroys the current session.
+//
+// Author: Mikael Roos, mos@bth.se
 //
 
 // -------------------------------------------------------------------------------------------

@@ -38,7 +38,7 @@ require_once(TP_SOURCEPATH . 'FDestroySession.php');
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
 $user 		= $pc->POSTisSetOrSetDefault('nameUser', '');
-$password 	= $pc->POSTisSetOrSetDefault('passwordUser', '');
+$password = $pc->POSTisSetOrSetDefault('passwordUser', '');
 
 
 // -------------------------------------------------------------------------------------------
@@ -46,10 +46,10 @@ $password 	= $pc->POSTisSetOrSetDefault('passwordUser', '');
 // Create a new database object, connect to the database, get the query and execute it.
 // Relates to files in directory TP_SQLPATH.
 //
-$db 	= new CDatabaseController();
+$db 		= new CDatabaseController();
 $mysqli = $db->Connect();
 $query 	= $db->LoadSQL('SQLLoginUser.php');
-$res 	= $db->Query($query); 
+$res 		= $db->Query($query); 
 
 
 // -------------------------------------------------------------------------------------------
@@ -63,12 +63,12 @@ $row = $res->fetch_object();
 
 // Must be one row in the resultset
 if($res->num_rows === 1) {
-	$_SESSION['idUser'] 			= $row->id;
-	$_SESSION['accountUser'] 		= $row->account;		
+	$_SESSION['idUser'] 					= $row->id;
+	$_SESSION['accountUser'] 			= $row->account;		
 	$_SESSION['groupMemberUser'] 	= $row->groupid;		
 } else {
 	$_SESSION['errorMessage']	= "Failed to login, wrong username or password";
-	$_POST['redirect'] 			= 'login';
+	$_POST['redirect'] 				= 'login';
 }
 
 $res->close();
@@ -78,9 +78,8 @@ $mysqli->close();
 // -------------------------------------------------------------------------------------------
 //
 // Redirect to another page
-// Support $redirect to be local uri within site or external site (starting with http://)
 //
-CPageController::RedirectTo(CPageController::POSTisSetOrSetDefault('redirect', 'home'));
+$pc->RedirectTo($pc->POSTisSetOrSetDefault('redirect'));
 exit;
 
 

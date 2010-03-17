@@ -32,6 +32,13 @@ switch($gPage) {
 	case 'post-save':	require_once($currentDir . 'PPostSave.php'); break;
 
 	//
+	// Login, logout
+	//
+	case 'login':			require_once(TP_PAGESPATH . 'login/PLogin.php'); break;
+	case 'loginp':		require_once(TP_PAGESPATH . 'login/PLoginProcess.php'); break;
+	case 'logoutp':		require_once(TP_PAGESPATH . 'login/PLogoutProcess.php'); break;
+
+	//
 	// Using common files from modules/core
 	//
 	case 'ls':	require_once(TP_MODULESPATH . '/core/viewfiles/PListDirectory.php'); break;

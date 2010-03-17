@@ -51,9 +51,10 @@ div#bottom p {
 	color: #999999;
 }
 
-div.sidebox {
+div.sidebox, fieldset.loginform {
 	background: #E3E0D1;
 }
+
 
 
 /* -------------------------------------------------------------------------------------

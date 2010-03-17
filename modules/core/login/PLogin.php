@@ -29,38 +29,27 @@ $intFilter->FrontControllerIsVisitedOrDie();
 
 // -------------------------------------------------------------------------------------------
 //
-// Enable access to protected pages through direct-links.
-// Try access a protected file, redirect to login, redirect back to protected page.
+// Always redirect to latest visited page on success.
 //
-global $gPage;
-$redirectTo = 'home';
-if($gPage != 'login') {
-	$refToThisPage	= CPageController::CurrentURL();
-	$redirectTo 	= $refToThisPage;
-}
+$redirectTo = $pc->SESSIONisSetOrSetDefault('history2');
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Show the login-form
 //
+global $gModule;
+
 $htmlMain = <<<EOD
+<fieldset class='loginform'>
 <h1>{$pc->lang['LOGIN']}</h1>
 <p>
 {$pc->lang['LOGIN_INTRO_TEXT']}
 </p>
-EOD;
-
-$htmlLeft = "";
-
-$htmlRight = <<<EOD
-<div class='sidebox'>
-<div id='login'>
-<fieldset>
 <p>
-{$pc->lang['LOGIN_USING_ACCOUNT_OR_EMAIL']}
+<!-- {$pc->lang['LOGIN_USING_ACCOUNT_OR_EMAIL']} -->
 </p>
-<form action="?p=loginp" method="post">
+<form action="?m={$gModule}&amp;p=loginp" method="post">
 <input type='hidden' name='redirect' value='{$redirectTo}'>
 <table>
 <tr>
@@ -91,10 +80,11 @@ $htmlRight = <<<EOD
 <p><a href="PGetPassword.php">Skapa en ny användare!</a></p>
 <p><a href="PGetPassword.php">Jag har glömt mitt lösenord!</a></p>
 -->
-</div> <!-- #login -->
-</div> <!-- .sidebox -->
 
 EOD;
+
+$htmlLeft  = "";
+$htmlRight = "";
 
 
 // -------------------------------------------------------------------------------------------
@@ -103,7 +93,7 @@ EOD;
 //
 $page = new CHTMLPage();
 
-$page->printPage('Template', $htmlLeft, $htmlMain, $htmlRight);
+$page->printPage('Login', $htmlLeft, $htmlMain, $htmlRight);
 exit;
 
 

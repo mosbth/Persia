@@ -7,11 +7,11 @@
 //
 
 $lang = Array(
-	'LOGIN_USING_ACCOUNT_OR_EMAIL' => "Login using your account.",
-	'USER' => "User:",
+	'LOGIN_USING_ACCOUNT_OR_EMAIL' => "Login with your account.",
+	'USER' => "Account:",
 	'PASSWORD' => "Password:",
 	'LOGIN' => "Login",
-	'LOGIN_INTRO_TEXT' => "Login with your user and password. Mikael - hemligt (adm), doe - doe (user)", 
+	'LOGIN_INTRO_TEXT' => "Login with your account and password. Mikael - hemligt (adm), doe - doe (user)", 
 
 );
 

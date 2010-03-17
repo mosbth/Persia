@@ -68,7 +68,7 @@ class CInterceptionFilter {
 	//
 	public function UserIsMemberOfGroupAdminOrDie() {
 		
-		if($_SESSION['groupMemberUser'] != 'adm') 
+		if(isset($_SESSION['groupMemberUser']) && $_SESSION['groupMemberUser'] != 'adm') 
 			die('You do not have the authourity to access this page');
 	}
 
@@ -79,8 +79,8 @@ class CInterceptionFilter {
 	//
 	public function IsUserMemberOfGroupAdminOrIsCurrentUser($aUserId) {
 		
-		$isAdmGroup 	= ($_SESSION['groupMemberUser'] == 'adm') ? TRUE : FALSE;
-		$isCurrentUser	= ($_SESSION['idUser'] == $aUserId) ? TRUE : FALSE;
+		$isAdmGroup 		= (isset($_SESSION['groupMemberUser']) && $_SESSION['groupMemberUser'] == 'adm') ? TRUE : FALSE;
+		$isCurrentUser	= (isset($_SESSION['idUser']) && $_SESSION['idUser'] == $aUserId) ? TRUE : FALSE;
 
 		return $isAdmGroup || $isCurrentUser;
 	}
