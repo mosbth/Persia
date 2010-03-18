@@ -41,8 +41,13 @@ class CPageController {
 	//
 	public function LoadLanguage($aFilename) {
 
-		// Load language file
-		$langFile = TP_LANGUAGEPATH . WS_LANGUAGE . '/' . substr($aFilename, strlen(TP_ROOT));
+		// Load language file, all language files in the TP_LANGUAGEPATH
+		//$langFile = TP_LANGUAGEPATH . WS_LANGUAGE . '/' . substr($aFilename, strlen(TP_ROOT));
+
+		// All language files in the a lang-subdirectory from the original file.
+		$file = basename($aFilename);
+		$dir  = dirname($aFilename);
+		$langFile = $dir . '/lang/' . WS_LANGUAGE . '/' . $file;
 
 		if(!file_exists($langFile)) {
 			die(sprintf("Language file does not exists: %s", $langFile));

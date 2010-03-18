@@ -1,7 +1,9 @@
 <?php
 // ===========================================================================================
 //
-// Class CWYSIWYGEditor
+// File: CWYSIWYGEditor.php
+//
+// Description: Class CWYSIWYGEditor
 //
 // Abstract base class WYSIWYG JavaScript editors as a replacement for <textarea>. 
 // Each specific editor must inherit this class and implement its methods.
@@ -19,15 +21,17 @@ abstract class CWYSIWYGEditor {
 	//
 	// Internal variables
 	//
-	public $iCSSId;		// A CSS id, if available
-	public $iCSSClass;	// A CSS class, if available
+	protected $iTextareaId;
+	protected $iTextareaClass;
+	protected $iSubmitId;
+	protected $iSubmitClass;
 	
 
 	// ------------------------------------------------------------------------------------
 	//
 	// Constructor
 	//
-	public function __construct($aCSSId='none', $aCSSClass='none') { ; }
+	public function __construct($aTextareaId='', $aTextareaClass='', $aSubmitId='', $aSubmitClass='') { ; }
 
 
 	// ------------------------------------------------------------------------------------
@@ -43,7 +47,23 @@ abstract class CWYSIWYGEditor {
 	// code to instantiate editor.
 	//
 	public function GetHTMLHead() { ; }
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Return the id and class attributes, if set, specific for this editor and
+	// the textarea.
+	//
+	public function GetTextareaSettings() { ; }
 	
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Return the id and class attributes, if set, specific for this editor and
+	// the submit button.
+	//
+	public function GetSubmitSettings() { ; }
+
 
 } // End of Of Class
 

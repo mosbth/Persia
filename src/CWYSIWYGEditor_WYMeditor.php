@@ -1,34 +1,30 @@
 <?php
 // ===========================================================================================
 //
-// Class CWYSIWYGEditor_WYMeditor
+// File: CWYSIWYGEditor_WYMeditor.php
+//
+// Description: Class CWYSIWYGEditor_WYMeditor
 //
 // Support for WYSIWYG JavaScript editor WYMeditor.
 // http://www.wymeditor.org/
 //
-//
 // Author: Mikael Roos, mos@bth.se
 //
 
-require_once('CWYSIWYGEditor.php');
 
-class CWYSIWYGEditor_WYMeditor extends CWYSIWYGEditor {
+class CWYSIWYGEditor_WYMeditor extends CWYSIWYGEditor_Plain {
 
 	// ------------------------------------------------------------------------------------
 	//
 	// Internal variables
 	//
-	public $iCSSId;		// A CSS id, if available
-	public $iCSSClass;	// A CSS class, if available
-	
 
 	// ------------------------------------------------------------------------------------
 	//
 	// Constructor
 	//
-	public function __construct($aCSSId='none', $aCSSClass='none') {
-		$this->iCSSId 		= $aCSSId; 
-		$this->iCSSClass 	= $aCSSClass; 
+	public function __construct($aTextareaId='', $aTextareaClass='', $aSubmitId='', $aSubmitClass='') {
+		parent::__construct($aTextareaId, $aTextareaClass, $aSubmitId, $aSubmitClass);
 	}
 
 
@@ -46,8 +42,8 @@ class CWYSIWYGEditor_WYMeditor extends CWYSIWYGEditor {
 	//
 	public function GetHTMLHead() {
 	
-		$tpJavaScript 	= WS_JAVASCRIPT;
-		$jquery 		= JS_JQUERY;
+		$tpJavaScript = WS_JAVASCRIPT;
+		$jquery 			= JS_JQUERY;
 
 		$head = <<<EOD
 <!-- Updated for WYMeditor ============================================================== -->
@@ -69,7 +65,7 @@ class CWYSIWYGEditor_WYMeditor extends CWYSIWYGEditor {
  */
 
 jQuery(function() {
-    jQuery('.{$this->iCSSClass}').wymeditor();
+    jQuery('.{$this->iTextareaClass}').wymeditor();
 });
 
 </script>

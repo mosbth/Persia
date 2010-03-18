@@ -1,34 +1,31 @@
 <?php
 // ===========================================================================================
 //
-// Class CWYSIWYGEditor_NicEdit
+// File: CWYSIWYGEditor_NicEdit.php
+//
+// Description: Class CWYSIWYGEditor_NicEdit
 //
 // Support for WYSIWYG JavaScript editor NicEdit.
 // http://nicedit.com/
 //
-//
 // Author: Mikael Roos, mos@bth.se
 //
 
-require_once('CWYSIWYGEditor.php');
 
-class CWYSIWYGEditor_NicEdit extends CWYSIWYGEditor {
+class CWYSIWYGEditor_NicEdit extends CWYSIWYGEditor_Plain {
 
 	// ------------------------------------------------------------------------------------
 	//
 	// Internal variables
 	//
-	public $iCSSId;		// A CSS id, if available
-	public $iCSSClass;	// A CSS class, if available
 	
 
 	// ------------------------------------------------------------------------------------
 	//
 	// Constructor
 	//
-	public function __construct($aCSSId='none', $aCSSClass='none') {
-		$this->iCSSId 		= $aCSSId; 
-		$this->iCSSClass 	= $aCSSClass; 
+	public function __construct($aTextareaId='', $aTextareaClass='', $aSubmitId='', $aSubmitClass='') {
+		parent::__construct($aTextareaId, $aTextareaClass, $aSubmitId, $aSubmitClass);
 	}
 
 

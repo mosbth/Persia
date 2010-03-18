@@ -1,10 +1,9 @@
 <?php
 // ===========================================================================================
 //
-// PPostEdit.php
+// File: PPostEdit.php
 //
-// A post editor. Create or edit a post.
-//
+// Description: A post editor. Create or edit a post.
 //
 // Author: Mikael Roos, mos@bth.se
 //
@@ -15,7 +14,7 @@
 // Get pagecontroller helpers. Useful methods to use in most pagecontrollers
 //
 $pc = new CPageController();
-//$pc->LoadLanguage(__FILE__);
+$pc->LoadLanguage(__FILE__);
 
 
 // -------------------------------------------------------------------------------------------
@@ -38,7 +37,7 @@ global $gModule;
 $editor		= $pc->GETisSetOrSetDefault('editor', 'WYMeditor');
 $postId		= $pc->GETisSetOrSetDefault('id', 0);
 $topicId	= $pc->GETisSetOrSetDefault('topic', 0);
-$userId		= $_SESSION['idUser'];
+$userId		= $pc->SESSIONisSetOrSetDefault('idUser', 0);
 
 // Always check whats coming in...
 $pc->IsNumericOrDie($postId, 0);
@@ -51,8 +50,6 @@ $pc->IsStringOrDie($editor);
 // Create a new database object, connect to the database, get the query and execute it.
 // Relates to files in directory TP_SQLPATH.
 //
-$title 		= "";
-$content 	= "";
 
 // Connect
 $db 	= new CDatabaseController();
@@ -81,9 +78,9 @@ $results[0]->close();
 
 // Get post details
 $row = $results[2]->fetch_object();
-$title 			= empty($row->title) 			? 'New title' : $row->title;
+$title 			= empty($row->title) 			? $pc->lang['NEW_TITLE'] : $row->title;
 $content 		= empty($row->content) 		? '' : $row->content;
-$saved	 		= empty($row->latest) 		? 'Not yet' : $row->latest;
+$saved	 		= empty($row->latest) 		? $pc->lang['NOT_YET'] : $row->latest;
 $results[2]->close(); 
 
 $mysqli->close();
@@ -93,33 +90,9 @@ $mysqli->close();
 //
 // Use a JavaScript editor
 //
-$jseditor;
-$jseditor_submit = "";
-
-switch($editor) {
-
-	case 'markItUp': {
-		$jseditor = new CWYSIWYGEditor_markItUp('text', 'text');
-	}
-	break;
-
-	case 'WYMeditor': {
-		$jseditor = new CWYSIWYGEditor_WYMeditor('text', 'text');
-		$jseditor_submit = 'class="wymupdate"'; 
-	}
-	break;
-
-	case 'NicEdit': {
-		$jseditor = new CWYSIWYGEditor_NicEdit('text', 'size98percentx300');
-	}
-	break;
-
-	case 'plain': 
-	default: {
-		$jseditor = new CWYSIWYGEditor_Plain('text', 'size98percentx300');
-	}
-	break;
-}
+$jsEditor				 	= CWYSIWYGEditorFactory::CreateObject($editor);
+$jsEditorTextarea = $jsEditor->GetTextareaSettings();
+$jsEditorSubmit 	= $jsEditor->GetSubmitSettings();
 
 
 // -------------------------------------------------------------------------------------------
@@ -132,26 +105,28 @@ $h1 				= '';
 $titleForm 	= '';
 
 if($topicId == 0 && $postId == 0) {
-	$h1 				= 'Create new topic';
-	$titleForm 	= "Topic: <input class='title' type='text' name='title' value='{$title}'>";
+	$h1 				= $pc->lang['CREATE_NEW_TOPIC'];
+	$titleForm 	= "{$pc->lang['TOPIC']}: <input class='title' type='text' name='title' value='{$title}'>";
 } else if($topicId != 0 && $postId == 0) {
-	$h1 				= 'Add reply';
-	$titleForm 	= "<h2>In topic: \"{$topicTitle}\"</h2>";
-} else if($postId != 0 && $topPost == $postId) {
-	$h1					= 'Edit post';
-	$titleForm 	= "Topic: <input class='title' type='text' name='title' value='{$title}'>";
+	$h1 				= $pc->lang['ADD_REPLY'];
+	$titleForm 	= "<h2>{$pc->lang['IN_TOPIC']}: \"{$topicTitle}\"</h2>";
+} else if($postId != 0 && $postId == $topPost) {
+	$h1					= $pc->lang['EDIT_POST'];
+	$titleForm 	= "{$pc->lang['TOPIC']}: <input class='title' type='text' name='title' value='{$title}'>";
 } else if($postId != 0) {
-	$h1					= 'Edit post';
-	$titleForm 	= "<h2>In topic: \"{$topicTitle}\"</h2>";
+	$h1					= $pc->lang['EDIT_POST'];
+	$titleForm 	= "<h2>{$pc->lang['IN_TOPIC']}: \"{$topicTitle}\"</h2>";
 }
 
 // Only show title if new topic
 $formTitle = "";
 $formTitle = ($topicId == 0) ? $formTitle : '';
+$img = WS_IMAGES;
 
 $htmlMain = <<<EOD
 <h1>{$h1}</h1>
-<form class='article' action='?m=rom&p=post-save' method='POST'>
+<fieldset class='article'>
+<form action='?m={$gModule}&amp;p=post-save' method='POST'>
 <input type='hidden' name='redirect_on_success' value='?m={$gModule}&amp;p=topic&amp;id=%1\$d#post-%2\$d'>
 <input type='hidden' name='redirect_on_failure' value='?m={$gModule}&amp;p=post-edit&amp;id=%1\$d'>
 <input type='hidden' name='post_id' value='{$postId}'>
@@ -160,25 +135,33 @@ $htmlMain = <<<EOD
 {$titleForm}
 </p>
 <p>
-<textarea id='{$jseditor->iCSSId}' class='{$jseditor->iCSSClass}' name='content'>{$content}</textarea>
+<textarea {$jsEditorTextarea} name='content'>{$content}</textarea>
 </p>
+<p>
+<!-- <input type='submit' value="{$pc->lang['PUBLISH']}" {$jsEditorSubmit}'> -->
+<button type='submit' {$jsEditorSubmit}><img src='{$img}/silk/accept.png' alt=''> {$pc->lang['PUBLISH']}</button>
+<button type='button'><img src='{$img}/silk/disk.png' alt=''> {$pc->lang['SAVE_NOW']}</button>
+<button type='reset' onClick='history.back();'><img src='{$img}/silk/cancel.png' alt=''> {$pc->lang['DISCARD']}</button>
+</p>
+
+<!--
+<input type='button' value='Cancel' onClick='history.back();'>
+<input type='button' value='Delete' onClick='if(confirm("Do you REALLY want to delete it?")) {form.action="?p=article-delete"; form.redirect_on_success.value="?m=rom&amp;p=topics"; submit();}'>
+<button type='button'><img src='{$img}/silk/disk.png' alt=''> {$pc->lang['SAVING']}</button>
+<button type='button'><img src='{$img}/silk/disk.png' alt=''> {$pc->lang['SAVED']}</button>
+-->
+<!--
 <p class='notice'>
 Saved: {$saved}
 </p>
-<p>
-<input type='submit' {$jseditor_submit} value='Save'>
-<input type='button' value='Cancel' onClick='history.back();'>
-<!--
-<input type='button' value='Delete' onClick='if(confirm("Do you REALLY want to delete it?")) {form.action="?p=article-delete"; form.redirect_on_success.value="?m=rom&amp;p=topics"; submit();}'>
 -->
-</p>
 </form>
 
 EOD;
 
 $htmlLeft 	= "";
 $htmlRight	= <<<EOD
-<h3 class='columnMenu'>Change editor</h3>
+<h3 class='columnMenu'>{$pc->lang['CHANGE_EDITOR']}</h3>
 <p>
 <a href='?m={$gModule}&amp;p=post-edit&amp;editor=plain&amp;id={$postId}&amp;topic={$topicId}'>Plain</a> | 
 <a href='?m={$gModule}&amp;p=post-edit&amp;editor=NicEdit&amp;id={$postId}&amp;topic={$topicId}'>NicEdit</a> |
@@ -204,7 +187,7 @@ EOD;
 //
 $page = new CHTMLPage();
 
-$page->PrintPage("Create/edit post", $htmlLeft, $htmlMain, $htmlRight, $jseditor->GetHTMLHead());
+$page->PrintPage($pc->lang['CREATE_OR_EDIT_POST'], $htmlLeft, $htmlMain, $htmlRight, $jsEditor->GetHTMLHead());
 exit;
 
 ?>

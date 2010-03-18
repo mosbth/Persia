@@ -7,14 +7,14 @@
  * 
  */
  
-@import url("nav.css");   		/* definitions to navigation menu bar */
+@import url("nav.css");						/* definitions to navigation menu bar */
 @import url("settingsbar.css");   /* definitions to settings side bar */
-@import url("settingsmenu.css");   /* definitions to settings menu bar */
-@import url("font.css");  		/* all font related definitions  */
-@import url("color.css"); 		/* all color related definitions */
-@import url("login.css"); 		/* standard login div and related */
-@import url("editor.css"); 		/* for WYSIWYG editor */
-@import url("article.css"); 		/* for displaying articles */
+@import url("settingsmenu.css");	/* definitions to settings menu bar */
+@import url("font.css");  				/* all font related definitions  */
+@import url("color.css");					/* all color related definitions */
+@import url("form.css");					/* forms related styles */
+@import url("editor.css");				/* for WYSIWYG editor */
+@import url("article.css"); 			/* for displaying articles */
  
 
 /* -------------------------------------------------------------------------------------

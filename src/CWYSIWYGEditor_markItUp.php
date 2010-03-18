@@ -1,7 +1,9 @@
 <?php
 // ===========================================================================================
 //
-// Class CWYSIWYGEditor_markItUp
+// File: CWYSIWYGEditor_markItUp.php
+//
+// Description: Class CWYSIWYGEditor_markItUp
 //
 // Support for WYSIWYG JavaScript editor markItUp.
 // http://markitup.jaysalvat.com/home/
@@ -9,25 +11,20 @@
 // Author: Mikael Roos, mos@bth.se
 //
 
-require_once('CWYSIWYGEditor.php');
 
-class CWYSIWYGEditor_markItUp extends CWYSIWYGEditor {
+class CWYSIWYGEditor_markItUp extends CWYSIWYGEditor_Plain {
 
 	// ------------------------------------------------------------------------------------
 	//
 	// Internal variables
-	//
-	public $iCSSId;		// A CSS id, if available
-	public $iCSSClass;	// A CSS class, if available
-	
+	//	
 
 	// ------------------------------------------------------------------------------------
 	//
 	// Constructor
 	//
-	public function __construct($aCSSId='none', $aCSSClass='none') {
-		$this->iCSSId 		= $aCSSId; 
-		$this->iCSSClass 	= $aCSSClass; 
+	public function __construct($aTextareaId='', $aTextareaClass='', $aSubmitId='', $aSubmitClass='') {
+		parent::__construct($aTextareaId, $aTextareaClass, $aSubmitId, $aSubmitClass);
 	}
 
 
@@ -45,8 +42,8 @@ class CWYSIWYGEditor_markItUp extends CWYSIWYGEditor {
 	//
 	public function GetHTMLHead() {
 	
-		$tpJavaScript 	= WS_JAVASCRIPT;
-		$jquery 		= JS_JQUERY;
+		$tpJavaScript = WS_JAVASCRIPT;
+		$jquery 			= JS_JQUERY;
 
 		$head = <<<EOD
 <!-- Updated for markItUp =============================================================== -->
@@ -68,7 +65,7 @@ class CWYSIWYGEditor_markItUp extends CWYSIWYGEditor {
 
 <script language="javascript">
 $(document).ready(function()	{
-	$('.{$this->iCSSClass}').markItUp(mySettings);
+	$('.{$this->iTextareaClass}').markItUp(mySettings);
 });
 </script>
 <!-- ==================================================================================== -->

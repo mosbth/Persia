@@ -57,7 +57,7 @@ $htmlMain = <<<EOD
 <label for="nameUser">{$pc->lang['USER']}</label>
 </td>
 <td>
-<input class="login" type="text" name="nameUser">
+<input class="account" type="text" name="nameUser">
 </td>
 </tr>
 <tr>
