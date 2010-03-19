@@ -93,6 +93,44 @@ $mysqli->close();
 $jsEditor				 	= CWYSIWYGEditorFactory::CreateObject($editor);
 $jsEditorTextarea = $jsEditor->GetTextareaSettings();
 $jsEditorSubmit 	= $jsEditor->GetSubmitSettings();
+$htmlHead					= $jsEditor->GetHTMLHead();
+$needjQuery				= $jsEditor->DependsOnjQuery();
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Add some JavaScript
+//
+
+// autosave functionality needs jQuery
+$needjQuery = TRUE;
+
+$javaScript = <<<EOD
+
+// ----------------------------------------------------------------------------------------------
+//
+// Event handler for buttons in form. Instead of messing up the html-code with javascript.
+//
+// Using Event bubbling as described in this document:
+// http://docs.jquery.com/Tutorials:AJAX_and_Events
+//
+$(document).ready(function() {
+	$('fieldset.article').click(function(event) {
+		if ($(event.target).is('button#publish')) {
+			//alert('published');
+			$('form').submit();
+		} else if ($(event.target).is('button#savenow')) {
+			//alert('savenow');
+			$('input#redirect_on_success').val('?m={$gModule}&p=post-edit&id=%2\$d&editor={$editor}');
+			$('form').submit();
+		} else if ($(event.target).is('button#discard')) {
+			//alert('discard');
+			history.back();
+		}
+	});
+});
+
+EOD;
 
 
 // -------------------------------------------------------------------------------------------
@@ -127,8 +165,8 @@ $htmlMain = <<<EOD
 <h1>{$h1}</h1>
 <fieldset class='article'>
 <form action='?m={$gModule}&amp;p=post-save' method='POST'>
-<input type='hidden' name='redirect_on_success' value='?m={$gModule}&amp;p=topic&amp;id=%1\$d#post-%2\$d'>
-<input type='hidden' name='redirect_on_failure' value='?m={$gModule}&amp;p=post-edit&amp;id=%1\$d'>
+<input type='hidden' id='redirect_on_success' name='redirect_on_success' value='?m={$gModule}&amp;p=topic&amp;id=%1\$d#post-%2\$d'>
+<input type='hidden' id='redirect_on_failure' name='redirect_on_failure' value='?m={$gModule}&amp;p=post-edit&amp;id=%1\$d'>
 <input type='hidden' name='post_id' value='{$postId}'>
 <input type='hidden' name='topic_id' value='{$topicId}'>
 <p>
@@ -138,13 +176,13 @@ $htmlMain = <<<EOD
 <textarea {$jsEditorTextarea} name='content'>{$content}</textarea>
 </p>
 <p>
-<!-- <input type='submit' value="{$pc->lang['PUBLISH']}" {$jsEditorSubmit}'> -->
-<button type='submit' {$jsEditorSubmit}><img src='{$img}/silk/accept.png' alt=''> {$pc->lang['PUBLISH']}</button>
-<button type='button'><img src='{$img}/silk/disk.png' alt=''> {$pc->lang['SAVE_NOW']}</button>
-<button type='reset' onClick='history.back();'><img src='{$img}/silk/cancel.png' alt=''> {$pc->lang['DISCARD']}</button>
+<button id='publish' type='submit' {$jsEditorSubmit}><img src='{$img}/silk/accept.png' alt=''> {$pc->lang['PUBLISH']}</button>
+<button id='savenow' type='submit' {$jsEditorSubmit}><img src='{$img}/silk/disk.png' alt=''> {$pc->lang['SAVE_NOW']}</button>
+<button id='discard' type='reset'><img src='{$img}/silk/cancel.png' alt=''> {$pc->lang['DISCARD']}</button>
 </p>
 
 <!--
+<input type='button' value="{$pc->lang['PUBLISH']}" {$jsEditorSubmit}'>
 <input type='button' value='Cancel' onClick='history.back();'>
 <input type='button' value='Delete' onClick='if(confirm("Do you REALLY want to delete it?")) {form.action="?p=article-delete"; form.redirect_on_success.value="?m=rom&amp;p=topics"; submit();}'>
 <button type='button'><img src='{$img}/silk/disk.png' alt=''> {$pc->lang['SAVING']}</button>
@@ -187,7 +225,7 @@ EOD;
 //
 $page = new CHTMLPage();
 
-$page->PrintPage($pc->lang['CREATE_OR_EDIT_POST'], $htmlLeft, $htmlMain, $htmlRight, $jsEditor->GetHTMLHead());
+$page->PrintPage($pc->lang['CREATE_OR_EDIT_POST'], $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
 exit;
 
 ?>

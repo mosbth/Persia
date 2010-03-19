@@ -40,7 +40,7 @@ class CHTMLPage {
 	//
 	// Print out a resulting page according to arguments
 	//
-	public function PrintPage($aTitle="", $aHTMLLeft="", $aHTMLMain="", $aHTMLRight="", $aHTMLHead="") {
+	public function PrintPage($aTitle="", $aHTMLLeft="", $aHTMLMain="", $aHTMLRight="", $aHTMLHead="", $aJavaScript="", $enablejQuery=FALSE) {
 
 		$titlePage	= $aTitle;
 		$titleSite	= WS_TITLE;
@@ -56,8 +56,9 @@ class CHTMLPage {
 		$body		= $this->preparePageBody($aHTMLLeft, $aHTMLMain, $aHTMLRight);
 		$w3c		= $this->prepareValidatorTools();
 		$timer	= $this->prepareTimer();
-		
-		$wsJavaScript = WS_JAVASCRIPT;
+
+		$jQuery 		= ($enablejQuery) ? "<script type='text/javascript' src='" . JS_JQUERY . "'></script> <!-- jQuery --> " : '';
+		$javascript = (empty($aJavaScript)) ? '' : "<script type='text/javascript'>{$aJavaScript}</script>";
 		
 		$html = <<<EOD
 <!DOCTYPE html>
@@ -67,7 +68,9 @@ class CHTMLPage {
 		<title>{$titlePage}</title>
 		<link rel="shortcut icon" href="{$favicon}" />
 		<link rel="stylesheet" href="{$stylesheet}" />
+		{$jQuery}
 		{$aHTMLHead}
+		{$javascript}
 		<!-- HTML5 support for IE -->
 		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>		
 	</head>

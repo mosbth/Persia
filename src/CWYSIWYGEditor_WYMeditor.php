@@ -12,7 +12,7 @@
 //
 
 
-class CWYSIWYGEditor_WYMeditor extends CWYSIWYGEditor_Plain {
+class CWYSIWYGEditor_WYMeditor extends CWYSIWYGEditor {
 
 	// ------------------------------------------------------------------------------------
 	//
@@ -35,6 +35,16 @@ class CWYSIWYGEditor_WYMeditor extends CWYSIWYGEditor_Plain {
 	public function __destruct() { ; }
 
 
+	// ------------------------------------------------------------------------------------
+	//
+	// Does this editor need the jQuery JavaScript library?
+	// Subclasses who does should reimplement this method and return TRUE.
+	//
+	public function DependsOnjQuery() {
+		return TRUE;
+	}
+	
+	
 	// ------------------------------------------------------------------------------------
 	//
 	// Return the HTML header for the editor, usually stylesheet, js-file and javascript 

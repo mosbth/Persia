@@ -12,7 +12,7 @@
 //
 
 
-class CWYSIWYGEditor_NicEdit extends CWYSIWYGEditor_Plain {
+class CWYSIWYGEditor_NicEdit extends CWYSIWYGEditor {
 
 	// ------------------------------------------------------------------------------------
 	//

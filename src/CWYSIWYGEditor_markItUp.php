@@ -12,7 +12,7 @@
 //
 
 
-class CWYSIWYGEditor_markItUp extends CWYSIWYGEditor_Plain {
+class CWYSIWYGEditor_markItUp extends CWYSIWYGEditor {
 
 	// ------------------------------------------------------------------------------------
 	//
@@ -37,13 +37,22 @@ class CWYSIWYGEditor_markItUp extends CWYSIWYGEditor_Plain {
 
 	// ------------------------------------------------------------------------------------
 	//
+	// Does this editor need the jQuery JavaScript library?
+	// Subclasses who does should reimplement this method and return TRUE.
+	//
+	public function DependsOnjQuery() {
+		return TRUE;
+	}
+	
+	
+	// ------------------------------------------------------------------------------------
+	//
 	// Return the HTML header for the editor, usually stylesheet, js-file and javascript 
 	// code to instantiate editor.
 	//
 	public function GetHTMLHead() {
 	
 		$tpJavaScript = WS_JAVASCRIPT;
-		$jquery 			= JS_JQUERY;
 
 		$head = <<<EOD
 <!-- Updated for markItUp =============================================================== -->
@@ -53,9 +62,6 @@ class CWYSIWYGEditor_markItUp extends CWYSIWYGEditor_Plain {
 
 <!--  markItUp! toolbar skin --> 
 <link rel="stylesheet" type="text/css" href="{$tpJavaScript}/markitup/markitup/sets/html/style.css" /> 
-
-<!-- jQuery --> 
-<script type="text/javascript" src="{$jquery}"></script>
 
 <!-- markItUp! --> 
 <script type="text/javascript" src="{$tpJavaScript}/markitup/markitup/jquery.markitup.pack.js"></script>

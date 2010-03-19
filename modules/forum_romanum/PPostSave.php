@@ -1,9 +1,9 @@
 <?php
 // ===========================================================================================
 //
-// PPostSave.php
+// File: PPostSave.php
 //
-// Saves a forum post to database
+// Description: Saves a forum post to database
 //
 // Author: Mikael Roos, mos@bth.se
 //
