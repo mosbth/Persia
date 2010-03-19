@@ -26,6 +26,8 @@ Persia uses a part of the iconset and its available in the img/silk-directory. R
 [ JavaScript ]
 
 * jQuery
+* jGrowl
+* jquery.autosave
 * markItUp
 * nicedit
 * WYMEditor

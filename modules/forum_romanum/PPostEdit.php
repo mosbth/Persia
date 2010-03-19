@@ -101,9 +101,19 @@ $needjQuery				= $jsEditor->DependsOnjQuery();
 //
 // Add some JavaScript
 //
-
-// autosave functionality needs jQuery
+$js = WS_JAVASCRIPT;
 $needjQuery = TRUE;
+$htmlHead .= <<<EOD
+<!-- jGrowl latest -->
+<link rel='stylesheet' href='{$js}/jGrowl/jquery.jgrowl.css' type='text/css' />
+<script type='text/javascript' src='{$js}/jGrowl/jquery.jgrowl.js'></script>  
+
+<!-- jquery.autosave latest -->
+<script type='text/javascript' src='{$js}/jGrowl/jquery.autosave.js'></script>  
+
+EOD;
+
+
 
 $javaScript = <<<EOD
 
@@ -115,12 +125,14 @@ $javaScript = <<<EOD
 // http://docs.jquery.com/Tutorials:AJAX_and_Events
 //
 $(document).ready(function() {
+	$.jGrowl("Hello World. This is Growl. Page was now loaded, or re-loaded, I'm not sure on which...");
+
 	$('fieldset.article').click(function(event) {
 		if ($(event.target).is('button#publish')) {
 			//alert('published');
 			$('form').submit();
 		} else if ($(event.target).is('button#savenow')) {
-			//alert('savenow');
+			$.jGrowl('savenow');
 			$('input#redirect_on_success').val('?m={$gModule}&p=post-edit&id=%2\$d&editor={$editor}');
 			$('form').submit();
 		} else if ($(event.target).is('button#discard')) {
@@ -182,11 +194,7 @@ $htmlMain = <<<EOD
 </p>
 
 <!--
-<input type='button' value="{$pc->lang['PUBLISH']}" {$jsEditorSubmit}'>
-<input type='button' value='Cancel' onClick='history.back();'>
 <input type='button' value='Delete' onClick='if(confirm("Do you REALLY want to delete it?")) {form.action="?p=article-delete"; form.redirect_on_success.value="?m=rom&amp;p=topics"; submit();}'>
-<button type='button'><img src='{$img}/silk/disk.png' alt=''> {$pc->lang['SAVING']}</button>
-<button type='button'><img src='{$img}/silk/disk.png' alt=''> {$pc->lang['SAVED']}</button>
 -->
 <!--
 <p class='notice'>
