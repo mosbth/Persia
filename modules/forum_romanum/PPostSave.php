@@ -65,8 +65,11 @@ $query = <<< EOD
 SET @aPostId = {$postId};
 SET @aTopicId = {$topicId};
 CALL {$spPInsertOrUpdatePost}(@aPostId, @aTopicId, '{$userId}', '{$title}', '{$content}');
-SELECT @aPostId AS id;
-SELECT @aTopicId AS id;
+SELECT 
+	@aPostId AS postId,
+	@aTopicId AS topicId,
+	NOW() AS timestamp
+;
 EOD;
 
 // Perform the query
@@ -76,15 +79,12 @@ $res = $db->MultiQuery($query);
 $results = Array();
 $db->RetrieveAndStoreResultsFromMultiQuery($results);
 
-// Get inserted/updated post id
+// Get inserted/updated id
 $row = $results[3]->fetch_object();
-$postId = $row->id;
+$postId 		= $row->postId;
+$topicId 		= $row->topicId;
+$timestamp	= $row->timestamp;
 $results[3]->close();
-
-// Get inserted/updated topic id
-$row = $results[4]->fetch_object();
-$topicId = $row->id;
-$results[4]->close();
 
 $mysqli->close();
 
@@ -93,7 +93,20 @@ $mysqli->close();
 //
 // Redirect to another page
 //
-$pc->RedirectTo(sprintf($success, $topicId, $postId));
+if($success = 'json') {
+	$json = <<<EOD
+{
+	"topicId": {$topicId},
+	"postId": {$postId},
+	"timestamp": "{$timestamp}"
+}
+EOD;
+
+	echo $json;
+
+} else {
+	$pc->RedirectTo(sprintf($success, $topicId, $postId));
+}
 exit;
 
 ?>

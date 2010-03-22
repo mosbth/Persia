@@ -99,7 +99,7 @@ $needjQuery				= $jsEditor->DependsOnjQuery();
 
 // -------------------------------------------------------------------------------------------
 //
-// Add some JavaScript
+// Add JavaScript and html head stuff related to JavaScript
 //
 $js = WS_JAVASCRIPT;
 $needjQuery = TRUE;
@@ -108,36 +108,69 @@ $htmlHead .= <<<EOD
 <link rel='stylesheet' href='{$js}/jGrowl/jquery.jgrowl.css' type='text/css' />
 <script type='text/javascript' src='{$js}/jGrowl/jquery.jgrowl.js'></script>  
 
+<!-- jQuery Form Plugin, included with jquery.autosave -->
+<script type='text/javascript' src='{$js}/jquery.autosave/jquery.form.js'></script>  
+
 <!-- jquery.autosave latest -->
-<script type='text/javascript' src='{$js}/jGrowl/jquery.autosave.js'></script>  
+<!-- <script type='text/javascript' src='{$js}/jquery.autosave/jquery.autosave.js'></script>  -->
 
 EOD;
 
 
-
+//
+// Should response be redirect or json?
+//
+//$redirectOnSuccess = "?m={$gModule}&p=post-edit&id=%2\$d&editor={$editor}";
+$redirectOnSuccess = 'json';
 $javaScript = <<<EOD
 
 // ----------------------------------------------------------------------------------------------
 //
-// Event handler for buttons in form. Instead of messing up the html-code with javascript.
 //
-// Using Event bubbling as described in this document:
-// http://docs.jquery.com/Tutorials:AJAX_and_Events
 //
 $(document).ready(function() {
-	$.jGrowl("Hello World. This is Growl. Page was now loaded, or re-loaded, I'm not sure on which...");
 
-	$('fieldset.article').click(function(event) {
+	// Just showing off jGrowl to see that it works
+	$.jGrowl("Hello World. This is Growl. Page is now loaded, or re-loaded, I'm not sure on which...");
+
+	// ----------------------------------------------------------------------------------------------
+	//
+	// Upgrade form to make Ajax submit
+	//
+	$('#form1').ajaxForm({
+		// return a datatype of json
+		dataType: 'json',
+		// do stuff before submitting form
+		beforeSubmit: function(data, status) {
+						$.jGrowl('Saving...');
+				},	
+		// define a callback function
+		success: function(data, status) {
+						$.jGrowl('Saved: ' + status + ' at ' + data.timestamp);
+						$.jGrowl('Topic: ' + data.topicId + ', post: ' + data.postId);
+						$('#topic_id').val(data.topicId);
+						$('#post_id').val(data.postId);
+				}	
+	});
+
+
+	// ----------------------------------------------------------------------------------------------
+	//
+	// Event handler for buttons in form. Instead of messing up the html-code with javascript.
+	// Using Event bubbling as described in this document:
+	// http://docs.jquery.com/Tutorials:AJAX_and_Events
+	//
+	$('#form1').click(function(event) {
+
 		if ($(event.target).is('button#publish')) {
-			//alert('published');
-			$('form').submit();
+			;
 		} else if ($(event.target).is('button#savenow')) {
-			$.jGrowl('savenow');
-			$('input#redirect_on_success').val('?m={$gModule}&p=post-edit&id=%2\$d&editor={$editor}');
-			$('form').submit();
-		} else if ($(event.target).is('button#discard')) {
-			//alert('discard');
+			;			
+    } else if ($(event.target).is('button#discard')) {
 			history.back();
+    } else if ($(event.target).is('a#viewPost')) {
+			$.jGrowl('View post?');
+			$('a#viewPost').attr('href', '?m={$gModule}&p=topic&id=' + $('#topic_id').val() + '#post-' + $('#post_id').val());
 		}
 	});
 });
@@ -176,11 +209,11 @@ $img = WS_IMAGES;
 $htmlMain = <<<EOD
 <h1>{$h1}</h1>
 <fieldset class='article'>
-<form action='?m={$gModule}&amp;p=post-save' method='POST'>
-<input type='hidden' id='redirect_on_success' name='redirect_on_success' value='?m={$gModule}&amp;p=topic&amp;id=%1\$d#post-%2\$d'>
-<input type='hidden' id='redirect_on_failure' name='redirect_on_failure' value='?m={$gModule}&amp;p=post-edit&amp;id=%1\$d'>
-<input type='hidden' name='post_id' value='{$postId}'>
-<input type='hidden' name='topic_id' value='{$topicId}'>
+<form id='form1' action='?m={$gModule}&amp;p=post-save' method='POST'>
+<input type='hidden' id='redirect_on_success' name='redirect_on_success' value='{$redirectOnSuccess}'>
+<input type='hidden' id='redirect_on_failure' name='redirect_on_failure' value=''>
+<input type='hidden' id='post_id' name='post_id' value='{$postId}'>
+<input type='hidden' id='topic_id' name='topic_id' value='{$topicId}'>
 <p>
 {$titleForm}
 </p>
@@ -192,7 +225,9 @@ $htmlMain = <<<EOD
 <button id='savenow' type='submit' {$jsEditorSubmit}><img src='{$img}/silk/disk.png' alt=''> {$pc->lang['SAVE_NOW']}</button>
 <button id='discard' type='reset'><img src='{$img}/silk/cancel.png' alt=''> {$pc->lang['DISCARD']}</button>
 </p>
-
+<p>
+<a id='viewPost' title='Click to view the published post' href='?m={$gModule}&amp;p=topic&amp;id={$topicId}#post-{$postId}'>View post</a>
+</p>
 <!--
 <input type='button' value='Delete' onClick='if(confirm("Do you REALLY want to delete it?")) {form.action="?p=article-delete"; form.redirect_on_success.value="?m=rom&amp;p=topics"; submit();}'>
 -->
