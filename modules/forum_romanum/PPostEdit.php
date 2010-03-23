@@ -34,7 +34,7 @@ $intFilter->UserIsSignedInOrRecirectToSignIn();
 //
 global $gModule;
 
-$editor		= $pc->GETisSetOrSetDefault('editor', 'WYMeditor');
+$editor		= $pc->GETisSetOrSetDefault('editor', 'plain');
 $postId		= $pc->GETisSetOrSetDefault('id', 0);
 $topicId	= $pc->GETisSetOrSetDefault('topic', 0);
 $userId		= $pc->SESSIONisSetOrSetDefault('idUser', 0);
@@ -112,7 +112,7 @@ $htmlHead .= <<<EOD
 <script type='text/javascript' src='{$js}/jquery.autosave/jquery.form.js'></script>  
 
 <!-- jquery.autosave latest -->
-<!-- <script type='text/javascript' src='{$js}/jquery.autosave/jquery.autosave.js'></script>  -->
+<script type='text/javascript' src='{$js}/jquery.autosave/jquery.autosave.js'></script> 
 
 EOD;
 
@@ -137,21 +137,92 @@ $(document).ready(function() {
 	//
 	// Upgrade form to make Ajax submit
 	//
+	// http://malsup.com/jquery/form/
+	//
 	$('#form1').ajaxForm({
 		// return a datatype of json
 		dataType: 'json',
+		
 		// do stuff before submitting form
 		beforeSubmit: function(data, status) {
+						autosave.callbackBeforeSave();
 						$.jGrowl('Saving...');
-				},	
+				},
+				
 		// define a callback function
 		success: function(data, status) {
-						$.jGrowl('Saved: ' + status + ' at ' + data.timestamp);
-						$.jGrowl('Topic: ' + data.topicId + ', post: ' + data.postId);
+						$.jGrowl('Saved: ' + status + ' at ' + data.timestamp + 'Topic: ' + data.topicId + ', post: ' + data.postId);
 						$('#topic_id').val(data.topicId);
 						$('#post_id').val(data.postId);
 				}	
 	});
+
+
+	// ----------------------------------------------------------------------------------------------
+	//
+	// Code to enable autosave and integrate it with existing form.
+	//
+	// 1) Set a callback on all keypress-event in the form. This is to keep track on the form has 
+	// changed.
+	// 2) In the callback, disable 1), enable the save-button och initiate a timer that submits the 
+	// form after a defined time.
+	// 3) If user initiates a save, then cancel the timer.
+	// 4) When autosaved, disable the save-button and enable the onkeypress-event again.
+	//
+	// http://api.jquery.com/bind/
+	// http://api.jquery.com/unbind/
+	// https://developer.mozilla.org/en/DOM/window.setTimeout
+	//
+	var autosave = {
+		//
+		// Tme between each autosave fires off.
+		//
+		time: 5000,
+
+		//
+		// Store the id of the timer, use to cancel timer if save is initiated by user.
+		//
+		id:	null,
+		
+		//
+		// Callback function that carries out the ajax-submit for autosave.
+		//
+		callbackSave: function() {
+				$('#form1').submit(); 
+			},
+		
+		//
+		// Callback function to change state before submitting
+		//
+		callbackBeforeSave: function() {
+				// Disable the button until form has changed again
+				$('button#savenow').attr('disabled', 'disabled');
+				
+				// Clear the timeout, it might have been user initiated, no need for timer than
+				clearTimeout(autosave.id);
+				
+				// Bind the event again to discover when form has changed
+				$('#form1').bind('keypress', autosave.callbackDetect);
+			},
+		
+		//
+		// Function that detects if the form has changed
+		//
+		callbackDetect:	function(event){
+				// Unbind the event, we already know that the form has changed, no need to detect it twice
+				$('#form1').unbind('keypress');
+				
+				// Enable the save button
+				$('button#savenow').removeAttr('disabled');
+				
+				// Set the timer that will eventually fire off the autosave event
+				autosave.id = setTimeout(autosave.callbackSave, autosave.time);
+				
+				// Just say that the form changed
+				$.jGrowl('Form changed!');
+			}
+	};
+	$('#form1').bind('keypress', autosave.callbackDetect);
 
 
 	// ----------------------------------------------------------------------------------------------
@@ -165,7 +236,7 @@ $(document).ready(function() {
 		if ($(event.target).is('button#publish')) {
 			;
 		} else if ($(event.target).is('button#savenow')) {
-			;			
+			;
     } else if ($(event.target).is('button#discard')) {
 			history.back();
     } else if ($(event.target).is('a#viewPost')) {
@@ -173,6 +244,8 @@ $(document).ready(function() {
 			$('a#viewPost').attr('href', '?m={$gModule}&p=topic&id=' + $('#topic_id').val() + '#post-' + $('#post_id').val());
 		}
 	});
+
+
 });
 
 EOD;
@@ -212,8 +285,8 @@ $htmlMain = <<<EOD
 <form id='form1' action='?m={$gModule}&amp;p=post-save' method='POST'>
 <input type='hidden' id='redirect_on_success' name='redirect_on_success' value='{$redirectOnSuccess}'>
 <input type='hidden' id='redirect_on_failure' name='redirect_on_failure' value=''>
-<input type='hidden' id='post_id' name='post_id' value='{$postId}'>
-<input type='hidden' id='topic_id' name='topic_id' value='{$topicId}'>
+<input type='hidden' id='post_id' 	name='post_id' 	value='{$postId}'>
+<input type='hidden' id='topic_id' 	name='topic_id' value='{$topicId}'>
 <p>
 {$titleForm}
 </p>
@@ -222,7 +295,7 @@ $htmlMain = <<<EOD
 </p>
 <p>
 <button id='publish' type='submit' {$jsEditorSubmit}><img src='{$img}/silk/accept.png' alt=''> {$pc->lang['PUBLISH']}</button>
-<button id='savenow' type='submit' {$jsEditorSubmit}><img src='{$img}/silk/disk.png' alt=''> {$pc->lang['SAVE_NOW']}</button>
+<button id='savenow' disabled='disabled' type='submit' {$jsEditorSubmit}><img src='{$img}/silk/disk.png' alt=''> {$pc->lang['SAVE_NOW']}</button>
 <button id='discard' type='reset'><img src='{$img}/silk/cancel.png' alt=''> {$pc->lang['DISCARD']}</button>
 </p>
 <p>
