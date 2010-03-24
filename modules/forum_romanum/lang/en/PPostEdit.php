@@ -23,6 +23,7 @@ $lang = Array(
 	'SAVED' => "Saved", 
 	'DISCARD' => "Discard", 
 	'PUBLISH' => "Publish", 
+	'VIEW_PUBLISHED_POST_LINK' => "View Published Post", 
 
 
 );

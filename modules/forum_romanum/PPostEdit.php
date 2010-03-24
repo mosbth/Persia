@@ -44,6 +44,9 @@ $pc->IsNumericOrDie($postId, 0);
 $pc->IsNumericOrDie($topicId, 0);
 $pc->IsStringOrDie($editor);
 
+// Publish button is initially disabled
+$publishDisabled = 'disabled="disabled"';
+
 
 // -------------------------------------------------------------------------------------------
 //
@@ -81,9 +84,22 @@ $row = $results[2]->fetch_object();
 $title 			= empty($row->title) 			? $pc->lang['NEW_TITLE'] : $row->title;
 $content 		= empty($row->content) 		? '' : $row->content;
 $saved	 		= empty($row->latest) 		? $pc->lang['NOT_YET'] : $row->latest;
+$hasDraft		 	= empty($row->hasDraft) 			? FALSE : $row->hasDraft;
+$draftTitle 	= empty($row->draftTitle) 		? '' : $row->draftTitle;
+$draftContent	= empty($row->draftContent) 	? '' : $row->draftContent;
+$draftSaved	 	= empty($row->draftModified) 	? '' : $row->draftModified;
 $results[2]->close(); 
 
 $mysqli->close();
+
+//
+// Use draft version if it exists 
+//
+if($hasDraft) {
+	$title = $draftTitle;
+	$content = $draftContent;
+	$publishDisabled = '';
+}
 
 
 // -------------------------------------------------------------------------------------------
@@ -146,12 +162,12 @@ $(document).ready(function() {
 		// do stuff before submitting form
 		beforeSubmit: function(data, status) {
 						autosave.callbackBeforeSave();
-						$.jGrowl('Saving...');
+						$.jGrowl('Saving (' + $('#action').val() + ')...');
 				},
 				
 		// define a callback function
 		success: function(data, status) {
-						$.jGrowl('Saved: ' + status + ' at ' + data.timestamp + 'Topic: ' + data.topicId + ', post: ' + data.postId);
+						$.jGrowl('Saved: ' + status + ' at ' + data.timestamp + ' Topic: ' + data.topicId + ', post: ' + data.postId);
 						$('#topic_id').val(data.topicId);
 						$('#post_id').val(data.postId);
 				}	
@@ -167,11 +183,12 @@ $(document).ready(function() {
 	// 2) In the callback, disable 1), enable the save-button och initiate a timer that submits the 
 	// form after a defined time.
 	// 3) If user initiates a save, then cancel the timer.
-	// 4) When autosaved, disable the save-button and enable the onkeypress-event again.
+	// 4) When saved/autosaved, disable the save-button and enable the onkeypress-event again.
 	//
 	// http://api.jquery.com/bind/
 	// http://api.jquery.com/unbind/
 	// https://developer.mozilla.org/en/DOM/window.setTimeout
+	// https://developer.mozilla.org/en/DOM/window.clearTimeout
 	//
 	var autosave = {
 		//
@@ -188,6 +205,7 @@ $(document).ready(function() {
 		// Callback function that carries out the ajax-submit for autosave.
 		//
 		callbackSave: function() {
+				$('#action').val('draft');
 				$('#form1').submit(); 
 			},
 		
@@ -212,7 +230,8 @@ $(document).ready(function() {
 				// Unbind the event, we already know that the form has changed, no need to detect it twice
 				$('#form1').unbind('keypress');
 				
-				// Enable the save button
+				// Enable the publish and save button
+				$('button#publish').removeAttr('disabled');
 				$('button#savenow').removeAttr('disabled');
 				
 				// Set the timer that will eventually fire off the autosave event
@@ -234,14 +253,21 @@ $(document).ready(function() {
 	$('#form1').click(function(event) {
 
 		if ($(event.target).is('button#publish')) {
-			;
+			// Disable the button until form has changed again
+			$('button#publish').attr('disabled', 'disabled');
+			$('#action').val('publish');
 		} else if ($(event.target).is('button#savenow')) {
-			;
-    } else if ($(event.target).is('button#discard')) {
+			$('#action').val('draft');
+		} else if ($(event.target).is('button#discard')) {
 			history.back();
-    } else if ($(event.target).is('a#viewPost')) {
-			$.jGrowl('View post?');
-			$('a#viewPost').attr('href', '?m={$gModule}&p=topic&id=' + $('#topic_id').val() + '#post-' + $('#post_id').val());
+		} else if ($(event.target).is('a#viewPost')) {
+			$.jGrowl('View published post...');
+			if($('#post_id').val() > 0) {
+				$('a#viewPost').attr('href', '?m={$gModule}&p=topic&id=' + $('#topic_id').val() + '#post-' + $('#post_id').val());		
+			} else {
+				alert('The post is not yet published. Press "Publish" to do so.');
+				return(false);
+			}
 		}
 	});
 
@@ -263,6 +289,7 @@ $titleForm 	= '';
 if($topicId == 0 && $postId == 0) {
 	$h1 				= $pc->lang['CREATE_NEW_TOPIC'];
 	$titleForm 	= "{$pc->lang['TOPIC']}: <input class='title' type='text' name='title' value='{$title}'>";
+	$publishDisabled = '';
 } else if($topicId != 0 && $postId == 0) {
 	$h1 				= $pc->lang['ADD_REPLY'];
 	$titleForm 	= "<h2>{$pc->lang['IN_TOPIC']}: \"{$topicTitle}\"</h2>";
@@ -287,6 +314,7 @@ $htmlMain = <<<EOD
 <input type='hidden' id='redirect_on_failure' name='redirect_on_failure' value=''>
 <input type='hidden' id='post_id' 	name='post_id' 	value='{$postId}'>
 <input type='hidden' id='topic_id' 	name='topic_id' value='{$topicId}'>
+<input type='hidden' id='action' 	name='action' value=''>
 <p>
 {$titleForm}
 </p>
@@ -294,12 +322,12 @@ $htmlMain = <<<EOD
 <textarea {$jsEditorTextarea} name='content'>{$content}</textarea>
 </p>
 <p>
-<button id='publish' type='submit' {$jsEditorSubmit}><img src='{$img}/silk/accept.png' alt=''> {$pc->lang['PUBLISH']}</button>
+<button id='publish' {$publishDisabled} type='submit' {$jsEditorSubmit}><img src='{$img}/silk/accept.png' alt=''> {$pc->lang['PUBLISH']}</button>
 <button id='savenow' disabled='disabled' type='submit' {$jsEditorSubmit}><img src='{$img}/silk/disk.png' alt=''> {$pc->lang['SAVE_NOW']}</button>
 <button id='discard' type='reset'><img src='{$img}/silk/cancel.png' alt=''> {$pc->lang['DISCARD']}</button>
 </p>
 <p>
-<a id='viewPost' title='Click to view the published post' href='?m={$gModule}&amp;p=topic&amp;id={$topicId}#post-{$postId}'>View post</a>
+<a id='viewPost' title='Click to view the published post' href='?m={$gModule}&amp;p=topic&amp;id={$topicId}#post-{$postId}'>{$pc->lang['VIEW_PUBLISHED_POST_LINK']}</a>
 </p>
 <!--
 <input type='button' value='Delete' onClick='if(confirm("Do you REALLY want to delete it?")) {form.action="?p=article-delete"; form.redirect_on_success.value="?m=rom&amp;p=topics"; submit();}'>

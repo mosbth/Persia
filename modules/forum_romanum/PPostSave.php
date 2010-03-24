@@ -36,6 +36,7 @@ $title		= $pc->POSTisSetOrSetDefault('title', 'No title');
 $content	= $pc->POSTisSetOrSetDefault('content', 'No content');
 $postId		= $pc->POSTisSetOrSetDefault('post_id', 0);
 $topicId	= $pc->POSTisSetOrSetDefault('topic_id', 0);
+$action		= $pc->POSTisSetOrSetDefault('action', '');
 $success	= $pc->POSTisSetOrSetDefault('redirect_on_success', '');
 $failure	= $pc->POSTisSetOrSetDefault('redirect_on_failure', '');
 $userId		= $_SESSION['idUser'];
@@ -64,7 +65,7 @@ $spPInsertOrUpdatePost = DBSP_PInsertOrUpdatePost;
 $query = <<< EOD
 SET @aPostId = {$postId};
 SET @aTopicId = {$topicId};
-CALL {$spPInsertOrUpdatePost}(@aPostId, @aTopicId, '{$userId}', '{$title}', '{$content}');
+CALL {$spPInsertOrUpdatePost}(@aPostId, @aTopicId, '{$userId}', '{$title}', '{$content}', '{$action}');
 SELECT 
 	@aPostId AS postId,
 	@aTopicId AS topicId,

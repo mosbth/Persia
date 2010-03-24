@@ -32,6 +32,7 @@ define('DBSP_PGetTopicDetails',									DB_PREFIX . 'PGetTopicDetails');
 define('DBSP_PGetTopicDetailsAndPosts',					DB_PREFIX . 'PGetTopicDetailsAndPosts');
 define('DBSP_PGetPostDetails',									DB_PREFIX . 'PGetPostDetails');
 define('DBSP_PInsertOrUpdatePost',							DB_PREFIX . 'PInsertOrUpdatepost');
+define('DBSP_PInitialPostPublish',							DB_PREFIX . 'PInitialPostPublish');
 
 // User Defined Functions UDF
 define('DBUDF_FCheckUserIsOwnerOrAdmin',	DB_PREFIX . 'FCheckUserIsOwnerOrAdmin');

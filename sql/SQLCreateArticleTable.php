@@ -30,6 +30,7 @@ $spPGetTopicDetails									= DBSP_PGetTopicDetails;
 $spPGetTopicDetailsAndPosts					= DBSP_PGetTopicDetailsAndPosts;
 $spPGetPostDetails									= DBSP_PGetPostDetails;
 $spPInsertOrUpdatePost							= DBSP_PInsertOrUpdatePost;
+$spPInitialPostPublish							= DBSP_PInitialPostPublish;
 
 // Get the UDF names
 $udfFCheckUserIsOwnerOrAdmin = DBUDF_FCheckUserIsOwnerOrAdmin;
@@ -69,7 +70,13 @@ CREATE TABLE {$tArticle} (
   contentArticle BLOB NOT NULL,
   createdArticle DATETIME NOT NULL,
   modifiedArticle DATETIME NULL,
-  deletedArticle DATETIME NULL
+  deletedArticle DATETIME NULL,
+
+	-- Attributes to enable draft, publish and autosaves
+  draftTitleArticle VARCHAR(256) NULL,
+  draftContentArticle BLOB NULL,
+  draftModifiedArticle DATETIME NULL,
+  publishedArticle DATETIME NULL
 
 );
 
@@ -345,8 +352,6 @@ BEGIN
 			ON A.Article_idUser = U.idUser
 		INNER JOIN {$tUser} AS U1
 			ON T.lastPostByTopic = U1.idUser
-	WHERE 
-		deletedArticle IS NULL
 	ORDER BY lastPostWhenTopic DESC
 	;
 END;
@@ -394,8 +399,7 @@ BEGIN
 		INNER JOIN {$tUser} AS U1
 			ON T.lastPostByTopic = U1.idUser
 	WHERE
-		T.idTopic = aTopicId AND
-		A.deletedArticle IS NULL
+		T.idTopic = aTopicId 
 	;
 END;
 
@@ -433,10 +437,10 @@ BEGIN
 			ON A.Article_idUser = U.idUser
 	WHERE 
 		T2P.Topic2Post_idTopic = aTopicId AND
-		A.deletedArticle IS NULL
+		A.deletedArticle IS NULL AND
+		A.publishedArticle IS NOT NULL
 	ORDER BY createdArticle ASC
 	;
-	
 END;
 
 
@@ -457,7 +461,12 @@ BEGIN
 		A.idArticle AS postid,
 		A.titleArticle AS title,
 		A.contentArticle AS content,
-		A.createdArticle AS created
+		A.createdArticle AS created,
+		A.modifiedArticle AS modified,
+		IF(draftModifiedArticle IS NULL, FALSE, TRUE) AS hasDraft,
+		A.draftTitleArticle AS draftTitle,
+		A.draftContentArticle AS draftContent,
+		A.draftModifiedArticle AS draftModified
 	FROM {$tTopic2Post} AS T2P
 		INNER JOIN {$tArticle} AS A
 			ON A.idArticle = T2P.Topic2Post_idArticle
@@ -465,10 +474,62 @@ BEGIN
 			ON A.Article_idUser = U.idUser
 	WHERE 
 		A.idArticle = aPostId AND
-		A.deletedArticle IS NULL
+		A.deletedArticle IS NULL AND
+		A.publishedArticle IS NOT NULL
 	ORDER BY createdArticle ASC
 	;
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP for the first time when the post is published. Create/update topic tables accordingly.
+--
+-- If aTopicId is 0 then insert new entry into topic-table.
+-- Keep tables Topic and Topic2Post updated.
+--
+DROP PROCEDURE IF EXISTS {$spPInitialPostPublish};
+CREATE PROCEDURE {$spPInitialPostPublish}
+(
+	INOUT aTopicId INT,
+	IN aPostId INT,
+	IN aUserId INT
+)
+BEGIN	
+	--
+	-- Is it a new topic? Then create the topic else update it.
+	--
+	IF aTopicId = 0 THEN
+	BEGIN
+		INSERT INTO {$tTopic}	
+			(Topic_idArticle, counterTopic, lastPostWhenTopic, lastPostByTopic) 
+			VALUES 
+			(aPostId, 1, NOW(), aUserId);
+			SET aTopicId = LAST_INSERT_ID();
+	END;
 	
+	--
+	-- Topic exists, just update it
+	--
+	ELSE
+	BEGIN
+		UPDATE {$tTopic} SET
+			counterTopic 			= counterTopic + 1,
+			lastPostWhenTopic = NOW(), 
+			lastPostByTopic		= aUserId
+		WHERE 
+			idTopic = aTopicId
+		LIMIT 1;
+	END;
+	END IF;
+
+	--
+	-- First time this post is published, insert post entry in Topic2Post
+	--
+	INSERT INTO {$tTopic2Post}	
+		(Topic2Post_idTopic, Topic2Post_idArticle) 
+		VALUES 
+		(aTopicId, aPostId);
 END;
 
 
@@ -476,10 +537,10 @@ END;
 --
 -- SP to insert or update a forum post.
 --
--- If aPostId is 0 then insert a new topic.
+-- If aPostId is 0 then insert a new post.
 -- else update the post.
--- If aTopicId is 0 then insert new entry into topic-table.
--- Keep tables Topic and Topic2Post updated.
+-- Save 'draft' or 'publish' the post depending on aAction.
+-- A post must be published once before it can be viewed. 
 --
 DROP PROCEDURE IF EXISTS {$spPInsertOrUpdatePost};
 CREATE PROCEDURE {$spPInsertOrUpdatePost}
@@ -488,72 +549,72 @@ CREATE PROCEDURE {$spPInsertOrUpdatePost}
 	INOUT aTopicId INT,
 	IN aUserId INT, 
 	IN aTitle VARCHAR(256), 
-	IN aContent BLOB
+	IN aContent BLOB,
+	IN aAction CHAR(7) -- 'draft' or 'publish'
 )
 BEGIN
-	DECLARE aParent INT;
+	DECLARE isPublished BOOLEAN;
 	
+	--
+	-- First see if this is a completely new post, if it is, start by creating an empty post
+	--
 	IF aPostId = 0 THEN
 	BEGIN
-		--
-		-- Insert new post
-		--
-		INSERT INTO {$tArticle}	
-			(Article_idUser, titleArticle, contentArticle, createdArticle) 
-			VALUES 
-			(aUserId, aTitle, aContent, NOW());
-
+		INSERT INTO {$tArticle}	(Article_idUser, createdArticle) VALUES (aUserId, NOW());
 		SET aPostId = LAST_INSERT_ID();
-
-		--
-		-- Is this a new topic?
-		--
-		IF aTopicId = 0 THEN
-		BEGIN
-			--
-			-- Insert new topic
-			--
-			INSERT INTO {$tTopic}	
-				(Topic_idArticle, counterTopic, lastPostWhenTopic, lastPostByTopic) 
-				VALUES 
-				(aPostId, 1, NOW(), aUserId);
-
-			SET aTopicId = LAST_INSERT_ID();
-		END;
-		ELSE
-			--
-			-- Update topic details
-			--
-			UPDATE {$tTopic} SET
-				counterTopic 			= counterTopic + 1,
-				lastPostWhenTopic = NOW(), 
-				lastPostByTopic		= aUserId
-			WHERE 
-				idTopic = aTopicId
-			LIMIT 1;
-		END IF;
-
-		--
-		-- Insert post entry in Topic2Post
-		--
-		INSERT INTO {$tTopic2Post}	
-			(Topic2Post_idTopic, Topic2Post_idArticle) 
-			VALUES 
-			(aTopicId, aPostId);
 	END;
-	ELSE
+	END IF;
+
+	--
+	-- Are we just saving a draft?
+	--
+	IF aAction = 'draft' THEN
 	BEGIN
-		--
-		-- Update existing post
-		--
 		UPDATE {$tArticle} SET
-			titleArticle 		= aTitle,
-			contentArticle 	= aContent,
-			modifiedArticle	= NOW()
+			draftTitleArticle 		= aTitle,
+			draftContentArticle 	= aContent,
+			draftModifiedArticle	= NOW()
 		WHERE
 			idArticle = aPostId  AND
 			{$udfFCheckUserIsOwnerOrAdmin}(aPostId, aUserId)
 		LIMIT 1;
+	END;
+
+	--
+	-- Or are we publishing the post? Then prepare it and remove the draft.
+	--
+	ELSEIF aAction = 'publish' THEN
+	BEGIN
+		--
+		-- Before we proceed, lets see if this post is published or not. 
+		--
+		SELECT publishedArticle INTO isPublished FROM {$tArticle} WHERE idArticle = aPostId;
+
+		--
+		-- Need to do some extra work if this is the first time the post is published
+		--
+		IF isPublished IS NULL THEN
+		BEGIN
+			CALL {$spPInitialPostPublish}(aTopicId, aPostId, aUserId);
+		END;
+		END IF;
+		
+		--
+		-- Re-publish the post it and remove the draft.
+		--
+		UPDATE {$tArticle} SET
+			titleArticle 					= aTitle,
+			contentArticle 				= aContent,
+			modifiedArticle				= NOW(),
+			publishedArticle			= NOW(),
+			draftTitleArticle 		= NULL,
+			draftContentArticle 	= NULL,
+			draftModifiedArticle	= NULL
+		WHERE
+			idArticle = aPostId  AND
+			{$udfFCheckUserIsOwnerOrAdmin}(aPostId, aUserId)
+		LIMIT 1;	
+
 	END;
 	END IF;
 END;
@@ -563,26 +624,27 @@ END;
 --
 -- Insert some default topics
 --
+SET @action='publish';
 SET @post=0;
 SET @topic=0;
-CALL {$spPInsertOrUpdatePost} (@post, @topic, 1, 'Rome was not built in one day', 'At least, that is the common opinion.');
+CALL {$spPInsertOrUpdatePost} (@post, @topic, 1, 'Rome was not built in one day', 'At least, that is the common opinion.', @action);
 
 SET @post=0;
-CALL {$spPInsertOrUpdatePost} (@post,  @topic, 2, '', 'But you never now. I have heard otherwise.');
-
-SET @post=0;
-SET @topic=0;
-CALL {$spPInsertOrUpdatePost} (@post,  @topic, 2, 'A forum should be open for all', 'Everybody should be able to say what they feel.');
-
-SET @post=0;
-CALL {$spPInsertOrUpdatePost} (@post,  @topic, 1, '', 'Is this really your opinion!!?');
-
-SET @post=0;
-CALL {$spPInsertOrUpdatePost} (@post,  @topic, 2, '', 'No, just said it for the fun of it.');
+CALL {$spPInsertOrUpdatePost} (@post,  @topic, 2, '', 'But you never now. I have heard otherwise.', @action);
 
 SET @post=0;
 SET @topic=0;
-CALL {$spPInsertOrUpdatePost} (@post,  @topic, 1, 'Which is the best forum ever?', 'I really would like to know your opinion on this matter.');
+CALL {$spPInsertOrUpdatePost} (@post,  @topic, 2, 'A forum should be open for all', 'Everybody should be able to say what they feel.', @action);
+
+SET @post=0;
+CALL {$spPInsertOrUpdatePost} (@post,  @topic, 1, '', 'Is this really your opinion!!?', @action);
+
+SET @post=0;
+CALL {$spPInsertOrUpdatePost} (@post,  @topic, 2, '', 'No, just said it for the fun of it.', @action);
+
+SET @post=0;
+SET @topic=0;
+CALL {$spPInsertOrUpdatePost} (@post,  @topic, 1, 'Which is the best forum ever?', 'I really would like to know your opinion on this matter.', @action);
 
 
 EOD;
