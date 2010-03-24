@@ -65,10 +65,12 @@ $spPInsertOrUpdatePost = DBSP_PInsertOrUpdatePost;
 $query = <<< EOD
 SET @aPostId = {$postId};
 SET @aTopicId = {$topicId};
-CALL {$spPInsertOrUpdatePost}(@aPostId, @aTopicId, '{$userId}', '{$title}', '{$content}', '{$action}');
+CALL {$spPInsertOrUpdatePost}(@aPostId, @aTopicId, @isPublished, @hasDraft, '{$userId}', '{$title}', '{$content}', '{$action}');
 SELECT 
 	@aPostId AS postId,
 	@aTopicId AS topicId,
+	@isPublished AS isPublished,
+	@hasDraft AS hasDraft,
 	NOW() AS timestamp
 ;
 EOD;
@@ -82,9 +84,11 @@ $db->RetrieveAndStoreResultsFromMultiQuery($results);
 
 // Get inserted/updated id
 $row = $results[3]->fetch_object();
-$postId 		= $row->postId;
-$topicId 		= $row->topicId;
-$timestamp	= $row->timestamp;
+$postId 			= $row->postId;
+$topicId 			= $row->topicId;
+$isPublished 	= (empty($row->isPublished)) ? 0 : 1;
+$hasDraft 		= (empty($row->hasDraft)) ? 0 : 1;
+$timestamp		= $row->timestamp;
 $results[3]->close();
 
 $mysqli->close();
@@ -99,7 +103,9 @@ if($success = 'json') {
 {
 	"topicId": {$topicId},
 	"postId": {$postId},
-	"timestamp": "{$timestamp}"
+	"timestamp": "{$timestamp}",
+	"isPublished": {$isPublished},
+	"hasDraft": {$hasDraft}
 }
 EOD;
 

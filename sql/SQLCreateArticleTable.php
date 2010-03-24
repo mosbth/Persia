@@ -61,13 +61,9 @@ CREATE TABLE {$tArticle} (
   -- Foreign keys
   Article_idUser INT NOT NULL,
   FOREIGN KEY (Article_idUser) REFERENCES {$tUser}(idUser),
-  
-  -- Attributes
-  -- parentArticle INT NULL,
-  -- FOREIGN KEY (parentArticle) REFERENCES {$tArticle}(idArticle),
 
-  titleArticle VARCHAR(256) NOT NULL,
-  contentArticle BLOB NOT NULL,
+  titleArticle VARCHAR(256) NULL,
+  contentArticle BLOB NULL,
   createdArticle DATETIME NOT NULL,
   modifiedArticle DATETIME NULL,
   deletedArticle DATETIME NULL,
@@ -463,7 +459,8 @@ BEGIN
 		A.contentArticle AS content,
 		A.createdArticle AS created,
 		A.modifiedArticle AS modified,
-		IF(draftModifiedArticle IS NULL, FALSE, TRUE) AS hasDraft,
+		IF(publishedArticle IS NULL, 0, 1) AS isPublished,
+		IF(draftModifiedArticle IS NULL, 0, 1) AS hasDraft,
 		A.draftTitleArticle AS draftTitle,
 		A.draftContentArticle AS draftContent,
 		A.draftModifiedArticle AS draftModified
@@ -547,13 +544,15 @@ CREATE PROCEDURE {$spPInsertOrUpdatePost}
 (
 	INOUT aPostId INT,
 	INOUT aTopicId INT,
+	OUT isPublished INT,
+	OUT hasDraft INT,
 	IN aUserId INT, 
 	IN aTitle VARCHAR(256), 
 	IN aContent BLOB,
 	IN aAction CHAR(7) -- 'draft' or 'publish'
 )
 BEGIN
-	DECLARE isPublished BOOLEAN;
+	DECLARE isPostPublished BOOLEAN;
 	
 	--
 	-- First see if this is a completely new post, if it is, start by creating an empty post
@@ -588,12 +587,12 @@ BEGIN
 		--
 		-- Before we proceed, lets see if this post is published or not. 
 		--
-		SELECT publishedArticle INTO isPublished FROM {$tArticle} WHERE idArticle = aPostId;
+		SELECT publishedArticle INTO isPostPublished FROM {$tArticle} WHERE idArticle = aPostId;
 
 		--
 		-- Need to do some extra work if this is the first time the post is published
 		--
-		IF isPublished IS NULL THEN
+		IF isPostPublished IS NULL THEN
 		BEGIN
 			CALL {$spPInitialPostPublish}(aTopicId, aPostId, aUserId);
 		END;
@@ -617,6 +616,21 @@ BEGIN
 
 	END;
 	END IF;
+
+	--
+	-- Check some status issues, return as OUT parameters, might be useful in the GUI.
+	--
+	SELECT 
+		IF(publishedArticle IS NULL, 0, 1),
+		IF(draftModifiedArticle IS NULL, 0, 1)
+		INTO 
+		isPublished,
+		hasDraft
+	FROM {$tArticle} 
+	WHERE 
+		idArticle = aPostId 
+	;
+
 END;
 
 
@@ -627,24 +641,24 @@ END;
 SET @action='publish';
 SET @post=0;
 SET @topic=0;
-CALL {$spPInsertOrUpdatePost} (@post, @topic, 1, 'Rome was not built in one day', 'At least, that is the common opinion.', @action);
+CALL {$spPInsertOrUpdatePost} (@post, @topic, @notUsed, @notUsed, 1, 'Rome was not built in one day', 'At least, that is the common opinion.', @action);
 
 SET @post=0;
-CALL {$spPInsertOrUpdatePost} (@post,  @topic, 2, '', 'But you never now. I have heard otherwise.', @action);
-
-SET @post=0;
-SET @topic=0;
-CALL {$spPInsertOrUpdatePost} (@post,  @topic, 2, 'A forum should be open for all', 'Everybody should be able to say what they feel.', @action);
-
-SET @post=0;
-CALL {$spPInsertOrUpdatePost} (@post,  @topic, 1, '', 'Is this really your opinion!!?', @action);
-
-SET @post=0;
-CALL {$spPInsertOrUpdatePost} (@post,  @topic, 2, '', 'No, just said it for the fun of it.', @action);
+CALL {$spPInsertOrUpdatePost} (@post,  @topic, @notUsed, @notUsed, 2, '', 'But you never now. I have heard otherwise.', @action);
 
 SET @post=0;
 SET @topic=0;
-CALL {$spPInsertOrUpdatePost} (@post,  @topic, 1, 'Which is the best forum ever?', 'I really would like to know your opinion on this matter.', @action);
+CALL {$spPInsertOrUpdatePost} (@post,  @topic, @notUsed, @notUsed, 2, 'A forum should be open for all', 'Everybody should be able to say what they feel.', @action);
+
+SET @post=0;
+CALL {$spPInsertOrUpdatePost} (@post,  @topic, @notUsed, @notUsed, 1, '', 'Is this really your opinion!!?', @action);
+
+SET @post=0;
+CALL {$spPInsertOrUpdatePost} (@post,  @topic, @notUsed, @notUsed, 2, '', 'No, just said it for the fun of it.', @action);
+
+SET @post=0;
+SET @topic=0;
+CALL {$spPInsertOrUpdatePost} (@post,  @topic, @notUsed, @notUsed, 1, 'Which is the best forum ever?', 'I really would like to know your opinion on this matter.', @action);
 
 
 EOD;

@@ -84,6 +84,7 @@ $row = $results[2]->fetch_object();
 $title 			= empty($row->title) 			? $pc->lang['NEW_TITLE'] : $row->title;
 $content 		= empty($row->content) 		? '' : $row->content;
 $saved	 		= empty($row->latest) 		? $pc->lang['NOT_YET'] : $row->latest;
+$isPublished 	= empty($row->isPublished)		? FALSE : $row->isPublished;
 $hasDraft		 	= empty($row->hasDraft) 			? FALSE : $row->hasDraft;
 $draftTitle 	= empty($row->draftTitle) 		? '' : $row->draftTitle;
 $draftContent	= empty($row->draftContent) 	? '' : $row->draftContent;
@@ -167,9 +168,11 @@ $(document).ready(function() {
 				
 		// define a callback function
 		success: function(data, status) {
-						$.jGrowl('Saved: ' + status + ' at ' + data.timestamp + ' Topic: ' + data.topicId + ', post: ' + data.postId);
 						$('#topic_id').val(data.topicId);
 						$('#post_id').val(data.postId);
+						$('#isPublished').val(data.isPublished);
+						$('#hasDraft').val(data.hasDraft);
+						$.jGrowl('Saved: ' + status + ' at ' + data.timestamp + ' Topic: ' + data.topicId + ', post: ' + data.postId + ', isPublished=' + data.isPublished + ' hasDraft=' + data.hasDraft);
 				}	
 	});
 
@@ -262,7 +265,7 @@ $(document).ready(function() {
 			history.back();
 		} else if ($(event.target).is('a#viewPost')) {
 			$.jGrowl('View published post...');
-			if($('#post_id').val() > 0) {
+			if($('#isPublished').val() == 1) {
 				$('a#viewPost').attr('href', '?m={$gModule}&p=topic&id=' + $('#topic_id').val() + '#post-' + $('#post_id').val());		
 			} else {
 				alert('The post is not yet published. Press "Publish" to do so.');
@@ -309,6 +312,14 @@ $img = WS_IMAGES;
 $htmlMain = <<<EOD
 <h1>{$h1}</h1>
 <fieldset class='article'>
+
+<!-- Form to keep status values during ajax-calls-->
+<form>
+<input type='hidden' id='isPublished' value='{$isPublished}'>
+<input type='hidden' id='hasDraft' 	value='{$hasDraft}'>
+</form>
+
+<!-- The real form -->
 <form id='form1' action='?m={$gModule}&amp;p=post-save' method='POST'>
 <input type='hidden' id='redirect_on_success' name='redirect_on_success' value='{$redirectOnSuccess}'>
 <input type='hidden' id='redirect_on_failure' name='redirect_on_failure' value=''>
