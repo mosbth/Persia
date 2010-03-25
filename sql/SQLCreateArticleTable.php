@@ -459,6 +459,8 @@ BEGIN
 		A.contentArticle AS content,
 		A.createdArticle AS created,
 		A.modifiedArticle AS modified,
+		A.deletedArticle AS deleted,
+		A.publishedArticle AS published,
 		IF(publishedArticle IS NULL, 0, 1) AS isPublished,
 		IF(draftModifiedArticle IS NULL, 0, 1) AS hasDraft,
 		A.draftTitleArticle AS draftTitle,

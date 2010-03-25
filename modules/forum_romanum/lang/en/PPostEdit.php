@@ -24,6 +24,8 @@ $lang = Array(
 	'DISCARD' => "Discard", 
 	'PUBLISH' => "Publish", 
 	'VIEW_PUBLISHED_POST_LINK' => "View Published Post", 
+	'POST_DETAILS' => "Details and Status", 
+
 
 
 );

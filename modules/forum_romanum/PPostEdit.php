@@ -172,6 +172,7 @@ $(document).ready(function() {
 						$('#post_id').val(data.postId);
 						$('#isPublished').val(data.isPublished);
 						$('#hasDraft').val(data.hasDraft);
+						$('#postDetails').html(data.status);
 						$.jGrowl('Saved: ' + status + ' at ' + data.timestamp + ' Topic: ' + data.topicId + ', post: ' + data.postId + ', isPublished=' + data.isPublished + ' hasDraft=' + data.hasDraft);
 				}	
 	});
@@ -357,9 +358,14 @@ $htmlRight	= <<<EOD
 <h3 class='columnMenu'>{$pc->lang['CHANGE_EDITOR']}</h3>
 <p>
 <a href='?m={$gModule}&amp;p=post-edit&amp;editor=plain&amp;id={$postId}&amp;topic={$topicId}'>Plain</a> | 
+<em>
 <a href='?m={$gModule}&amp;p=post-edit&amp;editor=NicEdit&amp;id={$postId}&amp;topic={$topicId}'>NicEdit</a> |
 <a href='?m={$gModule}&amp;p=post-edit&amp;editor=WYMeditor&amp;id={$postId}&amp;topic={$topicId}'>WYMeditor</a> |
 <a href='?m={$gModule}&amp;p=post-edit&amp;editor=markItUp&amp;id={$postId}&amp;topic={$topicId}'>markItUp!</a> 
+</em>
+</p>
+<h3 class='columnMenu'>{$pc->lang['POST_DETAILS']}</h3>
+<p id='postDetails'>
 </p>
 <!--
 <h3 class='columnMenu'>About This Topic</h3>

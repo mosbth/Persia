@@ -193,7 +193,7 @@ EOD;
 	public function PreparePageBody($aBodyLeft, $aBodyMain, $aBodyRight) {
 
 		// General error message from session
-		$htmlErrorMessage = $this->getErrorMessage();
+		$htmlErrorMessage = $this->GetErrorMessage();
 		
 		// Stylesheet must support this
 		// 1, 2 or 3-column layout? 
@@ -238,11 +238,11 @@ EOD;
 
 		if(!WS_VALIDATORS) { return ""; }
 
- 		$refToThisPage 			= CPageController::CurrentURL();
- 		$linkToCSSValidator	 	= "<a href='http://jigsaw.w3.org/css-validator/check/referer'>CSS</a>";
-		$linkToMarkupValidator 	= "<a href='http://validator.w3.org/check/referer'>XHTML</a>";
-		$linkToCheckLinks	 	= "<a href='http://validator.w3.org/checklink?uri={$refToThisPage}'>Links</a>";
- 		$linkToHTML5Validator	= "<a href='http://html5.validator.nu/?doc={$refToThisPage}'>HTML5</a>";
+ 		$refToThisPage 					= CPageController::CurrentURL();
+ 		$linkToCSSValidator	 		= "<a href='http://jigsaw.w3.org/css-validator/check/referer'>CSS</a>";
+		$linkToMarkupValidator	= "<a href='http://validator.w3.org/check/referer'>XHTML</a>";
+		$linkToCheckLinks	 			= "<a href='http://validator.w3.org/checklink?uri={$refToThisPage}'>Links</a>";
+ 		$linkToHTML5Validator		= "<a href='http://html5.validator.nu/?doc={$refToThisPage}'>HTML5</a>";
  
 		return "<br />{$linkToCSSValidator} {$linkToMarkupValidator} {$linkToCheckLinks} {$linkToHTML5Validator}";
 	}
@@ -266,21 +266,18 @@ EOD;
 	// Create a errormessage if its set in the SESSION
 	//
 	public function GetErrorMessage() {
-
-        $html = "";
-
-        if(isset($_SESSION['errorMessage'])) {
-        
-            $html = <<<EOD
+		$html = "";
+		if(isset($_SESSION['errorMessage'])) {    
+			$img = WS_IMAGES;
+			$html = <<<EOD
 <div class='errorMessage'>
+<img alt='' src='{$img}/psst_60x60.png'>
 {$_SESSION['errorMessage']}
 </div>
 EOD;
-
-            unset($_SESSION['errorMessage']);
-        }
-
-        return $html;   
+			unset($_SESSION['errorMessage']);
+		}
+		return $html;   
 	}
 	
 

@@ -96,7 +96,7 @@ fieldset.loginform {
 	margin: 0 auto;
 	padding: 10px;
 	width: 400px;
-	border: 10px ridge;
+	border: 10px #eee ridge;
 }
 
 div#loginbar {
@@ -166,10 +166,10 @@ p.last {
  */
  
 div.errorMessage {
-	border: #333333 4px dashed;
-	padding: 5px;
-	margin: 5px;
-	text-align: center;
+	border: none; /*#333333 4px dashed; */
+	font-size: 1.5em;
+	font-style: italic;
+	padding: 1.5em;
 }
 
 /* To display code. */

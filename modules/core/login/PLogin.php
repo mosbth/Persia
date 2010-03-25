@@ -49,7 +49,7 @@ $htmlMain = <<<EOD
 <p>
 <!-- {$pc->lang['LOGIN_USING_ACCOUNT_OR_EMAIL']} -->
 </p>
-<form action="?m={$gModule}&amp;p=loginp" method="post">
+<form action="?m={$gModule}&p=loginp" method="post">
 <input type='hidden' name='redirect' value='{$redirectTo}'>
 <table>
 <tr>

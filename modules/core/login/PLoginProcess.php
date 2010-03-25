@@ -29,9 +29,11 @@ $intFilter->FrontControllerIsVisitedOrDie();
 // -------------------------------------------------------------------------------------------
 //
 // Destroy the current session (logout user), if it exists. 
+// Remember where we are going, this enables us to redirect to the initial pagerequest,
+// even after several unsuccessfull login attempts.
 //
 require_once(TP_SOURCEPATH . 'FDestroySession.php');
-
+//$_SESSION['history1'] = $pc->POSTisSetOrSetDefault('redirect');
 
 // -------------------------------------------------------------------------------------------
 //
@@ -56,6 +58,8 @@ $res 		= $db->Query($query);
 //
 // Use the results of the query to populate a session that shows we are logged in
 //
+global $gModule;
+
 session_start(); 			// Must call it since we destroyed it above.
 session_regenerate_id(); 	// To avoid problems 
 
@@ -68,7 +72,7 @@ if($res->num_rows === 1) {
 	$_SESSION['groupMemberUser'] 	= $row->groupid;		
 } else {
 	$_SESSION['errorMessage']	= "Failed to login, wrong username or password";
-	$_POST['redirect'] 				= 'login';
+	$_POST['redirect'] 				= "?m={$gModule}&p=login";
 }
 
 $res->close();
