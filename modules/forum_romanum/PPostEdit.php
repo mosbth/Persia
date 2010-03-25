@@ -260,8 +260,12 @@ $(document).ready(function() {
 			// Disable the button until form has changed again
 			$('button#publish').attr('disabled', 'disabled');
 			$('#action').val('publish');
+			$('#form1').submit();
+			return(false);
 		} else if ($(event.target).is('button#savenow')) {
 			$('#action').val('draft');
+			$('#form1').submit();
+			return(false);
 		} else if ($(event.target).is('button#discard')) {
 			history.back();
 		} else if ($(event.target).is('a#viewPost')) {
