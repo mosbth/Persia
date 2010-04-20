@@ -128,19 +128,18 @@ EOD;
 
 		// If user is logged in, show details about user and some links.
 		// If user is not logged in, show link to login-page
-        if(isset($_SESSION['accountUser'])) {
-        
-        	$admHtml = "";
-        	if(isset($_SESSION['groupMemberUser']) && $_SESSION['groupMemberUser'] == 'adm') {
-        		$admHtml = "<a href='?{$m}p=admin'>{$pc->lang['ADMIN']}</a> ";
-        	}
+		if(isset($_SESSION['accountUser'])) {
+    	$admHtml = "";
+
+      if(isset($_SESSION['groupMemberUser']) && $_SESSION['groupMemberUser'] == 'adm') {
+      	$admHtml = "<a href='?{$m}p=admin'>{$pc->lang['ADMIN']}</a> ";
+      }
         
 			$html = <<<EOD
 <div id='loginbar'>
 	<p>
-	{$_SESSION['accountUser']}   
+	<a href='?{$m}p=account-settings'>{$_SESSION['accountUser']}</a>  	
 	<!--
-	<a href='?{$m}p=account-details'>{$pc->lang['SETTINGS']}</a>  
 	{$admHtml} 
 	-->
 	<a href='?{$m}p=logoutp'>{$pc->lang['LOGOUT']}</a>

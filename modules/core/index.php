@@ -25,8 +25,8 @@ switch($gPage) {
 	//
 	// The home-page
 	//
-	case 'home':		require_once(TP_PAGESPATH . 'home/PIndex.php'); break;
-	case 'about':		require_once(TP_PAGESPATH . 'home/PAbout.php'); break;
+	case 'home':			require_once(TP_PAGESPATH . 'home/PIndex.php'); break;
+	case 'about':			require_once(TP_PAGESPATH . 'home/PAbout.php'); break;
 	case 'template':	require_once(TP_PAGESPATH . 'home/PTemplate.php'); break;
 	
 	//
@@ -39,22 +39,19 @@ switch($gPage) {
 	// Login, logout
 	//
 	case 'login':		require_once(TP_PAGESPATH . 'login/PLogin.php'); break;
-	case 'loginp':		require_once(TP_PAGESPATH . 'login/PLoginProcess.php'); break;
-	case 'logoutp':		require_once(TP_PAGESPATH . 'login/PLogoutProcess.php'); break;
+	case 'loginp':	require_once(TP_PAGESPATH . 'login/PLoginProcess.php'); break;
+	case 'logoutp':	require_once(TP_PAGESPATH . 'login/PLogoutProcess.php'); break;
+
+	//
+	// User, profile and settings
+	//
+	case 'account-settings':	require_once(TP_PAGESPATH . 'account/PAccountSettings.php'); break;
+	case 'account-update':		require_once(TP_PAGESPATH . 'account/PAccountSettingsProcess.php'); break;
 
 	//
 	// Administration
 	//
-	case 'admin':		require_once(TP_PAGESPATH . 'admin_users/PUsersList.php'); break;
-
-	//
-	// User Profile
-	//
-	case 'account-details':		require_once(TP_PAGESPATH . 'account/PAccount.php'); break;
-	case 'style-details':		require_once(TP_PAGESPATH . 'style/PStyle.php'); break;
-	//
-	case 'settingsprofile':		require_once(TP_PAGESPATH . 'userprofile/PProfileShow.php'); break;
-	case 'account':				require_once(TP_PAGESPATH . 'account/PAccount.php'); break;
+	//case 'admin':		require_once(TP_PAGESPATH . 'admin_users/PUsersList.php'); break;
 
 	//
 	// Directory listning
@@ -65,15 +62,15 @@ switch($gPage) {
 	// Article (Forum Romanum 0.1 (0.01))
 	//
 	//case 'article-edit':	require_once(TP_PAGESPATH . 'forum/PArticleEdit.php'); break;
-	case 'article-save':	require_once(TP_PAGESPATH . 'forum/PArticleSave.php'); break;
+	case 'article-save':		require_once(TP_PAGESPATH . 'forum/PArticleSave.php'); break;
 	case 'article-delete':	require_once(TP_PAGESPATH . 'forum/PArticleDelete.php'); break;
-	case 'article-show':	require_once(TP_PAGESPATH . 'forum/PArticleShow.php'); break;
-	case 'topics':			require_once(TP_PAGESPATH . 'forum/PTopics.php'); break;
-	case 'topic':			require_once(TP_PAGESPATH . 'forum/PTopicShow.php'); break;
-	case 'post-edit':		require_once(TP_PAGESPATH . 'forum/PPostEdit.php'); break;
+	case 'article-show':		require_once(TP_PAGESPATH . 'forum/PArticleShow.php'); break;
+	case 'topics':					require_once(TP_PAGESPATH . 'forum/PTopics.php'); break;
+	case 'topic':						require_once(TP_PAGESPATH . 'forum/PTopicShow.php'); break;
+	case 'post-edit':				require_once(TP_PAGESPATH . 'forum/PPostEdit.php'); break;
 
 	// Testing JavaScript editors
-	case 'article-edit':		require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEdit.php'); break;
+	case 'article-edit':			require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEdit.php'); break;
 	case 'article-edit-all':	require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEditAll.php'); break;
 	case 'article-nicedit':		require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEdit_NicEdit.php'); break;
 	case 'article-wymeditor':	require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEdit_WYMeditor.php'); break;

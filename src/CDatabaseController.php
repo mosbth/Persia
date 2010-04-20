@@ -1,11 +1,11 @@
 <?php
 // ===========================================================================================
 //
-// Class CDatabaseController
+// File: CDatabaseController.php
 //
-// To ease database usage for pagecontroller. Supports MySQLi.
+// Description: To ease database usage for pagecontroller. Supports MySQLi.
 //
-// Author : Mikael Roos
+// Author: Mikael Roos
 //
 
 // Include commons for database
@@ -19,6 +19,7 @@ class CDatabaseController {
 	// Internal variables
 	//
 	protected $iMysqli;
+	protected $iPc;
 
 
 	// ------------------------------------------------------------------------------------
@@ -28,7 +29,9 @@ class CDatabaseController {
 	public function __construct() {
 
 		$this->iMysqli = FALSE;		
-	}
+		
+		$this->iPc = new CPageController();
+		$this->iPc->LoadLanguage(__FILE__);	}
 
 
 	// ------------------------------------------------------------------------------------
@@ -49,8 +52,7 @@ class CDatabaseController {
 		$this->iMysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 
 		if (mysqli_connect_error()) {
-   			echo "Connect to database failed: ".mysqli_connect_error()."<br>";
-   			exit();
+   			die(sprintf($this->iPc->lang['CONNECT_TO_DATABASE_FAILED'], mysqli_connect_error()));
 		}
 
 		return $this->iMysqli;
@@ -64,7 +66,7 @@ class CDatabaseController {
 	public function MultiQuery($aQuery) {
 
 		$res = $this->iMysqli->multi_query($aQuery) 
-			or die("Could not query database, query =<br/><pre>{$aQuery}</pre><br/>{$this->iMysqli->error}");
+			or die(sprintf($this->iPc->lang['COULD_NOT_QUERY_DATABASE'], $aQuery, $this->iMysqli->error));
             
 		return $res;
 	}
@@ -84,8 +86,8 @@ class CDatabaseController {
 		} while($mysqli->next_result());
 		
 		// Check if there is a database error
-        !$mysqli->errno 
-        	or die("<p>Failed retrieving resultsets.</p><p>Query =<br/><pre>{$query}</pre><br/>Error code: {$this->iMysqli->errno} ({$this->iMysqli->error})</p>");
+		!$mysqli->errno 
+				or die(sprintf($this->iPc->lang['FAILED_RETRIEVING_RESULTSET'], $this->iMysqli->errno, $this->iMysqli->error));
 	}
 
 
@@ -127,9 +129,28 @@ class CDatabaseController {
 	public function Query($aQuery) {
 
 		$res = $this->iMysqli->query($aQuery) 
-			or die("Could not query database, query =<br/><pre>{$aQuery}</pre><br/>{$this->iMysqli->error}");
+			or die(sprintf($this->iPc->lang['COULD_NOT_QUERY_DATABASE'], $aQuery, $this->iMysqli->error));
 
 		return $res;
+	}
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Execute a database query from file, check the number of rows affected.
+	// If aRowsAffected is 0, then skip checking.
+	//
+	public function ConnectAndExecuteSingleSQLQueryFromFileCheckRowsAffected($aFile, $aRowsAffected=0) {
+
+		$this->Connect();
+		$query 	= $this->LoadSQL($aFile);
+		$res 		= $this->Query($query);
+
+		if($aRowsAffected != 0 && $this->iMysqli->affectedRows != $aRowsAffected) {
+			$this->iPc->SetSessionErrorMessage(sprintf($this->iPc->lang['NUMBER_OF_ROWS_AFFECTED_MISMATCH']), $aRowsAffected, $this->iMysqli->affectedRows);
+		}
+		
+		$res->close();
+		$this->iMysqli->close();
 	}
 
 

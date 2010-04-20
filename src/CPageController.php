@@ -1,9 +1,11 @@
 <?php
 // ===========================================================================================
 //
-// Class CPagecontroller
+// File: CPagecontroller.php
 //
-// Nice to have utility for common methods useful in most pagecontrollers.
+// Description: Nice to have utility for common methods useful in most pagecontrollers.
+//
+// Author: Mikael Roos, mos@bth.se
 //
 
 class CPageController {
@@ -55,6 +57,16 @@ class CPageController {
 
 		require_once($langFile);
 		$this->lang = array_merge($this->lang, $lang);
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Set error message/notice, used and cleared by CHTMLPage
+	//
+	public static function SetSessionErrorMessage($aMessage) {
+		$message = isset($_SESSION['errorMessage']) ? $_SESSION['errorMessage'] : '';
+		$_SESSION['errorMessage']	= $message . '<p>' . $aMessage . '</p>';
 	}
 
 
@@ -172,7 +184,7 @@ class CPageController {
 		
 		$m = (empty($aModule)) ? "m={$gModule}" : "m={$aModule}";
 		$p = "p={$aPage}";
-		$aUri = WS_SITELINK . "?{$m}&amp;{$p}";
+		$aUri = WS_SITELINK . "?{$m}&{$p}";
 
 		// Enable sending $aArguments as an Array later on. When needed.
 

@@ -71,7 +71,7 @@ if($res->num_rows === 1) {
 	$_SESSION['accountUser'] 			= $row->account;		
 	$_SESSION['groupMemberUser'] 	= $row->groupid;		
 } else {
-	$_SESSION['errorMessage']	= "Failed to login, wrong username or password";
+	$pc->SetSessionErrorMessage("Failed to login, wrong username or password");
 	$_POST['redirect'] 				= "?m={$gModule}&p=login";
 }
 

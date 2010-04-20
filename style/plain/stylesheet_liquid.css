@@ -92,13 +92,6 @@ div.sidebox {
 	padding: 0;
 }
 
-fieldset.loginform {
-	margin: 0 auto;
-	padding: 10px;
-	width: 400px;
-	border: 10px #eee ridge;
-}
-
 div#loginbar {
 	float: right;
 	margin: 0;

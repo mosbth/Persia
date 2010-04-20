@@ -18,7 +18,11 @@ $tGroupMember = DBT_GroupMember;
 $tStatistics 	= DBT_Statistics;
 
 // Get the SP/UDF/trigger names
-$trInsertUser	= DBTR_TInsertUser;
+$trInsertUser			= DBTR_TInsertUser;
+$spAccountDetails = DBSP_PGetAccountDetails;
+$spChangePassword	= DBSP_PChangeAccountPassword;
+$spChangeEmail		= DBSP_PChangeAccountEmail;
+$spChangeAvatar		= DBSP_PChangeAccountAvatar;
 
 $imageLink = WS_IMAGES;
 
@@ -53,7 +57,7 @@ CREATE TABLE {$tUser} (
   nameUser CHAR(100) NOT NULL,
   emailUser CHAR(100) NOT NULL,
   passwordUser CHAR(32) NOT NULL,
-  avatarUser VARCHAR(256) NULL
+  avatarUser VARCHAR(255) NULL
 );
 
 
@@ -126,6 +130,106 @@ AFTER INSERT ON {$tUser}
 FOR EACH ROW
 BEGIN
   INSERT INTO {$tStatistics} (Statistics_idUser) VALUES (NEW.idUser);
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to show/display details of an account/user.
+--
+DROP PROCEDURE IF EXISTS {$spAccountDetails};
+CREATE PROCEDURE {$spAccountDetails}
+(
+	IN aUserId INT
+)
+BEGIN
+	
+	SELECT 
+		U.accountUser AS account,
+		U.nameUser AS name,
+		U.emailUser AS email,
+		U.avatarUser AS avatar,
+		G.idGroup AS groupakronym,
+		G.nameGroup AS groupdesc
+	FROM $tUser AS U
+		INNER JOIN {$tGroupMember} AS Gm
+			ON U.idUser = Gm.GroupMember_idUser
+		INNER JOIN {$tGroup} AS G
+			ON G.idGroup = Gm.GroupMember_idGroup
+	;
+	
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to change password for an account/user.
+--
+DROP PROCEDURE IF EXISTS {$spChangePassword};
+CREATE PROCEDURE {$spChangePassword}
+(
+	IN aUserId INT,
+	IN aPassword CHAR(32)
+)
+BEGIN
+	
+	UPDATE 
+		$tUser
+	SET 
+		passwordUser = md5(aPassword)
+	WHERE
+		idUser = aUserId
+	LIMIT 1
+	;
+	
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to change email for an account/user.
+--
+DROP PROCEDURE IF EXISTS {$spChangeEmail};
+CREATE PROCEDURE {$spChangeEmail}
+(
+	IN aUserId INT,
+	IN aEmail CHAR(100)
+)
+BEGIN
+	
+	UPDATE 
+		$tUser
+	SET 
+		emailUser = aEmail
+	WHERE
+		idUser = aUserId
+	LIMIT 1
+	;
+	
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to change password for an account/user.
+--
+DROP PROCEDURE IF EXISTS {$spChangeAvatar};
+CREATE PROCEDURE {$spChangeAvatar}
+(
+	IN aUserId INT,
+	IN aAvatar CHAR(255)
+)
+BEGIN
+	
+	UPDATE 
+		$tUser
+	SET 
+		avatarUser = aAvatar
+	WHERE
+		idUser = aUserId
+	LIMIT 1
+	;
+	
 END;
 
 

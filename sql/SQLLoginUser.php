@@ -1,9 +1,9 @@
 <?php
 // ===========================================================================================
 //
-// SQLLoginUser.php
+// File: SQLLoginUser.php
 //
-// SQL statements to login a user and validate to database.
+// Description: SQL statements to login a user and validate to database.
 //
 // WARNING: Do not forget to check input variables for SQL injections. 
 //
@@ -12,14 +12,14 @@
 
 
 // Get the tablenames
-$tUser 			= DBT_User;
-$tGroup 		= DBT_Group;
-$tGroupMember 	= DBT_GroupMember;
+$tUser 				= DBT_User;
+$tGroup 			= DBT_Group;
+$tGroupMember	= DBT_GroupMember;
 
 // Prevent SQL injections
 global $user, $password;
 $user 		= $mysqli->real_escape_string($user);
-$password 	= $mysqli->real_escape_string($password);
+$password = $mysqli->real_escape_string($password);
 
 // Create the query
 $query = <<< EOD
