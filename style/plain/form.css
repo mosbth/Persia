@@ -21,14 +21,15 @@ fieldset.loginform input.account,
 fieldset.loginform input.password {
 	font-family: Verdana, Sans-serif;
 	width: 16em;
-	font-size: 1.5em;
+	font-size: 1.2em;
+	padding: 0.3em;
 }
 
 fieldset.loginform button {
 	font-family: Verdana, Sans-serif;
 	width: 10em;	
+	font-size: 1.2em;
 	padding: 0.3em;
-	font-size: 1.5em;
 }
 
 
