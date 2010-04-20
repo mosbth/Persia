@@ -146,7 +146,7 @@ $htmlMain = <<< EOD
 </tr>
 <tr>
 <td>
-<img src='{$row->avatar}'>
+<img src='{$row->avatar}' alt=':)'>
 </td>
 <td style='text-align: right;'>
 <button type='submit' name='submit' value='change-avatar'>{$pc->lang['UPDATE_AVATAR']}</button>
