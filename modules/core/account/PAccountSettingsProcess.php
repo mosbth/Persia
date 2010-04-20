@@ -55,10 +55,8 @@ $userId				= $_SESSION['idUser'];
 // Are we trying to change the same user profile as is signed in? Must be Yes.
 //
 if($userId != $accountId) {
-
-
-	echo "Missusage" . $submitAction;
-	die;
+		$pc->SetSessionErrorMessage($pc->lang['MISMATCH_SESSION_AND_SETTINGS']);
+		$pc->RedirectTo($redirectFail);
 }
 
 
@@ -98,6 +96,14 @@ else if($submitAction == 'change-password') {
 	// Get details from resultset
 	$row = $results[1]->fetch_object();
 
+	/*
+	if($row->rowsaffected != 1) {
+		$pc->SetSessionErrorMessage($pc->lang['PASSWORD_WAS_NOT_UPDATED']);
+		$pc->RedirectTo($redirectFail);
+	} 
+	*/
+	
+	$results[1]->close();
 	$mysqli->close();
 
 	// Redirect to resultpage
@@ -131,6 +137,14 @@ else if($submitAction == 'change-email') {
 	// Get details from resultset
 	$row = $results[1]->fetch_object();
 
+	/*
+	if($row->rowsaffected != 1) {
+		$pc->SetSessionErrorMessage($pc->lang['EMAIL_WAS_NOT_UPDATED']);
+		$pc->RedirectTo($redirectFail);
+	} 
+	*/
+	
+	$results[1]->close();
 	$mysqli->close();
 
 	// Redirect to resultpage
@@ -164,6 +178,14 @@ else if($submitAction == 'change-avatar') {
 	// Get details from resultset
 	$row = $results[1]->fetch_object();
 
+	/*
+	if($row->rowsaffected != 1) {
+		$pc->SetSessionErrorMessage($pc->lang['AVATAR_WAS_NOT_UPDATED']);
+		$pc->RedirectTo($redirectFail);
+	} 
+	*/
+	
+	$results[1]->close();
 	$mysqli->close();
 
 	// Redirect to resultpage
@@ -175,177 +197,7 @@ else if($submitAction == 'change-avatar') {
 //
 // Default, submit-action not supported, show error and die.
 // 
-else {
-
-	echo $submitAction;
-	die;
-}
-
-
-exit;
-
-// -------------------------------------------------------------------------------------------
-//
-// Redirect to another page
-//
-$pc->RedirectTo($pc->POSTisSetOrSetDefault('redirect'));
-exit;
-
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Create and print out the resulting page
-//
-$page = new CHTMLPage();
-
-$page->PrintPage(sprintf($pc->lang['SETTINGS_FOR'], $account), $htmlLeft, $htmlMain, $htmlRight);
-exit;
-
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Create a new database object, connect to the database, get the query and execute it.
-// Relates to files in directory TP_SQLPATH.
-//
-$db 	= new CDatabaseController();
-$mysqli = $db->Connect();
-
-// Get the SP names
-$spAccountDetails = DBSP_PGetAccountDetails;
-
-$query = <<< EOD
-CALL {$spAccountDetails}({$userId});
-EOD;
-
-// Perform the query
-$results = Array();
-$res = $db->MultiQuery($query); 
-$db->RetrieveAndStoreResultsFromMultiQuery($results);
-	
-// Get account details 	
-$row = $results[0]->fetch_object();
-$account 			= $row->account;
-$name					= $row->name;
-$email				= $row->email;
-$avatar 			= $row->avatar;
-$groupakronym	= $row->groupakronym;
-$groupdesc		= $row->groupdesc;
-$results[0]->close(); 
-
-$mysqli->close();
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Page specific code
-//
-global $gModule;
-
-/*
-$urlToAddReply = "?m={$gModule}&amp;p=post-edit&amp;topic={$topicId}";
-
-$htmlMain = <<<EOD
-<h1>{$title}</h1>
-{$posts}
-<p>
-<a href='{$urlToAddReply}'>Add reply</a>
-</p>
-EOD;
-*/
-
-$htmlMain = <<< EOD
-<h1>{$pc->lang['MANAGE_ACCOUNT']}</h1>
-<form>
-
-<h2>{$pc->lang['BASIC_ACCOUNT_INFO']}</h2>
-<fieldset class='accountsettings'>
-<table width='99%'>
-<tr>
-<td>{$pc->lang['ACCOUNT_NAME_LABEL']}</td>
-<td style='text-align: right;'><input class='account' type='text' name='account' readonly value='{$account}'></td>
-</tr>
-<tr>
-<td>{$pc->lang['ACCOUNT_PASSWORD_LABEL']}</td>
-<td style='text-align: right;'><input class='password' type='password' name='password1'></td>
-</tr>
-<tr>
-<td>{$pc->lang['ACCOUNT_PASSWORD_AGAIN_LABEL']}</td>
-<td style='text-align: right;'><input class='password' type='password' name='password2'></td>
-</tr>
-<tr>
-<td colspan='2' style='text-align: right;'>
-<button class='' type="submit" name="submit-change-password">{$pc->lang['CHANGE_PASSWORD']}</button>
-</td>
-</tr>
-</table>
-</fieldset>
-
-<h2>{$pc->lang['EMAIL_SETTINGS']}</h2>
-<fieldset class='accountsettings'>
-<table width='99%'>
-<tr>
-<td>{$pc->lang['EMAIL_LABEL']}</td>
-<td style='text-align: right;'><input class='email' type='text' name='email' value='{$email}'></td>
-</tr>
-<tr>
-<td colspan='2' style='text-align: right;'>
-<button class='' type="submit" name="submit-change-email">{$pc->lang['UPDATE_EMAIL']}</button>
-</td>
-</tr>
-</table>
-</fieldset>
-
-
-<h2>{$pc->lang['AVATAR_SETTINGS']}</h2>
-<fieldset class='accountsettings'>
-<table width='99%'>
-<tr>
-<td>{$pc->lang['AVATAR_LABEL']}</td>
-<td style='text-align: right;'><input class='avatar' type='text' name='avatar' value='{$avatar}'></td>
-</tr>
-<tr>
-<td>
-<img src='{$row->avatar}'>
-</td>
-<td style='text-align: right;'>
-<button class='' type="submit" name="submit-change-avatar">{$pc->lang['UPDATE_AVATAR']}</button>
-</td>
-</tr>
-</table>
-</fieldset>
-
-
-<h2>{$pc->lang['GROUP_SETTINGS']}</h2>
-<fieldset class='accountsettings'>
-<table width='99%'>
-<tr>
-<td>{$pc->lang['GROUPMEMBER_OF_LABEL']}</td>
-<td style='text-align: right;'><input class='groups' type='text' name='groups' value='{$groupakronym}'></td>
-</tr>
-<tr>
-<td colspan='2' style='text-align: right;'>
-<button class='' type="submit" name="submit-change-groups">{$pc->lang['UPDATE_GROUPS']}</button>
-</td>
-</tr>
-</table>
-</fieldset>
-
-</form>
-
-EOD;
-
-
-$htmlLeft 	= "";
-$htmlRight	= <<<EOD
-<h3 class='columnMenu'>About Privacy</h3>
-<p>
-Later...
-</p>
-
-EOD;
-
+die($pc->SetSessionErrorMessage($pc->lang['SUBMIT_ACTION_NOT_SUPPORTED']));
 
 
 ?>

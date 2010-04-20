@@ -11,23 +11,11 @@
 $lang = Array(
 	'PASSWORD_DOESNT_MATCH' => "The passwords does not match.",
 	'PASSWORD_CANNOT_BE_EMPTY' => "The password was empty, a password must not be empty.",
-
-	'BASIC_ACCOUNT_INFO' => "Account &amp; Password",
-	'ACCOUNT_NAME_LABEL' => "Name:", 
-	'ACCOUNT_PASSWORD_LABEL' => "Password:", 
-	'ACCOUNT_PASSWORD_AGAIN_LABEL' => "Password (again):", 
-	'CHANGE_PASSWORD' => "Change password",
-	'EMAIL_SETTINGS' => "Email settings",
-	'EMAIL_LABEL' => "Mail:", 
-	'UPDATE_EMAIL' => "Update email",
-	'AVATAR_SETTINGS' => "Avatar", 
-	'AVATAR_LABEL' => "Avatar:", 
-	'UPDATE_AVATAR' => "Update avatar", 
-	'GROUP_SETTINGS' => "Groups &amp; Permissions", 
-	'GROUPMEMBER_OF_LABEL' => "Member of groups:", 
-	'UPDATE_GROUPS' => "Update groups",
-	
-
+	'PASSWORD_WAS_NOT_UPDATED' => "The password was not updated in the database.",
+	'EMAIL_WAS_NOT_UPDATED' => "The email was not updated in the database.", 
+	'AVATAR_WAS_NOT_UPDATED' => "The avatar was not updated in the database.",
+	'SUBMIT_ACTION_NOT_SUPPORTED' => "The submit is not supported. Failing.",
+	'MISMATCH_SESSION_AND_SETTINGS' => "You are trying to change an account but you are actually signed in on another account. Failing.",
 
 
 );
