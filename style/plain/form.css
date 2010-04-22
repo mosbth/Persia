@@ -42,6 +42,7 @@ fieldset.accountsettings {
 }
 
 fieldset.accountsettings input.account,
+fieldset.accountsettings input.account-dimmed,
 fieldset.accountsettings input.email,
 fieldset.accountsettings input.avatar,
 fieldset.accountsettings input.groups,
@@ -56,7 +57,7 @@ fieldset.accountsettings input.avatar {
 	width: 28em;
 }
 
-fieldset.accountsettings input.account {
+fieldset.accountsettings input.account-dimmed {
 	color: #999;
 }
 

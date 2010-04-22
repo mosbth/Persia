@@ -3,13 +3,15 @@
 //
 // SQLCreateUserAndGroupTables.php
 //
-// SQL statements to creta the tables for the User and group tables.
+// SQL statements to create the tables for the User and group tables.
 //
 // WARNING: Do not forget to check input variables for SQL injections. 
 //
 // Author: Mikael Roos
 //
 
+// Get (or create) an instance of the database object.
+$db = CDatabaseController::GetInstance();
 
 // Get the tablenames
 $tUser 				= DBT_User;
@@ -19,10 +21,6 @@ $tStatistics 	= DBT_Statistics;
 
 // Get the SP/UDF/trigger names
 $trInsertUser			= DBTR_TInsertUser;
-$spAccountDetails = DBSP_PGetAccountDetails;
-$spChangePassword	= DBSP_PChangeAccountPassword;
-$spChangeEmail		= DBSP_PChangeAccountEmail;
-$spChangeAvatar		= DBSP_PChangeAccountAvatar;
 
 $imageLink = WS_IMAGES;
 
@@ -54,8 +52,8 @@ CREATE TABLE {$tUser} (
 
   -- Attributes
   accountUser CHAR(20) NOT NULL UNIQUE,
-  nameUser CHAR(100) NOT NULL,
-  emailUser CHAR(100) NOT NULL,
+  nameUser CHAR(100) NULL,
+  emailUser CHAR(100) NULL,
   passwordUser CHAR(32) NOT NULL,
   avatarUser VARCHAR(255) NULL
 );
@@ -137,8 +135,8 @@ END;
 --
 -- SP to show/display details of an account/user.
 --
-DROP PROCEDURE IF EXISTS {$spAccountDetails};
-CREATE PROCEDURE {$spAccountDetails}
+DROP PROCEDURE IF EXISTS {$db->_['PGetAccountDetails']};
+CREATE PROCEDURE {$db->_['PGetAccountDetails']}
 (
 	IN aUserId INT
 )
@@ -156,6 +154,8 @@ BEGIN
 			ON U.idUser = Gm.GroupMember_idUser
 		INNER JOIN {$tGroup} AS G
 			ON G.idGroup = Gm.GroupMember_idGroup
+	WHERE
+		U.idUser = aUserId
 	;
 	
 END;
@@ -165,8 +165,8 @@ END;
 --
 -- SP to change password for an account/user.
 --
-DROP PROCEDURE IF EXISTS {$spChangePassword};
-CREATE PROCEDURE {$spChangePassword}
+DROP PROCEDURE IF EXISTS {$db->_['PChangeAccountPassword']};
+CREATE PROCEDURE {$db->_['PChangeAccountPassword']}
 (
 	IN aUserId INT,
 	IN aPassword CHAR(32)
@@ -189,8 +189,8 @@ END;
 --
 -- SP to change email for an account/user.
 --
-DROP PROCEDURE IF EXISTS {$spChangeEmail};
-CREATE PROCEDURE {$spChangeEmail}
+DROP PROCEDURE IF EXISTS {$db->_['PChangeAccountEmail']};
+CREATE PROCEDURE {$db->_['PChangeAccountEmail']}
 (
 	IN aUserId INT,
 	IN aEmail CHAR(100)
@@ -213,8 +213,8 @@ END;
 --
 -- SP to change password for an account/user.
 --
-DROP PROCEDURE IF EXISTS {$spChangeAvatar};
-CREATE PROCEDURE {$spChangeAvatar}
+DROP PROCEDURE IF EXISTS {$db->_['PChangeAccountAvatar']};
+CREATE PROCEDURE {$db->_['PChangeAccountAvatar']}
 (
 	IN aUserId INT,
 	IN aAvatar CHAR(255)
@@ -235,12 +235,94 @@ END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
--- Add default user(s) 
+-- SP to create an account/user.
 --
-INSERT INTO {$tUser} (accountUser, emailUser, nameUser, passwordUser, avatarUser)
-VALUES ('mikael', 'mos@bth.se', 'Mikael Roos', md5('hemligt'), '{$imageLink}/man_60x60.png');
-INSERT INTO {$tUser} (accountUser, emailUser, nameUser, passwordUser, avatarUser)
-VALUES ('doe', 'doe@bth.se', 'John/Jane Doe', md5('doe'), '{$imageLink}/woman_60x60.png');
+DROP PROCEDURE IF EXISTS {$db->_['PCreateAccount']};
+CREATE PROCEDURE {$db->_['PCreateAccount']}
+(
+	OUT aUserId INT,
+	IN aUserAccount CHAR(20),
+	IN aPassword CHAR(32),
+	OUT aStatus INT
+)
+BEGIN
+	
+	--
+	-- Check if the username exists, then set error code
+	--
+	SELECT idUser INTO aUserId FROM {$tUser} WHERE accountUser = aUserAccount;
+	
+	IF aUserId IS NOT NULL THEN
+	BEGIN
+		SET aStatus = 1; -- FAILED, the name already exists
+	END;
+	
+	--
+	-- Else insert the new user
+	--
+	ELSE
+	BEGIN
+
+		--
+		-- Insert the user account
+		--
+		INSERT INTO {$tUser} 
+			(accountUser, passwordUser, avatarUser)
+		VALUES 
+			(aUserAccount, md5(aPassword), '{$imageLink}/man_60x60.png')
+		;
+
+		SET aUserId = LAST_INSERT_ID();
+	
+		--
+		-- Insert default group memberships
+		--
+		INSERT INTO {$tGroupMember} 
+			(GroupMember_idUser, GroupMember_idGroup) 
+		VALUES 
+			(aUserId, 'usr')
+		;
+	
+		SET aStatus = 0; -- SUCCESS
+	
+	END;
+	END IF;
+
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to authenticate an account/user.
+--
+DROP PROCEDURE IF EXISTS {$db->_['PAuthenticateAccount']};
+CREATE PROCEDURE {$db->_['PAuthenticateAccount']}
+(
+	OUT aUserId INT,
+	IN aUserAccount CHAR(20),
+	IN aPassword CHAR(32),
+	OUT aStatus INT
+)
+BEGIN
+
+	--
+	-- Check that account and passwords match
+	--
+	SELECT 
+		idUser INTO aUserId 
+	FROM {$tUser} 
+	WHERE 
+		accountUser		= aUserAccount AND
+		passwordUser	= md5(aPassword)
+	;
+	
+	IF aUserId IS NULL THEN
+		SET aStatus = 1; -- FAILED, the account does not exists or passwords does not match.
+	ELSE
+		SET aStatus = 0; -- SUCCESS
+	END IF;
+
+END;
 
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -250,15 +332,44 @@ VALUES ('doe', 'doe@bth.se', 'John/Jane Doe', md5('doe'), '{$imageLink}/woman_60
 INSERT INTO {$tGroup} (idGroup, nameGroup) VALUES ('adm', 'Administrators of the site');
 INSERT INTO {$tGroup} (idGroup, nameGroup) VALUES ('usr', 'Regular users of the site');
 
+EOD;
 
+$account 	= 'mikael';
+$password	= 'hemligt';
+$mail			= "mos@bth.se";
+$avatar 	= "{$imageLink}/man_60x60.png";
+
+$query .= <<<EOD
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
--- Add default groupmembers
+-- Add default user(s) 
+--
+CALL {$db->_['PCreateAccount']}(@aUserId, '{$account}', '{$password}', @aStatus);
+CALL {$db->_['PChangeAccountEmail']}(@aUserId, '{$mail}');
+CALL {$db->_['PChangeAccountAvatar']}(@aUserId, '{$avatar}');
+
+EOD;
+
+$account 	= 'doe';
+$password	= 'doe';
+$mail			= "doe@bth.se";
+$avatar 	= "{$imageLink}/woman_60x60.png";
+
+$query .= <<<EOD
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- Add default user(s) 
+--
+CALL {$db->_['PCreateAccount']}(@aUserId, '{$account}', '{$password}', @aStatus);
+CALL {$db->_['PChangeAccountEmail']}(@aUserId, '{$mail}');
+CALL {$db->_['PChangeAccountAvatar']}(@aUserId, '{$avatar}');
+
+
+--
+-- Add mikael as adm groupmember
 --
 INSERT INTO {$tGroupMember} (GroupMember_idUser, GroupMember_idGroup) 
-	VALUES ((SELECT idUser FROM {$tUser} WHERE accountUser = 'doe'), 'usr');
-INSERT INTO {$tGroupMember} (GroupMember_idUser, GroupMember_idGroup) 
-	VALUES ((SELECT idUser FROM {$tUser} WHERE accountUser = 'mikael'), 'adm');
+	VALUES (@aUserId, 'adm');
 
 
 EOD;

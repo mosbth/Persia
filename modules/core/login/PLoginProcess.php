@@ -1,9 +1,11 @@
 <?php
 // ===========================================================================================
 //
-// PLoginProcess.php
+// File: PLoginProcess.php
 //
-// Verify user and password. Create a session and store userinfo in.
+// Description: Verify user and password. Create a session and store userinfo in.
+//
+// Author: Mikael Roos, mos@bth.se
 //
 
 
@@ -12,7 +14,7 @@
 // Get pagecontroller helpers. Useful methods to use in most pagecontrollers
 //
 $pc = new CPageController();
-//$pc->LoadLanguage(__FILE__);
+$pc->LoadLanguage(__FILE__);
 
 
 // -------------------------------------------------------------------------------------------
@@ -28,19 +30,29 @@ $intFilter->FrontControllerIsVisitedOrDie();
 
 // -------------------------------------------------------------------------------------------
 //
-// Destroy the current session (logout user), if it exists. 
-// Remember where we are going, this enables us to redirect to the initial pagerequest,
-// even after several unsuccessfull login attempts.
-//
-require_once(TP_SOURCEPATH . 'FDestroySession.php');
-//$_SESSION['history1'] = $pc->POSTisSetOrSetDefault('redirect');
-
-// -------------------------------------------------------------------------------------------
-//
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
-$user 		= $pc->POSTisSetOrSetDefault('nameUser', '');
-$password = $pc->POSTisSetOrSetDefault('passwordUser', '');
+$account			= $pc->POSTisSetOrSetDefault('account');
+$password 		= $pc->POSTisSetOrSetDefault('password');
+$redirect			= $pc->POSTisSetOrSetDefault('redirect');
+$redirectFail	= $pc->POSTisSetOrSetDefault('redirect-fail');
+$silent				= $pc->SESSIONIsSetOrSetDefault('silentLoginAccount');
+
+//
+// Check if this is a silent login attempt where another page is initiating the login process.
+// For example when creating a new account and login simoultaneously.
+// Then get the login info from the session instead from the POST.
+//
+if(!empty($silent)) {
+
+	$account 			= $pc->SESSIONIsSetOrSetDefault('silentLoginAccount');
+	$password 		= $pc->SESSIONIsSetOrSetDefault('silentLoginPassword');
+	$redirect 		= $pc->SESSIONIsSetOrSetDefault('silentLoginRedirect');
+
+	unset($_SESSION['silentLoginAccount']);
+	unset($_SESSION['silentLoginPassword']);
+	unset($_SESSION['silentLoginRedirect']);
+}
 
 
 // -------------------------------------------------------------------------------------------
@@ -48,43 +60,90 @@ $password = $pc->POSTisSetOrSetDefault('passwordUser', '');
 // Create a new database object, connect to the database, get the query and execute it.
 // Relates to files in directory TP_SQLPATH.
 //
-$db 		= new CDatabaseController();
+$db = new CDatabaseController();
 $mysqli = $db->Connect();
-$query 	= $db->LoadSQL('SQLLoginUser.php');
-$res 		= $db->Query($query); 
+
+if(empty($account) || empty($password)) {
+	$pc->RedirectTo($redirectFail);
+}
+
+// -------------------------------------------------------------------------------------------
+//
+// First: Prepare and do query to see if account exists and matches password
+//
+$account 	= $mysqli->real_escape_string($account);
+$password = $mysqli->real_escape_string($password);
+
+$query = <<<EOD
+CALL {$db->_['PAuthenticateAccount']}(@accountId, '{$account}', '{$password}', @status);
+SELECT 
+	@accountId AS accountid,
+	@status AS status;
+EOD;
+
+// Perform the query
+$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
+
+// Get details from resultset
+$row = $results[1]->fetch_object();
+
+if($row->status == 1) {
+	$pc->SetSessionErrorMessage($pc->lang['AUTHENTICATION_FAILED']);
+	$pc->RedirectTo($redirectFail);	
+}
+
+$accountId = $row->accountid;
+
+$results[1]->close();
 
 
 // -------------------------------------------------------------------------------------------
 //
-// Use the results of the query to populate a session that shows we are logged in
+// Second: Get details about this account, populate in an account-object.
 //
-global $gModule;
+$query = <<< EOD
+CALL {$db->_['PGetAccountDetails']}({$accountId});
+EOD;
 
-session_start(); 			// Must call it since we destroyed it above.
+// Perform the query
+$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
+	
+// Get account details 	
+$row = $results[0]->fetch_object();
+$account 			= $row->account;
+$name					= $row->name;
+$email				= $row->email;
+$avatar 			= $row->avatar;
+$groupakronym	= $row->groupakronym;
+$groupdesc		= $row->groupdesc;
+$results[0]->close(); 
+
+$mysqli->close();
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Third: Populate the session
+//
+// Destroy the current session (logout user), if it exists. 
+// Remember where we are going, this enables us to redirect to the initial pagerequest,
+// even after several unsuccessfull login attempts.
+//
+require_once(TP_SOURCEPATH . 'FDestroySession.php');
+//$_SESSION['history1'] = $pc->POSTisSetOrSetDefault('redirect');
+
+session_start(); 					// Must call it since we destroyed it above.
 session_regenerate_id(); 	// To avoid problems 
 
-$row = $res->fetch_object();
-
-// Must be one row in the resultset
-if($res->num_rows === 1) {
-	$_SESSION['idUser'] 					= $row->id;
-	$_SESSION['accountUser'] 			= $row->account;		
-	$_SESSION['groupMemberUser'] 	= $row->groupid;		
-} else {
-	$pc->SetSessionErrorMessage("Failed to login, wrong username or password");
-	$_POST['redirect'] 				= "?m={$gModule}&p=login";
-}
-
-$res->close();
-$mysqli->close();
+$_SESSION['idUser'] 					= $accountId;
+$_SESSION['accountUser'] 			= $account;		
+$_SESSION['groupMemberUser'] 	= $groupakronym;		
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Redirect to another page
 //
-$pc->RedirectTo($pc->POSTisSetOrSetDefault('redirect'));
-exit;
-
+$pc->RedirectTo($redirect);
 
 ?>

@@ -502,9 +502,9 @@ BEGIN
 	BEGIN
 		INSERT INTO {$tTopic}	
 			(Topic_idArticle, counterTopic, lastPostWhenTopic, lastPostByTopic) 
-			VALUES 
+		VALUES 
 			(aPostId, 1, NOW(), aUserId);
-			SET aTopicId = LAST_INSERT_ID();
+		SET aTopicId = LAST_INSERT_ID();
 	END;
 	
 	--

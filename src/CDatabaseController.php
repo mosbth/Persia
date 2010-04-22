@@ -4,13 +4,10 @@
 // File: CDatabaseController.php
 //
 // Description: To ease database usage for pagecontroller. Supports MySQLi.
+// All table names (stored procedures, functions, triggers) are stored in the config.php-file.
 //
 // Author: Mikael Roos
 //
-
-// Include commons for database
-require_once(TP_SQLPATH . 'config.php');
-
 
 class CDatabaseController {
 
@@ -18,8 +15,13 @@ class CDatabaseController {
 	//
 	// Internal variables
 	//
+	protected static $iInstance = NULL;
 	protected $iMysqli;
 	protected $iPc;
+	
+	// For accessing the tables and procedures naming array from within the database controller
+	public static $iTablesAndProcedures;
+	public $_;
 
 
 	// ------------------------------------------------------------------------------------
@@ -27,11 +29,34 @@ class CDatabaseController {
 	// Constructor
 	//
 	public function __construct() {
+		
+		//
+		// Store a pointer to the latest instance of the class. 
+		// Sort of singleton design pattern but with a public constructor.
+		//
+		self::$iInstance =& $this;
 
 		$this->iMysqli = FALSE;		
 		
 		$this->iPc = new CPageController();
-		$this->iPc->LoadLanguage(__FILE__);	}
+		$this->iPc->LoadLanguage(__FILE__);	
+
+		//
+		// Store a reference to the array containing names of tables, procedures, functions, 
+		// triggers, etc in this class. The array is defined in the config.php-file.
+		// This makes it possible to use it as variable in HEREDOC strings. 
+		// Reducing the need of converting constants/define to strings.
+		// The proper way of accessing a table name would then be:
+		// $db->_['tablename']
+		//
+		// http://www.php.net/manual/en/language.references.whatdo.php
+		//
+		//$this->lang = array_merge($this->lang, $lang);
+		require_once(TP_SQLPATH . 'config.php');
+		
+		self::$iTablesAndProcedures = &$DB_Tables_And_Procedures;
+		$this->_ = &$DB_Tables_And_Procedures;
+	}
 
 
 	// ------------------------------------------------------------------------------------
@@ -40,6 +65,19 @@ class CDatabaseController {
 	//
 	public function __destruct() {
 		;
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Get the instance of the latest created object or create a new one.
+	//
+	public static function GetInstance() {
+		
+		if(self::$iInstance == NULL) {
+			$db = new CDatabaseController();
+		}
+		return self::$iInstance;
 	}
 
 
@@ -93,6 +131,32 @@ class CDatabaseController {
 
 	// ------------------------------------------------------------------------------------
 	//
+	// Execute multiquery, retrieve and store the resultset in an array. 
+	// Return the resultset.
+	//
+	// Does the same as MultiQuery and RetrieveAndStoreResultsFromMultiQuery,
+	// just to ease usage from the pagecontrollers.
+	//
+	public function DoMultiQueryRetrieveAndStoreResultset($aQuery) {
+
+		$res = $this->iMysqli->multi_query($aQuery) 
+			or die(sprintf($this->iPc->lang['COULD_NOT_QUERY_DATABASE'], $aQuery, $this->iMysqli->error));
+
+		$results = Array();       
+		do {
+			$results[] = $this->iMysqli->store_result();
+		} while($this->iMysqli->next_result());
+		
+		// Check if there is a database error
+		!$this->iMysqli->errno 
+				or die(sprintf($this->iPc->lang['FAILED_RETRIEVING_RESULTSET'], $this->iMysqli->errno, $this->iMysqli->error));
+
+		return $results;
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
 	// Retrieve and ignore results from multiquery, count number of successful statements
 	// Some succeed and some fail, must count to really know.
 	//
@@ -139,6 +203,7 @@ class CDatabaseController {
 	// Execute a database query from file, check the number of rows affected.
 	// If aRowsAffected is 0, then skip checking.
 	//
+	/*
 	public function ConnectAndExecuteSingleSQLQueryFromFileCheckRowsAffected($aFile, $aRowsAffected=0) {
 
 		$this->Connect();
@@ -152,7 +217,8 @@ class CDatabaseController {
 		$res->close();
 		$this->iMysqli->close();
 	}
-
+	*/
+	
 
 } // End of Of Class
 

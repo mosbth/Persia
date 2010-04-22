@@ -1,7 +1,7 @@
 <?php
 // ===========================================================================================
 //
-// File: CHTMLPage.php
+// File: CDatabaseController.php
 //
 // Description: Language file
 //

@@ -45,6 +45,8 @@ switch($gPage) {
 	//
 	// User, profile and settings
 	//
+	case 'account-create':		require_once(TP_PAGESPATH . 'account/PAccountCreate.php'); break;
+	case 'account-createp':		require_once(TP_PAGESPATH . 'account/PAccountCreateProcess.php'); break;
 	case 'account-settings':	require_once(TP_PAGESPATH . 'account/PAccountSettings.php'); break;
 	case 'account-update':		require_once(TP_PAGESPATH . 'account/PAccountSettingsProcess.php'); break;
 

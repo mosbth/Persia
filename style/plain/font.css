@@ -50,6 +50,14 @@ h3.columnMenu {
 
 h1, h2, h3 { }
 
+/* -------------------------------------------------------------------------------------
+/* For the menu column, header */
+h3.columnMenu {
+	text-transform: uppercase;
+	border-bottom: double #333333 1px;
+}
+
+
 p.small {
 	font-size: x-small;
 }

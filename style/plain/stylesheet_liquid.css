@@ -178,11 +178,7 @@ fieldset.code {}
 
 
 
-/* For the menu column, header */
-h3.columnMenu {
-	text-transform: uppercase;
-	border-bottom: double #333333 1px;
-}
+
 
 p.small {}
 

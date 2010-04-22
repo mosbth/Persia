@@ -23,6 +23,28 @@
 
 // -------------------------------------------------------------------------------------------
 //
+// Evaluating new way of configuring the names for tables, procedures, functions, triggers.
+// Defining all in an array and making them accessable through the CDatabaseController.
+//
+// If it works properly will all defines be replaced by this array instead.
+//
+$DB_Tables_And_Procedures = Array(
+
+	// Module Core: Accounts, users, groups
+	'PCreateAccount' 					=> DB_PREFIX . 'PCreateAccount',
+	'PGetAccountDetails'			=> DB_PREFIX . 'PGetAccountDetails',
+	'PChangeAccountPassword' 	=> DB_PREFIX . 'PChangeAccountPassword',
+	'PChangeAccountEmail' 		=> DB_PREFIX . 'PChangeAccountEmail',
+	'PChangeAccountAvatar' 		=> DB_PREFIX . 'PChangeAccountAvatar',
+	'PAuthenticateAccount' 		=> DB_PREFIX . 'PAuthenticateAccount',
+
+
+);
+
+
+
+// -------------------------------------------------------------------------------------------
+//
 // Module Core
 //
 define('DBT_User', 				DB_PREFIX . 'User');
@@ -31,10 +53,6 @@ define('DBT_GroupMember',	DB_PREFIX . 'GroupMember');
 define('DBT_Statistics',	DB_PREFIX . 'Statistics');
 
 // Stored procedures
-define('DBSP_PGetAccountDetails',			DB_PREFIX . 'PGetAccountDetails');
-define('DBSP_PChangeAccountPassword',	DB_PREFIX . 'PChangeAccountPassword');
-define('DBSP_PChangeAccountEmail',		DB_PREFIX . 'PChangeAccountEmail');
-define('DBSP_PChangeAccountAvatar',		DB_PREFIX . 'PChangeAccountAvatar');
 
 // User Defined Functions UDF
 define('DBUDF_FCheckUserIsOwnerOrAdmin',	DB_PREFIX . 'FCheckUserIsOwnerOrAdmin');

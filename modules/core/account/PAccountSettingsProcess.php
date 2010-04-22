@@ -35,18 +35,14 @@ $intFilter->UserIsSignedInOrRecirectToSignIn();
 $submitAction	= $pc->POSTisSetOrSetDefault('submit');
 $accountId		= $pc->POSTisSetOrSetDefault('accountid');
 $redirect			= $pc->POSTisSetOrSetDefault('redirect');
-$redirectFail	= $pc->POSTisSetOrSetDefault('redirect-failure');
+$redirectFail	= $pc->POSTisSetOrSetDefault('redirect-fail');
 $userId				= $_SESSION['idUser'];
-
-// Always check whats coming in...
-//$pc->IsNumericOrDie($topicId, 0);
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Depending on the submit-action, do whats to be done. If, else if, else, replaces switch.
 // 
-
 
 // -------------------------------------------------------------------------------------------
 //
@@ -82,28 +78,16 @@ else if($submitAction == 'change-password') {
 	$db = new CDatabaseController();
 	$mysqli = $db->Connect();
 
-	// Get the SP names
-	$spChangePassword	= DBSP_PChangeAccountPassword;
+	// Prepare query
+	$password = $mysqli->real_escape_string($password1);
 
-	$query  = sprintf("CALL {$spChangePassword}(%s, '%s');", $userId, $mysqli->real_escape_string($password1));
-	$query .= "SELECT ROW_COUNT() AS rowsaffected;";
-	
-	// Perform the query
-	$results = Array();
-	$res = $db->MultiQuery($query); 
-	$db->RetrieveAndStoreResultsFromMultiQuery($results);
+	$query = <<<EOD
+CALL {$db->_['PChangeAccountPassword']}('{$userId}', '{$password}');
+EOD;
 
-	// Get details from resultset
-	$row = $results[1]->fetch_object();
+	// Perform the query, ignore the results
+	$db->DoMultiQueryRetrieveAndStoreResultset($query);
 
-	/*
-	if($row->rowsaffected != 1) {
-		$pc->SetSessionErrorMessage($pc->lang['PASSWORD_WAS_NOT_UPDATED']);
-		$pc->RedirectTo($redirectFail);
-	} 
-	*/
-	
-	$results[1]->close();
 	$mysqli->close();
 
 	// Redirect to resultpage
@@ -123,28 +107,16 @@ else if($submitAction == 'change-email') {
 	$db = new CDatabaseController();
 	$mysqli = $db->Connect();
 
-	// Get the SP names
-	$spChangeEmail	= DBSP_PChangeAccountEmail;
+	// Prepare query
+	$email = $mysqli->real_escape_string($email);
 
-	$query  = sprintf("CALL {$spChangeEmail}(%s, '%s');", $userId, $mysqli->real_escape_string($email));
-	$query .= "SELECT ROW_COUNT() AS rowsaffected;";
-	
-	// Perform the query
-	$results = Array();
-	$res = $db->MultiQuery($query); 
-	$db->RetrieveAndStoreResultsFromMultiQuery($results);
+	$query = <<<EOD
+CALL {$db->_['PChangeAccountEmail']}('{$userId}', '{$email}');
+EOD;
 
-	// Get details from resultset
-	$row = $results[1]->fetch_object();
+	// Perform the query, ignore the results
+	$db->DoMultiQueryRetrieveAndStoreResultset($query);
 
-	/*
-	if($row->rowsaffected != 1) {
-		$pc->SetSessionErrorMessage($pc->lang['EMAIL_WAS_NOT_UPDATED']);
-		$pc->RedirectTo($redirectFail);
-	} 
-	*/
-	
-	$results[1]->close();
 	$mysqli->close();
 
 	// Redirect to resultpage
@@ -164,28 +136,16 @@ else if($submitAction == 'change-avatar') {
 	$db = new CDatabaseController();
 	$mysqli = $db->Connect();
 
-	// Get the SP names
-	$spChangeAvatar	= DBSP_PChangeAccountAvatar;
+	// Prepare query
+	$avatar = $mysqli->real_escape_string($avatar);
 
-	$query  = sprintf("CALL {$spChangeAvatar}(%s, '%s');", $userId, $mysqli->real_escape_string($avatar));
-	$query .= "SELECT ROW_COUNT() AS rowsaffected;";
-	
-	// Perform the query
-	$results = Array();
-	$res = $db->MultiQuery($query); 
-	$db->RetrieveAndStoreResultsFromMultiQuery($results);
+	$query = <<<EOD
+CALL {$db->_['PChangeAccountAvatar']}('{$userId}', '{$avatar}');
+EOD;
 
-	// Get details from resultset
-	$row = $results[1]->fetch_object();
+	// Perform the query, ignore the results
+	$db->DoMultiQueryRetrieveAndStoreResultset($query);
 
-	/*
-	if($row->rowsaffected != 1) {
-		$pc->SetSessionErrorMessage($pc->lang['AVATAR_WAS_NOT_UPDATED']);
-		$pc->RedirectTo($redirectFail);
-	} 
-	*/
-	
-	$results[1]->close();
 	$mysqli->close();
 
 	// Redirect to resultpage
@@ -197,7 +157,7 @@ else if($submitAction == 'change-avatar') {
 //
 // Default, submit-action not supported, show error and die.
 // 
-die($pc->SetSessionErrorMessage($pc->lang['SUBMIT_ACTION_NOT_SUPPORTED']));
+die($pc->lang['SUBMIT_ACTION_NOT_SUPPORTED']);
 
 
 ?>

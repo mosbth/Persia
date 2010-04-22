@@ -1,11 +1,11 @@
 <?php
 // ===========================================================================================
 //
-// PLogin.php
+// File: PLogin.php
 //
-// Show a login-form, ask for user name and password.
+// Description: Show a login-form, ask for user name and password.
 //
-// Author: Mikael Roos
+// Author: Mikael Roos, mos@bth.se
 //
 
 // -------------------------------------------------------------------------------------------
@@ -40,17 +40,19 @@ $redirectTo = $pc->SESSIONisSetOrSetDefault('history2');
 //
 global $gModule;
 
+$action 			= "?m={$gModule}&amp;p=loginp";
+$redirect 		= $redirectTo;
+$redirectFail = "?m={$gModule}&amp;p=login";
+
+/*
 $htmlMain = <<<EOD
+<form action="?m={$gModule}&amp;p=loginp" method="POST">
+<input type='hidden' name='redirect' value='{$redirectTo}'>
+
 <fieldset class='loginform'>
 <h1>{$pc->lang['LOGIN']}</h1>
-<p>
-{$pc->lang['LOGIN_INTRO_TEXT']}
-</p>
-<p>
-<!-- {$pc->lang['LOGIN_USING_ACCOUNT_OR_EMAIL']} -->
-</p>
-<form action="?m={$gModule}&p=loginp" method="post">
-<input type='hidden' name='redirect' value='{$redirectTo}'>
+<p>{$pc->lang['LOGIN_INTRO_TEXT']}</p> 
+
 <table>
 <tr>
 <td style="text-align: right">
@@ -74,17 +76,64 @@ $htmlMain = <<<EOD
 </td>
 </tr>
 </table>
-</form>
+
+<p>[<a href="?m={$gModule}&amp;p=account-create">{$pc->lang['CREATE_NEW_ACCOUNT']}</a>]</p>
 </fieldset>
+
+</form>
+
 <!--
-<p><a href="PGetPassword.php">Skapa en ny användare!</a></p>
 <p><a href="PGetPassword.php">Jag har glömt mitt lösenord!</a></p>
 -->
 
 EOD;
+*/
 
-$htmlLeft  = "";
-$htmlRight = "";
+$htmlMain = <<<EOD
+<h1>{$pc->lang['LOGIN']}</h1>
+
+<p>{$pc->lang['LOGIN_INTRO_TEXT']}</p> <!-- {$pc->lang['LOGIN_USING_ACCOUNT_OR_EMAIL']} -->
+
+<form action='{$action}' method='POST'>
+<input type='hidden' name='redirect' 			value='{$redirect}'>
+<input type='hidden' name='redirect-fail' value='{$redirectFail}'>
+
+<fieldset class='accountsettings'>
+<table width='99%'>
+<tr>
+<td><label for="account">{$pc->lang['USER']}</label></td>
+<td style='text-align: right;'><input class='account' type='text' name='account'></td>
+</tr>
+<tr>
+<td><label for="account">{$pc->lang['PASSWORD']}</label></td>
+<td style='text-align: right;'><input class='password' type='password' name='password'></td>
+</tr>
+<td colspan='2' style='text-align: right;'>
+<button type='submit' name='submit' value='account-create'>{$pc->lang['LOGIN']}</button>
+</td>
+</tr>
+</table>
+
+</fieldset>
+
+</form>
+
+<p>
+[<a href="?m={$gModule}&amp;p=account-create">{$pc->lang['CREATE_NEW_ACCOUNT']}</a>]
+</p>
+
+EOD;
+
+$htmlLeft 	= "";
+$htmlRight	= <<<EOD
+<section>
+<h3 class='columnMenu'>Various ways to sign in</h3>
+<p>
+Later...
+</p>
+</section>
+
+EOD;
 
 
 // -------------------------------------------------------------------------------------------
@@ -93,8 +142,7 @@ $htmlRight = "";
 //
 $page = new CHTMLPage();
 
-$page->printPage('Login', $htmlLeft, $htmlMain, $htmlRight);
+$page->printPage($pc->lang['LOGIN'], $htmlLeft, $htmlMain, $htmlRight);
 exit;
-
 
 ?>
