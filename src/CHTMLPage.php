@@ -153,7 +153,7 @@ EOD;
 			$html = <<<EOD
 <div id='loginbar'>
 	<p>
-	<a href='?{$m}p=login'>{$pc->lang['LOGIN']}</a>
+	<a href='?{$m}p=login'>{$pc->lang['LOGIN_OR_CREATE_ACCOUNT']}</a>
 	</p>
 </div>
 
