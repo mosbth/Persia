@@ -143,10 +143,13 @@ required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*\.(\w{2}|(com|net|org|edu|int|
 <td><label for="account">{$pc->lang['AVATAR_LABEL']}</label></td>
 <td style='text-align: right;'>
 <input class='avatar' type='url' list='avatars' name='avatar' value='{$avatar}' placeholder="{$pc->lang['INSERT_LINKT_TO_AVATAR_HERE']}" autocomplete>
+
+<!-- datalist only supported in Opera
 <datalist id='avatars'>
 <option>{$imageLink}man_60x60.png</option>
 <option>{$imageLink}woman_60x60.png</option>
 </datalist>
+-->
 </td>
 </tr>
 <tr>
