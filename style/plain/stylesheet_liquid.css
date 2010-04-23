@@ -174,11 +174,6 @@ fieldset.code {}
  * Fonts
  *
  */
- 
-
-
-
-
 
 p.small {}
 
@@ -233,13 +228,17 @@ td {}
  * Display source code
  *
  */
-div.sourcecode {
+div.sourcecode,
+div.sourcecode_h40 {
 	border: 4px solid #eeeeee;
 	overflow: auto;
 	background: white;
 	padding-left: 10px;
 }
 
+div.sourcecode_h40 {
+	height: 40em;
+}
 
 /* -------------------------------------------------------------------------------------
  *

@@ -76,6 +76,7 @@ global $gModule;
 
 $action 	= "?m={$gModule}&amp;p=account-update";
 $redirect = "?m={$gModule}&amp;p=account-settings";
+$imageLink = WS_IMAGES;
 
 $htmlMain = <<< EOD
 <h1>{$pc->lang['MANAGE_ACCOUNT']}</h1>
@@ -117,7 +118,10 @@ $htmlMain = <<< EOD
 <table width='99%'>
 <tr>
 <td><label for="account">{$pc->lang['EMAIL_LABEL']}</label></td>
-<td style='text-align: right;'><input class='email' type='text' name='email' value='{$email}'></td>
+<td style='text-align: right;'>
+<input class='email' type='email' name='email' value='{$email}' placeholder="{$pc->lang['INSERT_EMAIL_HERE']}" autocomplete
+required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*\.(\w{2}|(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum))$" title="{$pc->lang['EMAIL_FORMAT_REQUIRED']}">
+</td>
 </tr>
 <tr>
 <td colspan='2' style='text-align: right;'>
@@ -137,7 +141,13 @@ $htmlMain = <<< EOD
 <table width='99%'>
 <tr>
 <td><label for="account">{$pc->lang['AVATAR_LABEL']}</label></td>
-<td style='text-align: right;'><input class='avatar' type='text' name='avatar' value='{$avatar}'></td>
+<td style='text-align: right;'>
+<input class='avatar' type='url' list='avatars' name='avatar' value='{$avatar}' placeholder="{$pc->lang['INSERT_LINKT_TO_AVATAR_HERE']}" autocomplete>
+<datalist id='avatars'>
+<option>{$imageLink}man_60x60.png</option>
+<option>{$imageLink}woman_60x60.png</option>
+</datalist>
+</td>
 </tr>
 <tr>
 <td>

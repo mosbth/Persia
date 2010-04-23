@@ -1,9 +1,9 @@
 <?php
 // ===========================================================================================
 //
-// PInstallProcess.php
+// File: PInstallProcess.php
 //
-// Executes SQL statments in database, displays the results.
+// Description: Executes SQL statments in database, displays the results.
 //
 // Author: Mikael Roos
 //
@@ -14,7 +14,7 @@
 // Get pagecontroller helpers. Useful methods to use in most pagecontrollers
 //
 $pc = new CPageController();
-//$pc->LoadLanguage(__FILE__);
+$pc->LoadLanguage(__FILE__);
 
 
 // -------------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ $intFilter->FrontControllerIsVisitedOrDie();
 // Prepare the text
 //
 $htmlMain = <<< EOD
-<h1>Database installed</h1>
+<h1>{$pc->lang['DATABASE_INSTALLATION']}</h1>
 EOD;
 
 $htmlLeft 	= "";
@@ -57,18 +57,21 @@ $queries = Array('SQLCreateUserAndGroupTables.php', 'SQLCreateArticleTable.php')
 foreach($queries as $val) {
 
 	$query 	= $db->LoadSQL($val);
-	$res 	= $db->MultiQuery($query); 
-	$no		= $db->RetrieveAndIgnoreResultsFromMultiQuery();
-
+	$res 		= $db->MultiQuery($query); 
+	$no			= $db->RetrieveAndIgnoreResultsFromMultiQuery();
+	$title 			= sprintf($pc->lang['SQL_QUERY'], $val);
+	$statements	= sprintf($pc->lang['STATEMENTS_SUCCEEDED'], $no);
+	$errorcode	= sprintf($pc->lang['ERROR_CODE'], $mysqli->errno, $mysqli->error);
+	
 	$htmlMain .= <<< EOD
-<h3>SQL Query '{$val}'</h3>
+<h3>{$title}'</h3>
 <p>
-<div class="sourcecode">
+<div class="sourcecode_h40">
 <pre>{$query}</pre>
 </div>
 </p>
-<p>Statements that succeeded: {$no}</p>
-<p>Error code: {$mysqli->errno} ({$mysqli->error})</p>
+<p>{$statements}</p>
+<p>{$errorcode}</p>
 EOD;
 }
 
@@ -86,7 +89,7 @@ $mysqli->close();
 //
 $page = new CHTMLPage();
 
-$page->printPage('Database installed', $htmlLeft, $htmlMain, $htmlRight);
+$page->printPage($pc->lang['DATABASE_INSTALLATION_LOG'], $htmlLeft, $htmlMain, $htmlRight);
 exit;
 
 ?>

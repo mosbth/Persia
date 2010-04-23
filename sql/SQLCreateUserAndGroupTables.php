@@ -337,7 +337,7 @@ EOD;
 $account 	= 'mikael';
 $password	= 'hemligt';
 $mail			= "mos@bth.se";
-$avatar 	= "{$imageLink}/man_60x60.png";
+$avatar 	= "{$imageLink}man_60x60.png";
 
 $query .= <<<EOD
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -353,7 +353,7 @@ EOD;
 $account 	= 'doe';
 $password	= 'doe';
 $mail			= "doe@bth.se";
-$avatar 	= "{$imageLink}/woman_60x60.png";
+$avatar 	= "{$imageLink}woman_60x60.png";
 
 $query .= <<<EOD
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -366,10 +366,10 @@ CALL {$db->_['PChangeAccountAvatar']}(@aUserId, '{$avatar}');
 
 
 --
--- Add mikael as adm groupmember
+-- Add first user as adm groupmember
 --
 INSERT INTO {$tGroupMember} (GroupMember_idUser, GroupMember_idGroup) 
-	VALUES (@aUserId, 'adm');
+	VALUES (1, 'adm');
 
 
 EOD;
