@@ -14,7 +14,6 @@ $lang = Array(
 	'LOGIN_INTRO_TEXT' => "Login with your account and password. mikael - hemligt (adm), doe - doe (usr)", 
 	'CREATE_NEW_ACCOUNT' => "Create new account", 
 
-
 );
 
 ?>
