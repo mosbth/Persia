@@ -1,0 +1,27 @@
+/* =====================================================================================
+ *
+ * Fil: heighwidth.css
+ *
+ * Description:
+ * General definitions for height and width. To be used when the pagecontroller must 
+ * decide the size of an element. This avoids creation of multiple css-classes, such as
+ * sourcecode and sourcecode_height40em.
+ * The overall idea is that this ends up in lesser code written in the stylesheets, and
+ * then also easier to maintain. 
+ *
+ * Example on usage:
+ * <div class="sourcecode height40em">
+ *
+ * Author: Mikael Roos, mos@bth.se
+ *
+ */
+ 
+
+/* -------------------------------------------------------------------------------------
+/* Various height definitions */
+.height40em {
+	height: 40em;
+}
+
+/* -------------------------------------------------------------------------------------
+/* Various length definitions */
