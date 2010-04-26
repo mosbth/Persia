@@ -66,7 +66,7 @@ foreach($queries as $val) {
 	$htmlMain .= <<< EOD
 <h3>{$title}'</h3>
 <p>
-<div class="sourcecode_h40">
+<div class="sourcecode height40em">
 <pre>{$query}</pre>
 </div>
 </p>

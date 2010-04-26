@@ -23,12 +23,18 @@ $lang = Array(
 	'EMAIL_FORMAT_REQUIRED' => "Email-format required.",
 	'AVATAR_SETTINGS' => "Avatar", 
 	'AVATAR_LABEL' => "Avatar:", 
-	'INSERT_LINKT_TO_AVATAR_HERE' => "Insert a link to your avatar here.", 
+	'INSERT_LINK_TO_AVATAR_HERE' => "Insert a link to your avatar here.", 
 	'UPDATE_AVATAR' => "Update avatar", 
 	'GROUP_SETTINGS' => "Groups &amp; Permissions", 
 	'GROUPMEMBER_OF_LABEL' => "Member of groups:", 
 	'UPDATE_GROUPS' => "Update groups",
+	'GRAVATAR_SETTINGS' => "Gravatar",
+	'GRAVATAR_INFO' => "Use your Gravatar from <a href='http://gravatar.com'>gravatar.com</a>.",
+	'GRAVATAR_LABEL' => "Gravatar id (email):",
+	'INSERT_EMAIL_FOR_GRAVATAR_HERE' => "Insert email for your Gravatar here.",
+	'UPDATE_GRAVATAR' => "Update gravatar",
 	
+
 
 
 

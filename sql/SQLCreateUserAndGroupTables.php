@@ -14,7 +14,6 @@
 $db = CDatabaseController::GetInstance();
 
 // Get the tablenames
-$tUser 				= DBT_User;
 $tGroup 			= DBT_Group;
 $tGroupMember = DBT_GroupMember;
 $tStatistics 	= DBT_Statistics;
@@ -28,7 +27,7 @@ $imageLink = WS_IMAGES;
 $query = <<<EOD
 -- =============================================================================================
 --
--- SQL for User
+-- SQL for User, Group and Groupmember
 --
 -- =============================================================================================
 
@@ -37,7 +36,7 @@ $query = <<<EOD
 -- Drop all tables first
 --
 DROP TABLE IF EXISTS {$tGroupMember};
-DROP TABLE IF EXISTS {$tUser};
+DROP TABLE IF EXISTS {$db->_['User']};
 DROP TABLE IF EXISTS {$tGroup};
 
 
@@ -45,17 +44,18 @@ DROP TABLE IF EXISTS {$tGroup};
 --
 -- Table for the User
 --
-CREATE TABLE {$tUser} (
+CREATE TABLE {$db->_['User']} (
 
   -- Primary key(s)
-  idUser INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+  idUser INT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
 
   -- Attributes
   accountUser CHAR(20) NOT NULL UNIQUE,
   nameUser CHAR(100) NULL,
   emailUser CHAR(100) NULL,
   passwordUser CHAR(32) NOT NULL,
-  avatarUser VARCHAR(255) NULL
+  avatarUser VARCHAR(255) NULL,
+  gravatarUser VARCHAR(100) NULL
 );
 
 
@@ -85,10 +85,10 @@ CREATE TABLE {$tGroupMember} (
   --
   
   -- Foreign keys
-  GroupMember_idUser INT NOT NULL,
+  GroupMember_idUser INT UNSIGNED NOT NULL,
   GroupMember_idGroup CHAR(3) NOT NULL,
 	
-  FOREIGN KEY (GroupMember_idUser) REFERENCES {$tUser}(idUser),
+  FOREIGN KEY (GroupMember_idUser) REFERENCES {$db->_['User']}(idUser),
   FOREIGN KEY (GroupMember_idGroup) REFERENCES {$tGroup}(idGroup),
 
   PRIMARY KEY (GroupMember_idUser, GroupMember_idGroup)
@@ -107,9 +107,9 @@ CREATE TABLE {$tStatistics} (
 
   -- Primary key(s)
   -- Foreign keys
-  Statistics_idUser INT NOT NULL,
+  Statistics_idUser INT UNSIGNED NOT NULL,
 	
-  FOREIGN KEY (Statistics_idUser) REFERENCES {$tUser}(idUser),
+  FOREIGN KEY (Statistics_idUser) REFERENCES {$db->_['User']}(idUser),
   PRIMARY KEY (Statistics_idUser),
   
   -- Attributes
@@ -124,10 +124,33 @@ CREATE TABLE {$tStatistics} (
 --
 DROP TRIGGER IF EXISTS {$trInsertUser};
 CREATE TRIGGER {$trInsertUser}
-AFTER INSERT ON {$tUser}
+AFTER INSERT ON {$db->_['User']}
 FOR EACH ROW
 BEGIN
   INSERT INTO {$tStatistics} (Statistics_idUser) VALUES (NEW.idUser);
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- Function to create a link to gravatar.com from an emailadress.
+--
+-- http://en.gravatar.com/site/implement/url
+--
+DROP FUNCTION IF EXISTS {$db->_['FGetGravatarLinkFromEmail']};
+CREATE FUNCTION {$db->_['FGetGravatarLinkFromEmail']}
+(
+	aEmail CHAR(100),
+	aSize INT
+)
+RETURNS CHAR(255)
+BEGIN
+	DECLARE link CHAR(255);
+
+	SELECT CONCAT('http://www.gravatar.com/avatar/', MD5(LOWER(aEmail)), '.jpg?s=', aSize)
+		INTO link;
+	
+	RETURN link;		
 END;
 
 
@@ -147,9 +170,11 @@ BEGIN
 		U.nameUser AS name,
 		U.emailUser AS email,
 		U.avatarUser AS avatar,
+		U.gravatarUser AS gravatar,
+		{$db->_['FGetGravatarLinkFromEmail']}(U.gravatarUser, 60) AS gravatarsmall,
 		G.idGroup AS groupakronym,
 		G.nameGroup AS groupdesc
-	FROM $tUser AS U
+	FROM {$db->_['User']} AS U
 		INNER JOIN {$tGroupMember} AS Gm
 			ON U.idUser = Gm.GroupMember_idUser
 		INNER JOIN {$tGroup} AS G
@@ -174,7 +199,7 @@ CREATE PROCEDURE {$db->_['PChangeAccountPassword']}
 BEGIN
 	
 	UPDATE 
-		$tUser
+		{$db->_['User']}
 	SET 
 		passwordUser = md5(aPassword)
 	WHERE
@@ -198,9 +223,9 @@ CREATE PROCEDURE {$db->_['PChangeAccountEmail']}
 BEGIN
 	
 	UPDATE 
-		$tUser
+		{$db->_['User']}
 	SET 
-		emailUser = aEmail
+		emailUser = TRIM(aEmail)
 	WHERE
 		idUser = aUserId
 	LIMIT 1
@@ -211,7 +236,7 @@ END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
--- SP to change password for an account/user.
+-- SP to change avatar for an account/user.
 --
 DROP PROCEDURE IF EXISTS {$db->_['PChangeAccountAvatar']};
 CREATE PROCEDURE {$db->_['PChangeAccountAvatar']}
@@ -222,9 +247,33 @@ CREATE PROCEDURE {$db->_['PChangeAccountAvatar']}
 BEGIN
 	
 	UPDATE 
-		$tUser
+		{$db->_['User']}
 	SET 
-		avatarUser = aAvatar
+		avatarUser = TRIM(aAvatar)
+	WHERE
+		idUser = aUserId
+	LIMIT 1
+	;
+	
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to change gravatar for an account/user.
+--
+DROP PROCEDURE IF EXISTS {$db->_['PChangeAccountGravatar']};
+CREATE PROCEDURE {$db->_['PChangeAccountGravatar']}
+(
+	IN aUserId INT,
+	IN aGravatar CHAR(255)
+)
+BEGIN
+	
+	UPDATE 
+		{$db->_['User']}
+	SET 
+		gravatarUser = TRIM(aGravatar)
 	WHERE
 		idUser = aUserId
 	LIMIT 1
@@ -250,7 +299,7 @@ BEGIN
 	--
 	-- Check if the username exists, then set error code
 	--
-	SELECT idUser INTO aUserId FROM {$tUser} WHERE accountUser = aUserAccount;
+	SELECT idUser INTO aUserId FROM {$db->_['User']} WHERE accountUser = aUserAccount;
 	
 	IF aUserId IS NOT NULL THEN
 	BEGIN
@@ -266,7 +315,7 @@ BEGIN
 		--
 		-- Insert the user account
 		--
-		INSERT INTO {$tUser} 
+		INSERT INTO {$db->_['User']} 
 			(accountUser, passwordUser, avatarUser)
 		VALUES 
 			(aUserAccount, md5(aPassword), '{$imageLink}/man_60x60.png')
@@ -310,7 +359,7 @@ BEGIN
 	--
 	SELECT 
 		idUser INTO aUserId 
-	FROM {$tUser} 
+	FROM {$db->_['User']} 
 	WHERE 
 		accountUser		= aUserAccount AND
 		passwordUser	= md5(aPassword)

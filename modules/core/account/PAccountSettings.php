@@ -57,12 +57,14 @@ $results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 	
 // Get account details 	
 $row = $results[0]->fetch_object();
-$account 			= $row->account;
-$name					= $row->name;
-$email				= $row->email;
-$avatar 			= $row->avatar;
-$groupakronym	= $row->groupakronym;
-$groupdesc		= $row->groupdesc;
+$account 				= $row->account;
+$name						= $row->name;
+$email					= $row->email;
+$avatar 				= $row->avatar;
+$gravatar 			= $row->gravatar;
+$gravatarsmall	= $row->gravatarsmall;
+$groupakronym		= $row->groupakronym;
+$groupdesc			= $row->groupdesc;
 $results[0]->close(); 
 
 $mysqli->close();
@@ -93,11 +95,11 @@ $htmlMain = <<< EOD
 <td style='text-align: right;'><input class='account-dimmed' type='text' name='account' readonly value='{$account}'></td>
 </tr>
 <tr>
-<td><label for="account">{$pc->lang['ACCOUNT_PASSWORD_LABEL']}</label></td>
+<td><label for="password1">{$pc->lang['ACCOUNT_PASSWORD_LABEL']}</label></td>
 <td style='text-align: right;'><input class='password' type='password' name='password1'></td>
 </tr>
 <tr>
-<td><label for="account">{$pc->lang['ACCOUNT_PASSWORD_AGAIN_LABEL']}</label></td>
+<td><label for="password2">{$pc->lang['ACCOUNT_PASSWORD_AGAIN_LABEL']}</label></td>
 <td style='text-align: right;'><input class='password' type='password' name='password2'></td>
 </tr>
 <tr>
@@ -117,7 +119,7 @@ $htmlMain = <<< EOD
 <fieldset class='accountsettings'>
 <table width='99%'>
 <tr>
-<td><label for="account">{$pc->lang['EMAIL_LABEL']}</label></td>
+<td><label for="email">{$pc->lang['EMAIL_LABEL']}</label></td>
 <td style='text-align: right;'>
 <input class='email' type='email' name='email' value='{$email}' placeholder="{$pc->lang['INSERT_EMAIL_HERE']}" autocomplete
 required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*\.(\w{2}|(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum))$" title="{$pc->lang['EMAIL_FORMAT_REQUIRED']}">
@@ -140,9 +142,9 @@ required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*\.(\w{2}|(com|net|org|edu|int|
 <fieldset class='accountsettings'>
 <table width='99%'>
 <tr>
-<td><label for="account">{$pc->lang['AVATAR_LABEL']}</label></td>
+<td><label for="avatar">{$pc->lang['AVATAR_LABEL']}</label></td>
 <td style='text-align: right;'>
-<input class='avatar' type='url' list='avatars' name='avatar' value='{$avatar}' placeholder="{$pc->lang['INSERT_LINKT_TO_AVATAR_HERE']}" autocomplete>
+<input class='avatar' type='url' list='avatars' name='avatar' value='{$avatar}' placeholder="{$pc->lang['INSERT_LINK_TO_AVATAR_HERE']}" autocomplete>
 
 <!-- datalist only supported in Opera
 <datalist id='avatars'>
@@ -159,6 +161,37 @@ required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*\.(\w{2}|(com|net|org|edu|int|
 </td>
 <td style='text-align: right;'>
 <button type='submit' name='submit' value='change-avatar'>{$pc->lang['UPDATE_AVATAR']}</button>
+</td>
+</tr>
+</table>
+</fieldset>
+</form>
+
+<h2 id='gravatar'>{$pc->lang['GRAVATAR_SETTINGS']}</h2>
+<form action='{$action}' method='POST'>
+<input type='hidden' name='redirect' 					value='{$redirect}#gravatar'>
+<input type='hidden' name='redirect-failure' 	value='{$redirect}'>
+<input type='hidden' name='accountid' 				value='{$userId}'>
+<fieldset class='accountsettings'>
+<table width='99%'>
+<tr>
+<td colspan='2'>
+<p>
+{$pc->lang['GRAVATAR_INFO']}
+</p>
+</td>
+</tr>
+<td><label for="gravatar">{$pc->lang['GRAVATAR_LABEL']}</label></td>
+<td style='text-align: right;'>
+<input class='gravatar' type='email' name='gravatar' value='{$gravatar}' placeholder="{$pc->lang['INSERT_EMAIL_FOR_GRAVATAR_HERE']}" autocomplete>
+</td>
+</tr>
+<tr>
+<td>
+<img src='{$row->gravatarsmall}' alt=''>
+</td>
+<td style='text-align: right;'>
+<button type='submit' name='submit' value='change-gravatar'>{$pc->lang['UPDATE_GRAVATAR']}</button>
 </td>
 </tr>
 </table>

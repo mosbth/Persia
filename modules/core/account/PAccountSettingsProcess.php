@@ -155,6 +155,35 @@ EOD;
 
 // -------------------------------------------------------------------------------------------
 //
+// Change gravatar
+// 
+else if($submitAction == 'change-gravatar') {
+
+	$gravatar	= $pc->POSTisSetOrSetDefault('gravatar');
+
+	// Execute the database query to make the update
+	$db = new CDatabaseController();
+	$mysqli = $db->Connect();
+
+	// Prepare query
+	$avatar = $mysqli->real_escape_string($gravatar);
+
+	$query = <<<EOD
+CALL {$db->_['PChangeAccountGravatar']}('{$userId}', '{$gravatar}');
+EOD;
+
+	// Perform the query, ignore the results
+	$db->DoMultiQueryRetrieveAndStoreResultset($query);
+
+	$mysqli->close();
+
+	// Redirect to resultpage
+	$pc->RedirectTo($redirect);
+}
+
+
+// -------------------------------------------------------------------------------------------
+//
 // Default, submit-action not supported, show error and die.
 // 
 die($pc->lang['SUBMIT_ACTION_NOT_SUPPORTED']);

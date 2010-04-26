@@ -15,6 +15,7 @@
 @import url("form.css");					/* forms related styles */
 @import url("editor.css");				/* for WYSIWYG editor */
 @import url("article.css"); 			/* for displaying articles */
+@import url("heightwidth.css"); 	/* various (general) height and width definitions */
  
 
 /* -------------------------------------------------------------------------------------
@@ -223,22 +224,6 @@ a.noUnderline:active  { text-decoration:none; }
 th {}
 td {}
 
-/* -------------------------------------------------------------------------------------
- *
- * Display source code
- *
- */
-div.sourcecode,
-div.sourcecode_h40 {
-	border: 4px solid #eeeeee;
-	overflow: auto;
-	background: white;
-	padding-left: 10px;
-}
-
-div.sourcecode_h40 {
-	height: 40em;
-}
 
 /* -------------------------------------------------------------------------------------
  *
@@ -251,3 +236,4 @@ aside.float_right {
     padding: 1em;
     font-size: x-small;
 } 
+

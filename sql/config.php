@@ -31,12 +31,17 @@
 $DB_Tables_And_Procedures = Array(
 
 	// Module Core: Accounts, users, groups
+	'User'					 					=> DB_PREFIX . 'User',
 	'PCreateAccount' 					=> DB_PREFIX . 'PCreateAccount',
+	'PAuthenticateAccount' 		=> DB_PREFIX . 'PAuthenticateAccount',
 	'PGetAccountDetails'			=> DB_PREFIX . 'PGetAccountDetails',
 	'PChangeAccountPassword' 	=> DB_PREFIX . 'PChangeAccountPassword',
 	'PChangeAccountEmail' 		=> DB_PREFIX . 'PChangeAccountEmail',
 	'PChangeAccountAvatar' 		=> DB_PREFIX . 'PChangeAccountAvatar',
-	'PAuthenticateAccount' 		=> DB_PREFIX . 'PAuthenticateAccount',
+
+	// For supporting gravatar from gratavar.com
+	'PChangeAccountGravatar' 		=> DB_PREFIX . 'PChangeAccountGravatar',
+	'FGetGravatarLinkFromEmail' => DB_PREFIX . 'FGetGravatarLinkFromEmail',
 
 
 );
