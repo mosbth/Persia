@@ -47,6 +47,7 @@ fieldset.accountsettings input.email,
 fieldset.accountsettings input.avatar,
 fieldset.accountsettings input.gravatar,
 fieldset.accountsettings input.groups,
+fieldset.accountsettings input.captcha,
 fieldset.accountsettings input.password {
 	font-family: Verdana, Sans-serif;
 	width: 24em;
@@ -56,6 +57,10 @@ fieldset.accountsettings input.password {
 
 fieldset.accountsettings input.avatar {
 	width: 28em;
+}
+
+fieldset.accountsettings input.captcha {
+	width: 300px;
 }
 
 fieldset.accountsettings input.account-dimmed {

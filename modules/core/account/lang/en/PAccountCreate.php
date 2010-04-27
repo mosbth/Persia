@@ -15,6 +15,8 @@ $lang = Array(
 	'ACCOUNT_NAME_LABEL' => "Name:", 
 	'ACCOUNT_PASSWORD_LABEL' => "Password:", 
 	'ACCOUNT_PASSWORD_AGAIN_LABEL' => "Password (again):", 
+	'ACCOUNT_NAME_MAGIC' => "Magic word:", 
+
 
 );
 

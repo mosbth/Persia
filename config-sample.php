@@ -82,21 +82,4 @@ define('MENU_NAVBAR', 		serialize($menuNavBar));
 //define('reCAPTCHA_PRIVATE',	'6LeUxbkSAAAAAPRDQ8cAvEOgXMJZwb1rY2C5XauB');	
 
 
-// -------------------------------------------------------------------------------------------
-//
-// Settings for the template (TP) structure, show where everything are stored.
-// Support for storing in directories, no need to store everything under one directory
-//
-// All these setting are moved to the file config-global.php
-//
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Settings for commonly used external resources, for example javascripts.
-//
-// All these setting are moved to the file config-global.php
-//
-
-
 ?>

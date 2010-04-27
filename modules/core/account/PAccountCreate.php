@@ -45,7 +45,8 @@ $redirectTo = $pc->SESSIONisSetOrSetDefault('history2');
 // Prepare the CAPTCHA
 //
 $captcha = new CCaptcha();
-$captchaHtml = $captcha->GetHTMLToDisplay();
+$captchaStyle = $pc->GETIsSetOrSetDefault('captcha-style', 'custom');
+$captchaHtml = $captcha->GetHTMLToDisplay($captchaStyle);
 
 
 // -------------------------------------------------------------------------------------------
@@ -71,25 +72,25 @@ $htmlMain = <<<EOD
 
 <fieldset class='accountsettings'>
 <table width='99%'>
+
 <tr>
 <td><label for="account">{$pc->lang['ACCOUNT_NAME_LABEL']}</label></td>
 <td style='text-align: right;'><input class='account' type='text' name='account' value='{$account}'></td>
 </tr>
+
 <tr>
 <td><label for="account">{$pc->lang['ACCOUNT_PASSWORD_LABEL']}</label></td>
 <td style='text-align: right;'><input class='password' type='password' name='password1'></td>
 </tr>
+
 <tr>
 <td><label for="account">{$pc->lang['ACCOUNT_PASSWORD_AGAIN_LABEL']}</label></td>
 <td style='text-align: right;'><input class='password' type='password' name='password2'></td>
 </tr>
 
 <tr>
-<td colspan='2''>
-<div style='float: right'>
-{$captchaHtml}
-</div>
-</td>
+<td><label for="captcha">{$pc->lang['ACCOUNT_NAME_MAGIC']}</label></td>
+<td><div style='float: right'>{$captchaHtml}</div></td>
 </tr>
 
 <tr>
@@ -107,11 +108,20 @@ $htmlMain = <<<EOD
 
 EOD;
 
+//
+// Enable changing and referencing parts of the current url
+//
+$links  = "<a href='" . $pc->ModifyCurrentURL('captcha-style=red') . 				"'>red</a> ";
+$links .= "<a href='" . $pc->ModifyCurrentURL('captcha-style=white') . 			"'>white</a> ";
+$links .= "<a href='" . $pc->ModifyCurrentURL('captcha-style=blackglass') . "'>blackglass</a> ";
+$links .= "<a href='" . $pc->ModifyCurrentURL('captcha-style=clean') . 			"'>clean</a> ";
+$links .= "<a href='" . $pc->ModifyCurrentURL('captcha-style=custom') . 		"'>custom</a> ";
+
 $htmlLeft 	= "";
 $htmlRight	= <<<EOD
-<h3 class='columnMenu'>Various ways to sign in</h3>
+<h3 class='columnMenu'>Style the reCAPTCHA widget</h3>
 <p>
-Later...
+{$links}
 </p>
 
 EOD;

@@ -211,6 +211,48 @@ class CPageController {
 	}
 
 
+	// ------------------------------------------------------------------------------------
+	//
+	// Static function
+	// Parse current URL into an array. Return the array.
+	// 
+	public static function ParseCurrentURL() {
+
+		$current 	= self::CurrentURL();
+		$url 			= parse_url($current);
+		parse_str($url['query'], $url['query']);
+		
+		return $url;
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Static function
+	// Parse current URL and modify its querystring. Return the modified url.
+	// 
+	public static function ModifyCurrentURL($aQueryStr) {
+		
+		// Build current url
+		$url	 = self::ParseCurrentURL();
+		$query = Array();
+		parse_str($aQueryStr, $query);
+		
+		// Modify the querystring
+		$url['query'] = array_merge($url['query'], $query);
+		
+		// Rebuild the url from the array
+		$newQuery = http_build_query($url['query']);
+		$newQuery = (empty($newQuery) ? '' : "?{$newQuery}");
+		$password = (empty($url['password']) 	? '' : ":{$url['password']}");
+		$userPwd	= (empty($url['name']) 			? '' : "{$url['name']}{$password}@");
+		$fragment = (empty($url['fragment']) 	? '' : "#{$url['fragment']}");
+		$urlAsString = "{$url['scheme']}://{$userPwd}{$url['host']}{$url['path']}{$newQuery}{$fragment}";
+									
+		return $urlAsString;
+	}
+
+
 } // End of Of Class
 
 ?>

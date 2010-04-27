@@ -17,6 +17,8 @@
 //
 
 
+require_once(TP_SOURCEPATH . '/recaptcha-php/recaptchalib.php');
+
 class CCaptcha {
 
 	// ------------------------------------------------------------------------------------
@@ -46,12 +48,81 @@ class CCaptcha {
 	//
 	// Get HTML to display the CAPTCHA
 	//
-	public function GetHTMLToDisplay() {
-		$this->iErrorMessage = ""; 
+	public function GetHTMLToDisplay($aStyle='', $use_ssl=false) {
+		$this->iErrorMessage 	= ''; 
+		$html 								= '';
+		$pubkey	= reCAPTCHA_PUBLIC; 
+		$server = ($use_ssl) ? RECAPTCHA_API_SECURE_SERVER : RECAPTCHA_API_SERVER;
+		$noscript = <<<EOD
+<noscript>
+   <iframe src="{$server}/noscript?k={$pubkey}"
+       height="300" width="500" frameborder="0"></iframe><br>
+   <textarea name="recaptcha_challenge_field" rows="3" cols="40">
+   </textarea>
+   <input type="hidden" name="recaptcha_response_field" 
+       value="manual_challenge">
+</noscript>
+EOD;
 
-		require_once(TP_SOURCEPATH . '/recaptcha-php/recaptchalib.php');
-		$publickey = reCAPTCHA_PUBLIC; // you got this from the signup page
-		return recaptcha_get_html($publickey);
+		switch ($aStyle) {
+
+			case 'custom': {
+				$html = <<< EOD
+<script>
+var RecaptchaOptions = {
+   theme : '{$aStyle}',
+   lang: 'en',
+   custom_theme_widget: 'recaptcha_widget'
+};
+</script>
+
+<div id="recaptcha_widget" style="display:none">
+<div id="recaptcha_image"></div>
+<input type="text" id="recaptcha_response_field" class="captcha width300px" name="recaptcha_response_field" />
+<br />
+<span class="recaptcha_only_if_image">Enter the words above:</span>
+<span class="recaptcha_only_if_audio">Enter the numbers you hear:</span>
+<div><a href="javascript:Recaptcha.reload()">Get another CAPTCHA</a></div>
+<div class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type('audio')">Get an audio CAPTCHA</a></div>
+<div class="recaptcha_only_if_audio"><a href="javascript:Recaptcha.switch_type('image')">Get an image CAPTCHA</a></div>
+
+<div><a href="javascript:Recaptcha.showhelp()">Help</a>
+</div>
+
+<script type="text/javascript"
+   src="{$server}/challenge?k={$pubkey}">
+</script>
+{$noscript}
+
+EOD;
+			} break;
+			
+			case 'red':
+			case 'white':
+			case 'blackglass':
+			case 'clean': {
+				$html = <<< EOD
+<script>
+var RecaptchaOptions = {
+   theme : '{$aStyle}',
+   lang: 'en',
+};
+</script>
+
+<script type="text/javascript"
+   src="{$server}/challenge?k={$pubkey}">
+</script>
+{$noscript}
+
+EOD;
+			} break;
+			
+			case '':
+			default: {
+				$html = recaptcha_get_html($pubkey, null, $use_ssl);
+			}
+		}
+		return $html;
 	}
 
 	
@@ -62,7 +133,6 @@ class CCaptcha {
 	public function CheckAnswer() {
 		$this->iErrorMessage = ""; 
 
-		require_once(TP_SOURCEPATH . '/recaptcha-php/recaptchalib.php');
 		$privatekey = reCAPTCHA_PRIVATE;
 		$resp = recaptcha_check_answer ($privatekey,
 			$_SERVER["REMOTE_ADDR"],

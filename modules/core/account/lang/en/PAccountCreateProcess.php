@@ -12,7 +12,7 @@ $lang = Array(
 	'PASSWORD_DOESNT_MATCH' => "The passwords does not match.",
 	'PASSWORD_CANNOT_BE_EMPTY' => "The password was empty, a password must not be empty.",
 	'ACCOUNTNAME_ALREADY_EXISTS' => "The accountname already exists, please choose another accountname.",
-	'CAPTCHA_FAILED' => "CAPTCHA: The magic word did not match, please try again.",
+	'CAPTCHA_FAILED' => "CAPTCHA check failed: The magic word did not match, please try again.",
 
 
 
