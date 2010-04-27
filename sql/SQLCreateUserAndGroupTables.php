@@ -50,9 +50,9 @@ CREATE TABLE {$db->_['User']} (
   idUser INT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
 
   -- Attributes
-  accountUser CHAR(20) NOT NULL UNIQUE,
+  accountUser CHAR(32) NOT NULL UNIQUE,
   nameUser CHAR(100) NULL,
-  emailUser CHAR(100) NULL,
+  emailUser CHAR(100) NULL UNIQUE,
   passwordUser CHAR(32) NOT NULL,
   avatarUser VARCHAR(255) NULL,
   gravatarUser VARCHAR(100) NULL
@@ -354,7 +354,7 @@ DROP PROCEDURE IF EXISTS {$db->_['PAuthenticateAccount']};
 CREATE PROCEDURE {$db->_['PAuthenticateAccount']}
 (
 	OUT aUserId INT,
-	IN aUserAccount CHAR(20),
+	IN aUserAccountOrEmail CHAR(100),
 	IN aPassword CHAR(32),
 	OUT aStatus INT
 )
@@ -367,8 +367,14 @@ BEGIN
 		idUser INTO aUserId 
 	FROM {$db->_['User']} 
 	WHERE 
-		accountUser		= aUserAccount AND
-		passwordUser	= md5(aPassword)
+		(
+			accountUser		= aUserAccountOrEmail AND
+			passwordUser	= md5(aPassword)
+		) OR
+		(
+			emailUser			= aUserAccountOrEmail AND
+			passwordUser	= md5(aPassword)
+		)
 	;
 	
 	IF aUserId IS NULL THEN
