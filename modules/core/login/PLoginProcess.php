@@ -110,12 +110,15 @@ $results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 	
 // Get account details 	
 $row = $results[0]->fetch_object();
-$account 			= $row->account;
-$name					= $row->name;
-$email				= $row->email;
-$avatar 			= $row->avatar;
-$groupakronym	= $row->groupakronym;
-$groupdesc		= $row->groupdesc;
+$account 				= $row->account;
+$name						= $row->name;
+$email					= $row->email;
+$avatar 				= $row->avatar;
+$gravatar 			= $row->gravatar;
+$gravatarmicro	= $row->gravatarmicro;
+$gravatarsmall	= $row->gravatarsmall;
+$groupakronym		= $row->groupakronym;
+$groupdesc			= $row->groupdesc;
 $results[0]->close(); 
 
 $mysqli->close();
@@ -135,9 +138,10 @@ require_once(TP_SOURCEPATH . 'FDestroySession.php');
 session_start(); 					// Must call it since we destroyed it above.
 session_regenerate_id(); 	// To avoid problems 
 
-$_SESSION['idUser'] 					= $accountId;
-$_SESSION['accountUser'] 			= $account;		
-$_SESSION['groupMemberUser'] 	= $groupakronym;		
+$_SESSION['idUser'] 						= $accountId;
+$_SESSION['gravatarUserMicro'] 	= empty($gravatarmicro) ? '' : $gravatarmicro;		
+$_SESSION['accountUser'] 				= $account;		
+$_SESSION['groupMemberUser'] 		= $groupakronym;		
 
 
 // -------------------------------------------------------------------------------------------

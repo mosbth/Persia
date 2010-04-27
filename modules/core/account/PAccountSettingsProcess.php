@@ -175,7 +175,23 @@ EOD;
 	// Perform the query, ignore the results
 	$db->DoMultiQueryRetrieveAndStoreResultset($query);
 
+	// Get the updated gravatar and store in the session
+	$query = <<< EOD
+CALL {$db->_['PGetAccountDetails']}({$accountId});
+EOD;
+
+	// Perform the query
+	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
+	
+	// Get account details 	
+	$row = $results[0]->fetch_object();
+	$gravatarmicro	= $row->gravatarmicro;
+	$results[0]->close(); 
+
 	$mysqli->close();
+	
+	// Update the gravatar in the session
+	$_SESSION['gravatarUserMicro'] 	= empty($gravatarmicro) ? '' : $gravatarmicro;
 
 	// Redirect to resultpage
 	$pc->RedirectTo($redirect);

@@ -12,7 +12,8 @@ in the Oscars-gala...
 I WOULD LIKE TO THANK THE FOLLOWING...
 (and I guess I have forgotten a lot of them)
 
-[ Pictures, images ]
+
+-- [ Pictures, images ] ---------------------------------------------------------------------------
 
 * Silk icon set
 Credits to Mark James at (http://www.famfamfam.com/lab/icons/silk/). Licensed as Creative Commons 
@@ -23,7 +24,21 @@ Persia uses a part of the iconset and its available in the img/silk-directory. R
 * OpenSVG
 
 
-[ JavaScript ]
+-- [ Web services ] -------------------------------------------------------------------------------
+
+* gravatar.com
+Used in the account profile to give the user an optional gravatar-avatar.
+(http://gravatar.com/)
+(http://en.gravatar.com/site/terms-of-service/)
+
+* reCATPCHA
+Used to prevent bots from creating new accounts. 
+(http://recaptcha.net/terms.html)
+Resides in the src/ library, using the recapcha-php modul to perform the action. Review it on GitHub.
+(http://github.com/mosbth/Persia/tree/master/src/recaptcha-php/)
+
+
+-- [ JavaScript ] ---------------------------------------------------------------------------------
 
 * jQuery
 * jGrowl
@@ -34,7 +49,7 @@ Persia uses a part of the iconset and its available in the img/silk-directory. R
 * WYMEditor
 
 
-[ INFORMATION AND KNOWLEDGE ]
+-- [ INFORMATION AND KNOWLEDGE ] ------------------------------------------------------------------
 
 * Google
 * Wikipedia

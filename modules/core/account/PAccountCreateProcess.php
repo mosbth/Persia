@@ -67,6 +67,18 @@ else if($submitAction == 'account-create') {
 	$password1	= $pc->POSTisSetOrSetDefault('password1');
 	$password2	= $pc->POSTisSetOrSetDefault('password2');
 
+	//
+	// Check the CAPTCHA
+	//
+	$captcha = new CCaptcha();
+	if(!$captcha->CheckAnswer()) {
+		$pc->SetSessionErrorMessage($pc->lang['CAPTCHA_FAILED']);
+		$pc->RedirectTo($redirectFail);		
+	}
+
+	//
+	// Check the passwords
+	//
 	if(empty($password1) || empty($password2)) {
 		$pc->SetSessionErrorMessage($pc->lang['PASSWORD_CANNOT_BE_EMPTY']);
 		$pc->RedirectTo($redirectFail);
@@ -76,7 +88,9 @@ else if($submitAction == 'account-create') {
 		$pc->RedirectTo($redirectFail);
 	}
 
+	//
 	// Execute the database query to make the update
+	//
 	$db = new CDatabaseController();
 	$mysqli = $db->Connect();
 
@@ -105,7 +119,9 @@ EOD;
 	$results[1]->close();
 	$mysqli->close();
 
+	//
 	// Do a silent login and then proceed to $redirect
+	//
 	$_SESSION['silentLoginAccount'] 	= $account;
 	$_SESSION['silentLoginPassword'] 	= $password;
 	$_SESSION['silentLoginRedirect'] 	= $redirect;

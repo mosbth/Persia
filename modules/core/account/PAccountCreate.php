@@ -42,6 +42,14 @@ $redirectTo = $pc->SESSIONisSetOrSetDefault('history2');
 
 // -------------------------------------------------------------------------------------------
 //
+// Prepare the CAPTCHA
+//
+$captcha = new CCaptcha();
+$captchaHtml = $captcha->GetHTMLToDisplay();
+
+
+// -------------------------------------------------------------------------------------------
+//
 // Show the login-form
 //
 global $gModule;
@@ -75,11 +83,23 @@ $htmlMain = <<<EOD
 <td><label for="account">{$pc->lang['ACCOUNT_PASSWORD_AGAIN_LABEL']}</label></td>
 <td style='text-align: right;'><input class='password' type='password' name='password2'></td>
 </tr>
+
+<tr>
+<td colspan='2''>
+<div style='float: right'>
+{$captchaHtml}
+</div>
+</td>
+</tr>
+
 <tr>
 <td colspan='2' style='text-align: right;'>
 <button type='submit' name='submit' value='account-create'>{$pc->lang['CREATE_ACCOUNT']}</button>
 </td>
 </tr>
+
+
+
 </table>
 </fieldset>
 

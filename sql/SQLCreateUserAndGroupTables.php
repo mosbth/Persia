@@ -147,9 +147,14 @@ RETURNS CHAR(255)
 BEGIN
 	DECLARE link CHAR(255);
 
-	SELECT CONCAT('http://www.gravatar.com/avatar/', MD5(LOWER(aEmail)), '.jpg?s=', aSize)
-		INTO link;
-	
+	-- Take care of empty emailadresses
+	IF aEmail IS NULL OR ASCII(aEmail) = 0 THEN
+		SET link = '';
+	ELSE
+		SELECT CONCAT('http://www.gravatar.com/avatar/', MD5(LOWER(aEmail)), '.jpg?s=', aSize)
+			INTO link;
+	END IF;
+		
 	RETURN link;		
 END;
 
@@ -172,6 +177,7 @@ BEGIN
 		U.avatarUser AS avatar,
 		U.gravatarUser AS gravatar,
 		{$db->_['FGetGravatarLinkFromEmail']}(U.gravatarUser, 60) AS gravatarsmall,
+		{$db->_['FGetGravatarLinkFromEmail']}(U.gravatarUser, 15) AS gravatarmicro,
 		G.idGroup AS groupakronym,
 		G.nameGroup AS groupdesc
 	FROM {$db->_['User']} AS U

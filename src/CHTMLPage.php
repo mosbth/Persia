@@ -72,7 +72,9 @@ class CHTMLPage {
 		{$aHTMLHead}
 		{$javascript}
 		<!-- HTML5 support for IE -->
+		<!--[if IE]> 
 		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>		
+		<![endif]-->
 	</head>
 	<body>
 		<div id='wrap'>
@@ -124,6 +126,7 @@ EOD;
 	
 		$m = "m={$gModule}&amp;";
 		$pc = $this->iPc;
+		$gravatar = $pc->SESSIONIsSetOrSetDefault('gravatarUserMicro');
 		$html = "";
 
 		// If user is logged in, show details about user and some links.
@@ -137,7 +140,8 @@ EOD;
         
 			$html = <<<EOD
 <div id='loginbar'>
-	<p>
+	<p> 
+	<a href='?{$m}p=account-settings'><img src='{$gravatar}' alt=''></a>
 	<a href='?{$m}p=account-settings'>{$_SESSION['accountUser']}</a>  	
 	<!--
 	{$admHtml} 
