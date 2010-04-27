@@ -50,7 +50,7 @@ class CCaptcha {
 		$this->iErrorMessage = ""; 
 
 		require_once(TP_SOURCEPATH . '/recaptcha-php/recaptchalib.php');
-		$publickey = "6LcswbkSAAAAAN4kRL5qcAdiZLRo54fhlCVnt880"; // you got this from the signup page
+		$publickey = reCAPTCHA_PUBLIC; // you got this from the signup page
 		return recaptcha_get_html($publickey);
 	}
 
@@ -63,7 +63,7 @@ class CCaptcha {
 		$this->iErrorMessage = ""; 
 
 		require_once(TP_SOURCEPATH . '/recaptcha-php/recaptchalib.php');
-		$privatekey = "6LcswbkSAAAAACFVN50SNO6lOC8uAlIB2cJwxknl";
+		$privatekey = reCAPTCHA_PRIVATE;
 		$resp = recaptcha_check_answer ($privatekey,
 			$_SERVER["REMOTE_ADDR"],
 			$_POST["recaptcha_challenge_field"],

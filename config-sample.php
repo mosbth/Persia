@@ -69,6 +69,21 @@ define('MENU_NAVBAR', 		serialize($menuNavBar));
 
 // -------------------------------------------------------------------------------------------
 //
+// Server keys for reCAPTCHA. Get your own keys for your server.
+// http://recaptcha.net/whyrecaptcha.html
+//
+
+// dev.phpersia.org
+//define('reCAPTCHA_PUBLIC',	'6LcswbkSAAAAAN4kRL5qcAdiZLRo54fhlCVnt880');	
+//define('reCAPTCHA_PRIVATE',	'6LcswbkSAAAAACFVN50SNO6lOC8uAlIB2cJwxknl');	
+
+// www.student.bth.se
+//define('reCAPTCHA_PUBLIC',	'6LeUxbkSAAAAADjelI32xn2VdBwsMJLLiBO2umtO');	
+//define('reCAPTCHA_PRIVATE',	'6LeUxbkSAAAAAPRDQ8cAvEOgXMJZwb1rY2C5XauB');	
+
+
+// -------------------------------------------------------------------------------------------
+//
 // Settings for the template (TP) structure, show where everything are stored.
 // Support for storing in directories, no need to store everything under one directory
 //
