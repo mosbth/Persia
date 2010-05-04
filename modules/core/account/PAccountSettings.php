@@ -80,9 +80,11 @@ $action 	= "?m={$gModule}&amp;p=account-update";
 $redirect = "?m={$gModule}&amp;p=account-settings";
 $imageLink = WS_IMAGES;
 
-// Get messages from session if they are set
-$mailMessage = $pc->GetSessionMessage('mailMessage');
-$mailMessage = empty($mailMessage) ? '' : "<div class='userFeedback' style=\"background: url('{$imageLink}/silk/accept.png') no-repeat;\">{$mailMessage}</div>";
+// Get and format messages from session if they are set
+$helpers = new CHTMLHelpers();
+$successMessages 	= Array('mailSuccess', 'changePwdSuccess');
+$failedMessages 	= Array('mailFailed', 'changePwdFailed');
+$messages = $helpers->GetHTMLForSessionMessages($successMessages, $failedMessages);
 
 $htmlMain = <<< EOD
 <h1>{$pc->lang['MANAGE_ACCOUNT']}</h1>
@@ -90,10 +92,15 @@ $htmlMain = <<< EOD
 <h2 id='basic'>{$pc->lang['BASIC_ACCOUNT_INFO']}</h2>
 <form action='{$action}' method='POST'>
 <input type='hidden' name='redirect' 				value='{$redirect}#basic'>
-<input type='hidden' name='redirect-fail' 	value='{$redirect}'>
+<input type='hidden' name='redirect-fail' 	value='{$redirect}#basic'>
 <input type='hidden' name='accountid' 			value='{$userId}'>
 <fieldset class='accountsettings'>
 <table width='99%'>
+<tr>
+<td colspan='2'>
+<p>{$pc->lang['DESCRIPTION_ACCOUNT']}</p>
+</td>
+</tr>
 <tr>
 <td><label for="account">{$pc->lang['ACCOUNT_NAME_LABEL']}</label></td>
 <td style='text-align: right;'><input class='account-dimmed' type='text' name='account' readonly value='{$account}'></td>
@@ -111,6 +118,7 @@ $htmlMain = <<< EOD
 <button type='submit' name='submit' value='change-password'>{$pc->lang['CHANGE_PASSWORD']}</button>
 </td>
 </tr>
+<tr><td colspan='2'>{$messages['changePwdSuccess']}{$messages['changePwdFailed']}</td></tr>
 </table>
 </fieldset>
 </form>
@@ -118,7 +126,7 @@ $htmlMain = <<< EOD
 <h2 id='email'>{$pc->lang['EMAIL_SETTINGS']}</h2>
 <form action='{$action}' method='POST'>
 <input type='hidden' name='redirect' 					value='{$redirect}#email'>
-<input type='hidden' name='redirect-failure' 	value='{$redirect}'>
+<input type='hidden' name='redirect-failure' 	value='{$redirect}#email'>
 <input type='hidden' name='accountid' 				value='{$userId}'>
 <fieldset class='accountsettings'>
 <table width='99%'>
@@ -139,11 +147,7 @@ required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*\.(\w{2}|(com|net|org|edu|int|
 <button type='submit' name='submit' value='change-email'>{$pc->lang['UPDATE_EMAIL']}</button>
 </td>
 </tr>
-<tr>
-<td colspan='2'>
-<div class='userFeedback'>{$mailMessage}</div>
-</td>
-</tr>
+<tr><td colspan='2'>{$messages['mailSuccess']}{$messages['mailFailed']}</td></tr>
 </table>
 </fieldset>
 </form>
@@ -152,7 +156,7 @@ required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*\.(\w{2}|(com|net|org|edu|int|
 <h2 id='avatar'>{$pc->lang['AVATAR_SETTINGS']}</h2>
 <form action='{$action}' method='POST'>
 <input type='hidden' name='redirect' 					value='{$redirect}#avatar'>
-<input type='hidden' name='redirect-failure' 	value='{$redirect}'>
+<input type='hidden' name='redirect-failure' 	value='{$redirect}#avatar'>
 <input type='hidden' name='accountid' 				value='{$userId}'>
 <fieldset class='accountsettings'>
 <table width='99%'>
@@ -185,7 +189,7 @@ required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*\.(\w{2}|(com|net|org|edu|int|
 <h2 id='gravatar'>{$pc->lang['GRAVATAR_SETTINGS']}</h2>
 <form action='{$action}' method='POST'>
 <input type='hidden' name='redirect' 					value='{$redirect}#gravatar'>
-<input type='hidden' name='redirect-failure' 	value='{$redirect}'>
+<input type='hidden' name='redirect-failure' 	value='{$redirect}#gravatar'>
 <input type='hidden' name='accountid' 				value='{$userId}'>
 <fieldset class='accountsettings'>
 <table width='99%'>

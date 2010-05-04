@@ -56,7 +56,8 @@ CREATE TABLE {$db->_['User']} (
   
   -- Attributes related to the password
   saltUser BINARY(10) NOT NULL,
-  passwordUser BINARY(32) NOT NULL,
+  passwordUser BINARY(40) NOT NULL,
+  methodUser CHAR(5) NOT NULL,
 
 	-- Attributes for user profile info
   avatarUser VARCHAR(255) NULL,
@@ -278,12 +279,16 @@ END;
 --
 -- SP to create an account/user.
 --
+-- aMethod is the hashing-algoritm to be used for storing the password.
+-- Review the funktion "{$db->_['FCreatePassword']}" to see which alternatives that are supported.
+--
 DROP PROCEDURE IF EXISTS {$db->_['PCreateAccount']};
 CREATE PROCEDURE {$db->_['PCreateAccount']}
 (
 	OUT aUserId INT,
 	IN aUserAccount CHAR(20),
 	IN aPassword CHAR(32),
+	IN aMethod CHAR(5),
 	OUT aStatus INT
 )
 BEGIN
@@ -311,9 +316,9 @@ BEGIN
 		SELECT BINARY(UNIX_TIMESTAMP(NOW())) INTO salt;
 		
 		INSERT INTO {$db->_['User']} 
-			(accountUser, saltUser, passwordUser, avatarUser)
+			(accountUser, saltUser, passwordUser, methodUser, avatarUser)
 		VALUES 
-			(aUserAccount, salt, md5(CONCAT(salt, aPassword)), '{$imageLink}/man_60x60.png')
+			(aUserAccount, salt, {$db->_['FCreatePassword']}(salt, aPassword, aMethod), aMethod, '{$imageLink}/man_60x60.png')
 		;
 
 		SET aUserId = LAST_INSERT_ID();
@@ -343,7 +348,8 @@ DROP PROCEDURE IF EXISTS {$db->_['PChangeAccountPassword']};
 CREATE PROCEDURE {$db->_['PChangeAccountPassword']}
 (
 	IN aUserId INT,
-	IN aPassword CHAR(32)
+	IN aPassword CHAR(32),
+	OUT aRowsAffected INT
 )
 BEGIN
 	
@@ -351,11 +357,13 @@ BEGIN
 		{$db->_['User']}
 	SET 
 		saltUser			= BINARY(UNIX_TIMESTAMP(NOW())),
-		passwordUser = md5(CONCAT(saltUser, aPassword))
+		passwordUser 	= {$db->_['FCreatePassword']}(saltUser, aPassword, methodUser)
 	WHERE
 		idUser = aUserId
 	LIMIT 1
 	;
+
+	SELECT ROW_COUNT() INTO aRowsAffected;
 	
 END;
 
@@ -383,11 +391,11 @@ BEGIN
 	WHERE 
 		(
 			accountUser		= aUserAccountOrEmail AND
-			passwordUser	= md5(CONCAT(saltUser, aPassword))
+			passwordUser	= {$db->_['FCreatePassword']}(saltUser, aPassword, methodUser)
 		) OR
 		(
 			emailUser			= aUserAccountOrEmail AND
-			passwordUser	= md5(CONCAT(saltUser, aPassword))
+			passwordUser	= {$db->_['FCreatePassword']}(saltUser, aPassword, methodUser)
 		)
 	;
 	
@@ -402,6 +410,35 @@ END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
+-- Function to create a password from a salt, password and method.
+--
+DROP FUNCTION IF EXISTS {$db->_['FCreatePassword']};
+CREATE FUNCTION {$db->_['FCreatePassword']}
+(
+	aSalt BINARY(10),
+	aPassword CHAR(32),
+	aMethod CHAR(5)
+)
+RETURNS BINARY(40)
+BEGIN
+	DECLARE password BINARY(40);
+	
+	--
+	-- Switch on the method to be used
+	--
+	CASE TRIM(aMethod)
+		WHEN 'MD5' 		THEN SELECT md5(CONCAT(aSalt, aPassword)) INTO password;
+		WHEN 'SHA-1' 	THEN SELECT sha1(CONCAT(aSalt, aPassword)) INTO password;
+		WHEN 'PLAIN' 	THEN SELECT aPassword INTO password;
+	END CASE;
+	
+	RETURN password;
+	
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
 -- Add default groups
 --
 INSERT INTO {$tGroup} (idGroup, nameGroup) VALUES ('adm', 'Administrators of the site');
@@ -409,6 +446,7 @@ INSERT INTO {$tGroup} (idGroup, nameGroup) VALUES ('usr', 'Regular users of the 
 
 EOD;
 
+$hashingalgoritm = DB_PASSWORDHASHING;
 $account 	= 'mikael';
 $password	= 'hemligt';
 $mail			= "mos@bth.se";
@@ -419,7 +457,7 @@ $query .= <<<EOD
 --
 -- Add default user(s) 
 --
-CALL {$db->_['PCreateAccount']}(@aUserId, '{$account}', '{$password}', @aStatus);
+CALL {$db->_['PCreateAccount']}(@aUserId, '{$account}', '{$password}', '{$hashingalgoritm}', @aStatus);
 CALL {$db->_['PChangeAccountEmail']}(@aUserId, '{$mail}', @ignore);
 CALL {$db->_['PChangeAccountAvatar']}(@aUserId, '{$avatar}');
 
@@ -435,7 +473,7 @@ $query .= <<<EOD
 --
 -- Add default user(s) 
 --
-CALL {$db->_['PCreateAccount']}(@aUserId, '{$account}', '{$password}', @aStatus);
+CALL {$db->_['PCreateAccount']}(@aUserId, '{$account}', '{$password}', '{$hashingalgoritm}', @aStatus);
 CALL {$db->_['PChangeAccountEmail']}(@aUserId, '{$mail}', @ignore);
 CALL {$db->_['PChangeAccountAvatar']}(@aUserId, '{$avatar}');
 

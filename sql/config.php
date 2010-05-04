@@ -38,6 +38,7 @@ $DB_Tables_And_Procedures = Array(
 	'PChangeAccountPassword' 	=> DB_PREFIX . 'PChangeAccountPassword',
 	'PChangeAccountEmail' 		=> DB_PREFIX . 'PChangeAccountEmail',
 	'PChangeAccountAvatar' 		=> DB_PREFIX . 'PChangeAccountAvatar',
+	'FCreatePassword' 				=> DB_PREFIX . 'FCreatePassword',
 
 	// For supporting gravatar from gratavar.com
 	'PChangeAccountGravatar' 		=> DB_PREFIX . 'PChangeAccountGravatar',

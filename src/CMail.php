@@ -38,10 +38,15 @@ class CMail {
 	// Send the mail.
 	// http://se.php.net/manual/en/function.mail.php
 	//
-	public function SendMail($to, $from, $subject, $message) {
+	public function SendMail($to, $subject, $message, $from='') {
 
+		// Default value of From-field
+		if(empty($from)) {
+			$from = WS_MAILFROM;
+		}
+		
 		// To send HTML mail, the Content-type header must be set
-		$headers  = '';
+		//$headers  = '';
 		//$headers  = 'MIME-Version: 1.0' . "\r\n";
 		//$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 		//$headers .= 'To: ' . $to . "\r\n";
@@ -50,6 +55,9 @@ class CMail {
 		//$headers .= 'Bcc: birthdaycheck@example.com' . "\r\n";
 		//$headers .= 'Reply-To: ' . $from . "\r\n";
     //$headers .= 'X-Mailer: Persia PHP/' . phpversion();
+    
+    // THe simplest header
+    $headers = "From: {$from}\r\n";
     
     // In case any of our lines are larger than 70 characters, we should use wordwrap()
 		$message = wordwrap($message, 70);

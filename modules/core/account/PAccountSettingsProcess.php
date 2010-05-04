@@ -66,11 +66,11 @@ else if($submitAction == 'change-password') {
 	$password2	= $pc->POSTisSetOrSetDefault('password2');
 
 	if(empty($password1) || empty($password2)) {
-		$pc->SetSessionErrorMessage($pc->lang['PASSWORD_CANNOT_BE_EMPTY']);
+		$pc->SetSessionMessage('changePwdFailed', $pc->lang['PASSWORD_CANNOT_BE_EMPTY']);
 		$pc->RedirectTo($redirectFail);
 	} 
 	else if($password1 != $password2) {
-		$pc->SetSessionErrorMessage($pc->lang['PASSWORD_DOESNT_MATCH']);
+		$pc->SetSessionMessage('changePwdFailed', $pc->lang['PASSWORD_DOESNT_MATCH']);
 		$pc->RedirectTo($redirectFail);
 	}
 
@@ -81,10 +81,19 @@ else if($submitAction == 'change-password') {
 	// Prepare query
 	$password = $mysqli->real_escape_string($password1);
 
-	$query = "CALL {$db->_['PChangeAccountPassword']}('{$userId}', '{$password}');";
-	
-	// Perform the query, ignore the results
-	$db->DoMultiQueryRetrieveAndStoreResultset($query);
+	$query = <<<EOD
+CALL {$db->_['PChangeAccountPassword']}('{$userId}', '{$password}', @rowcount);
+SELECT @rowcount AS rowcount;
+EOD;
+
+	// Perform the query, 
+	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
+
+	$row = $results[1]->fetch_object();
+
+	if($row->rowcount == 1) {
+		$pc->SetSessionMessage('changePwdSuccess', $pc->lang['CHANGE_PASSWORD_SUCCESS']);
+	}
 
 	$mysqli->close();
 
@@ -113,7 +122,7 @@ CALL {$db->_['PChangeAccountEmail']}('{$userId}', '{$email1}', @rowcount);
 SELECT @rowcount AS rowcount;
 EOD;
 
-	// Perform the query, do not use the result
+	// Perform the query
 	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 
 	$row = $results[1]->fetch_object();
@@ -122,22 +131,12 @@ EOD;
 	
 		// Send a mail to the new mailadress
 		$mail = new CMail();
-		$from = "no-reply@nowhere.org";
-		
-		$message = <<<EOD
-Välkommen,
-Här kommer ett mail till din nya mailadress.
-
-Bästa hälsningar,
-phpersia
-EOD;
-
-		$r = $mail->SendMail($email, $from, "Ny mailadress registrerad", $message);
+		$r = $mail->SendMail($email, $pc->lang['MAIL_NEW_MAILADRESS_CONFIRMATION_SUBJECT'], $pc->lang['MAIL_NEW_MAILADRESS_CONFIRMATION_BODY']);
 
 		if($r) {
-			$pc->SetSessionMessage('mailMessage', "Successfully sent mail to {$email}.");
+			$pc->SetSessionMessage('mailSuccess', sprintf($pc->lang['SUCCESSFULLY_SENT_MAIL'], $email));
 		}else {
-			$pc->SetSessionMessage('mailMessage', "Failed to send mail to {$email}. Perhaps malformed mailadress?");
+			$pc->SetSessionMessage('mailFailed', sprintf($pc->lang['FAILED_SENDING_MAIL'], $email));
 		}
 	
 	}

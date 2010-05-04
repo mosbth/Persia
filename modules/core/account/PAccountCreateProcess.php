@@ -97,9 +97,10 @@ else if($submitAction == 'account-create') {
 	// Prepare query
 	$account 	= $mysqli->real_escape_string($account);
 	$password = $mysqli->real_escape_string($password1);
+	$hashingalgoritm = DB_PASSWORDHASHING;
 
 	$query = <<<EOD
-CALL {$db->_['PCreateAccount']}(@accountId, '{$account}', '{$password}', @status);
+CALL {$db->_['PCreateAccount']}(@accountId, '{$account}', '{$password}', '{$hashingalgoritm}', @status);
 SELECT 
 	@accountId AS accountid,
 	@status AS status;

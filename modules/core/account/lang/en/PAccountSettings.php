@@ -12,6 +12,7 @@ $lang = Array(
 	'SETTINGS_FOR' => "Settings for: %s",
 	'MANAGE_ACCOUNT' => "Manage account",
 	'BASIC_ACCOUNT_INFO' => "Account &amp; Password",
+	'DESCRIPTION_ACCOUNT' => "Change your password here.", 
 	'ACCOUNT_NAME_LABEL' => "Name:", 
 	'ACCOUNT_PASSWORD_LABEL' => "Password:", 
 	'ACCOUNT_PASSWORD_AGAIN_LABEL' => "Password (again):", 

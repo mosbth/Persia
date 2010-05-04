@@ -161,7 +161,8 @@ fieldset.code {
 /* -------------------------------------------------------------------------------------
  * User notices, feedback and messages
  */
-div.userFeedback {
+div.userFeedbackPositive,
+div.userFeedbackNegative {
 	/*background: url('img/silk/accept.png') no-repeat;*/
 }
 
