@@ -147,12 +147,23 @@ div.errorMessage {
 	color: white;
 }
 
+div.successMessage {
+	background-color: #green;
+	color: white;
+}
+
 /* To display code. */
 fieldset.code {
 	background-color: #eeeeee;
 	color: #111111;
 }
 
+/* -------------------------------------------------------------------------------------
+ * User notices, feedback and messages
+ */
+div.userFeedback {
+	/*background: url('img/silk/accept.png') no-repeat;*/
+}
 
 /* -------------------------------------------------------------------------------------
  *

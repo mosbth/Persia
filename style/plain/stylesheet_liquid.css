@@ -163,7 +163,8 @@ p.last {
  *
  */
  
-div.errorMessage {
+div.errorMessage,
+div.successMessage {
 	border: none; /*#333333 4px dashed; */
 	font-size: 1.5em;
 	font-style: italic;

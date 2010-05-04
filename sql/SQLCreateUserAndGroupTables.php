@@ -220,11 +220,14 @@ END;
 --
 -- SP to change email for an account/user.
 --
+-- Returns the number of affected rows as an OUT parameter.
+--
 DROP PROCEDURE IF EXISTS {$db->_['PChangeAccountEmail']};
 CREATE PROCEDURE {$db->_['PChangeAccountEmail']}
 (
 	IN aUserId INT,
-	IN aEmail CHAR(100)
+	IN aEmail CHAR(100),
+	OUT aRowsAffected INT
 )
 BEGIN
 	
@@ -236,6 +239,8 @@ BEGIN
 		idUser = aUserId
 	LIMIT 1
 	;
+
+	SELECT ROW_COUNT() INTO aRowsAffected;
 	
 END;
 
@@ -260,7 +265,7 @@ BEGIN
 		idUser = aUserId
 	LIMIT 1
 	;
-	
+		
 END;
 
 
@@ -406,7 +411,7 @@ $query .= <<<EOD
 -- Add default user(s) 
 --
 CALL {$db->_['PCreateAccount']}(@aUserId, '{$account}', '{$password}', @aStatus);
-CALL {$db->_['PChangeAccountEmail']}(@aUserId, '{$mail}');
+CALL {$db->_['PChangeAccountEmail']}(@aUserId, '{$mail}', @ignore);
 CALL {$db->_['PChangeAccountAvatar']}(@aUserId, '{$avatar}');
 
 EOD;
@@ -422,7 +427,7 @@ $query .= <<<EOD
 -- Add default user(s) 
 --
 CALL {$db->_['PCreateAccount']}(@aUserId, '{$account}', '{$password}', @aStatus);
-CALL {$db->_['PChangeAccountEmail']}(@aUserId, '{$mail}');
+CALL {$db->_['PChangeAccountEmail']}(@aUserId, '{$mail}', @ignore);
 CALL {$db->_['PChangeAccountAvatar']}(@aUserId, '{$avatar}');
 
 

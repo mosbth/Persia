@@ -18,6 +18,7 @@ $lang = Array(
 	'CHANGE_PASSWORD' => "Change password",
 	'EMAIL_SETTINGS' => "Email",
 	'EMAIL_LABEL' => "Mail:", 
+	'DESCRIPTION_EMAIL' => "This mailadress can be used for login and for sending messages to the account owner.", 
 	'UPDATE_EMAIL' => "Update email",
 	'INSERT_EMAIL_HERE' => "Insert your email here.",
 	'EMAIL_FORMAT_REQUIRED' => "Email-format required.",

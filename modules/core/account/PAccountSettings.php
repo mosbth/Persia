@@ -80,6 +80,10 @@ $action 	= "?m={$gModule}&amp;p=account-update";
 $redirect = "?m={$gModule}&amp;p=account-settings";
 $imageLink = WS_IMAGES;
 
+// Get messages from session if they are set
+$mailMessage = $pc->GetSessionMessage('mailMessage');
+$mailMessage = empty($mailMessage) ? '' : "<div class='userFeedback' style=\"background: url('{$imageLink}/silk/accept.png') no-repeat;\">{$mailMessage}</div>";
+
 $htmlMain = <<< EOD
 <h1>{$pc->lang['MANAGE_ACCOUNT']}</h1>
 
@@ -119,6 +123,11 @@ $htmlMain = <<< EOD
 <fieldset class='accountsettings'>
 <table width='99%'>
 <tr>
+<td colspan='2'>
+<p>{$pc->lang['DESCRIPTION_EMAIL']}</p>
+</td>
+</tr>
+<tr>
 <td><label for="email">{$pc->lang['EMAIL_LABEL']}</label></td>
 <td style='text-align: right;'>
 <input class='email' type='email' name='email' value='{$email}' placeholder="{$pc->lang['INSERT_EMAIL_HERE']}" autocomplete
@@ -130,9 +139,15 @@ required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*\.(\w{2}|(com|net|org|edu|int|
 <button type='submit' name='submit' value='change-email'>{$pc->lang['UPDATE_EMAIL']}</button>
 </td>
 </tr>
+<tr>
+<td colspan='2'>
+<div class='userFeedback'>{$mailMessage}</div>
+</td>
+</tr>
 </table>
 </fieldset>
 </form>
+
 
 <h2 id='avatar'>{$pc->lang['AVATAR_SETTINGS']}</h2>
 <form action='{$action}' method='POST'>

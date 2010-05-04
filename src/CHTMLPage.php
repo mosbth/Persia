@@ -73,7 +73,7 @@ class CHTMLPage {
 		{$javascript}
 		<!-- HTML5 support for IE -->
 		<!--[if IE]> 
-		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>		
+			<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>		
 		<![endif]-->
 	</head>
 	<body>
@@ -195,9 +195,19 @@ EOD;
 	//
 	public function PreparePageBody($aBodyLeft, $aBodyMain, $aBodyRight) {
 
-		// General error message from session
-		$htmlErrorMessage = $this->GetErrorMessage();
-		
+		// General error/success message from session
+		$htmlErrorMessage 	= CPageController::GetSessionMessage('errorMessage');
+		$htmlSuccessMessage = CPageController::GetSessionMessage('successMessage');
+
+		$img = WS_IMAGES;
+		if(!empty($htmlErrorMessage)) {
+			$htmlErrorMessage = "<div class='errorMessage'><img alt='' src='{$img}/psst_60x60.png'>{$htmlErrorMessage}</div>";
+		}
+
+		if(!empty($htmlSuccessMessage)) {
+			$htmlSuccessMessage = "<div class='successMessage'><img alt='' src='{$img}/silk/accept.png'>{$htmlSuccessMessage}</div>";
+		}
+
 		// Stylesheet must support this
 		// 1, 2 or 3-column layout? 
 		// LMR, show left, main and right column
@@ -217,6 +227,7 @@ EOD;
 		$html = <<<EOD
 <div id='body'> 											
 	{$htmlErrorMessage}
+	{$htmlSuccessMessage}
 	<div id='container_{$cols}'>
 		<div id='content_{$cols}'>
 			{$bodyLeft}
@@ -279,6 +290,26 @@ EOD;
 </div>
 EOD;
 			unset($_SESSION['errorMessage']);
+		}
+		return $html;   
+	}
+	
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Create a successmessage if its set in the SESSION
+	//
+	public function GetSuccessMessage() {
+		$html = "";
+		if(isset($_SESSION['successMessage'])) {    
+			$img = WS_IMAGES;
+			$html = <<<EOD
+<div class='successMessage'>
+<img alt='' src='{$img}/silk/accept.png'>
+{$_SESSION['successMessage']}
+</div>
+EOD;
+			unset($_SESSION['successMessage']);
 		}
 		return $html;   
 	}

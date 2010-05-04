@@ -81,10 +81,8 @@ else if($submitAction == 'change-password') {
 	// Prepare query
 	$password = $mysqli->real_escape_string($password1);
 
-	$query = <<<EOD
-CALL {$db->_['PChangeAccountPassword']}('{$userId}', '{$password}');
-EOD;
-
+	$query = "CALL {$db->_['PChangeAccountPassword']}('{$userId}', '{$password}');";
+	
 	// Perform the query, ignore the results
 	$db->DoMultiQueryRetrieveAndStoreResultset($query);
 
@@ -108,17 +106,40 @@ else if($submitAction == 'change-email') {
 	$mysqli = $db->Connect();
 
 	// Prepare query
-	$email = $mysqli->real_escape_string($email);
+	$email1 = $mysqli->real_escape_string($email);
 
 	$query = <<<EOD
-CALL {$db->_['PChangeAccountEmail']}('{$userId}', '{$email}');
+CALL {$db->_['PChangeAccountEmail']}('{$userId}', '{$email1}', @rowcount);
+SELECT @rowcount AS rowcount;
 EOD;
 
-	// Perform the query, ignore the results
-	$db->DoMultiQueryRetrieveAndStoreResultset($query);
+	// Perform the query, do not use the result
+	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 
+	$row = $results[1]->fetch_object();
+
+	if($row->rowcount == 1) {
+	
+		// Send a mail to the new mailadress
+		$mail = new CMail();
+		$from = "mos@bth.se";
+		
+		$message = <<<EOD
+Välkommen,
+Här kommer ett mail till din nya mailadress.
+EOD;
+
+		$r = $mail->SendMail($email, $from, "Ny mailadress registrerad", $message);
+
+		if($r) {
+			$pc->SetSessionMessage('mailMessage', "Successfully sent mail to {$email}.");
+		}else {
+			$pc->SetSessionMessage('mailMessage', "Failed to send mail to {$email}. Perhaps malformed mailadress?");
+		}
+	
+	}
 	$mysqli->close();
-
+	
 	// Redirect to resultpage
 	$pc->RedirectTo($redirect);
 }
@@ -139,9 +160,7 @@ else if($submitAction == 'change-avatar') {
 	// Prepare query
 	$avatar = $mysqli->real_escape_string($avatar);
 
-	$query = <<<EOD
-CALL {$db->_['PChangeAccountAvatar']}('{$userId}', '{$avatar}');
-EOD;
+	$query = "CALL {$db->_['PChangeAccountAvatar']}('{$userId}', '{$avatar}');";
 
 	// Perform the query, ignore the results
 	$db->DoMultiQueryRetrieveAndStoreResultset($query);
@@ -168,17 +187,13 @@ else if($submitAction == 'change-gravatar') {
 	// Prepare query
 	$avatar = $mysqli->real_escape_string($gravatar);
 
-	$query = <<<EOD
-CALL {$db->_['PChangeAccountGravatar']}('{$userId}', '{$gravatar}');
-EOD;
+	$query = "CALL {$db->_['PChangeAccountGravatar']}('{$userId}', '{$gravatar}');";
 
 	// Perform the query, ignore the results
 	$db->DoMultiQueryRetrieveAndStoreResultset($query);
 
 	// Get the updated gravatar and store in the session
-	$query = <<< EOD
-CALL {$db->_['PGetAccountDetails']}({$accountId});
-EOD;
+	$query = "CALL {$db->_['PGetAccountDetails']}({$accountId});";
 
 	// Perform the query
 	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);

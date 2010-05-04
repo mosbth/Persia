@@ -50,6 +50,16 @@ h3.columnMenu {
 
 h1, h2, h3 { }
 
+
+/* -------------------------------------------------------------------------------------
+ * User notices, feedback and messages
+ */
+div.userFeedback {
+	text-indent: 1.5em;
+	font-style: italic;
+}
+
+
 /* -------------------------------------------------------------------------------------
 /* For the menu column, header */
 h3.columnMenu {

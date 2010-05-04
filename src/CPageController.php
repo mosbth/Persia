@@ -62,11 +62,44 @@ class CPageController {
 
 	// ------------------------------------------------------------------------------------
 	//
-	// Set error message/notice, used and cleared by CHTMLPage
+	// Set global error message/notice, used and cleared by CHTMLPage
 	//
 	public static function SetSessionErrorMessage($aMessage) {
-		$message = isset($_SESSION['errorMessage']) ? $_SESSION['errorMessage'] : '';
-		$_SESSION['errorMessage']	= $message . '<p>' . $aMessage . '</p>';
+		self::SetSessionMessage('errorMessage', $aMessage);
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Set global success message/notice, used and cleared by CHTMLPage
+	//
+	public static function SetSessionSuccessMessage($aMessage) {
+		self::SetSessionMessage('successMessage', $aMessage);
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Set message in session, get and clear the message by using GetSessionMessage
+	//
+	public static function SetSessionMessage($aVar, $aMessage) {
+		$message = isset($_SESSION[$aVar]) ? $_SESSION[$aVar] : '';
+		$_SESSION[$aVar]	= $message . '<p>' . $aMessage . '</p>';
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Set message in session, set the message by using SetSessionMessage
+	//
+	public static function GetSessionMessage($aVar) {
+
+		$message = "";
+		if(isset($_SESSION[$aVar])) {    
+			$message = $_SESSION[$aVar];
+			unset($_SESSION[$aVar]);
+		}
+		return $message;
 	}
 
 
