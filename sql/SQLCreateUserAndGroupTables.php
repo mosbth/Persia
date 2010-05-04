@@ -53,7 +53,12 @@ CREATE TABLE {$db->_['User']} (
   accountUser CHAR(32) NOT NULL UNIQUE,
   nameUser CHAR(100) NULL,
   emailUser CHAR(100) NULL UNIQUE,
-  passwordUser CHAR(32) NOT NULL,
+  
+  -- Attributes related to the password
+  saltUser BINARY(10) NOT NULL,
+  passwordUser BINARY(32) NOT NULL,
+
+	-- Attributes for user profile info
   avatarUser VARCHAR(255) NULL,
   gravatarUser VARCHAR(100) NULL
 );
@@ -194,30 +199,6 @@ END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
--- SP to change password for an account/user.
---
-DROP PROCEDURE IF EXISTS {$db->_['PChangeAccountPassword']};
-CREATE PROCEDURE {$db->_['PChangeAccountPassword']}
-(
-	IN aUserId INT,
-	IN aPassword CHAR(32)
-)
-BEGIN
-	
-	UPDATE 
-		{$db->_['User']}
-	SET 
-		passwordUser = md5(aPassword)
-	WHERE
-		idUser = aUserId
-	LIMIT 1
-	;
-	
-END;
-
-
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---
 -- SP to change email for an account/user.
 --
 -- Returns the number of affected rows as an OUT parameter.
@@ -306,6 +287,7 @@ CREATE PROCEDURE {$db->_['PCreateAccount']}
 	OUT aStatus INT
 )
 BEGIN
+	DECLARE salt BINARY(10);
 	
 	--
 	-- Check if the username exists, then set error code
@@ -326,10 +308,12 @@ BEGIN
 		--
 		-- Insert the user account
 		--
+		SELECT BINARY(UNIX_TIMESTAMP(NOW())) INTO salt;
+		
 		INSERT INTO {$db->_['User']} 
-			(accountUser, passwordUser, avatarUser)
+			(accountUser, saltUser, passwordUser, avatarUser)
 		VALUES 
-			(aUserAccount, md5(aPassword), '{$imageLink}/man_60x60.png')
+			(aUserAccount, salt, md5(CONCAT(salt, aPassword)), '{$imageLink}/man_60x60.png')
 		;
 
 		SET aUserId = LAST_INSERT_ID();
@@ -348,6 +332,31 @@ BEGIN
 	END;
 	END IF;
 
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to change password for an account/user.
+--
+DROP PROCEDURE IF EXISTS {$db->_['PChangeAccountPassword']};
+CREATE PROCEDURE {$db->_['PChangeAccountPassword']}
+(
+	IN aUserId INT,
+	IN aPassword CHAR(32)
+)
+BEGIN
+	
+	UPDATE 
+		{$db->_['User']}
+	SET 
+		saltUser			= BINARY(UNIX_TIMESTAMP(NOW())),
+		passwordUser = md5(CONCAT(saltUser, aPassword))
+	WHERE
+		idUser = aUserId
+	LIMIT 1
+	;
+	
 END;
 
 
@@ -374,11 +383,11 @@ BEGIN
 	WHERE 
 		(
 			accountUser		= aUserAccountOrEmail AND
-			passwordUser	= md5(aPassword)
+			passwordUser	= md5(CONCAT(saltUser, aPassword))
 		) OR
 		(
 			emailUser			= aUserAccountOrEmail AND
-			passwordUser	= md5(aPassword)
+			passwordUser	= md5(CONCAT(saltUser, aPassword))
 		)
 	;
 	
