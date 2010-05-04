@@ -122,11 +122,14 @@ EOD;
 	
 		// Send a mail to the new mailadress
 		$mail = new CMail();
-		$from = "mos@bth.se";
+		$from = "no-reply@nowhere.org";
 		
 		$message = <<<EOD
 Välkommen,
 Här kommer ett mail till din nya mailadress.
+
+Bästa hälsningar,
+phpersia
 EOD;
 
 		$r = $mail->SendMail($email, $from, "Ny mailadress registrerad", $message);
