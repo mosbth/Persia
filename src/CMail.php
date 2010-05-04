@@ -58,7 +58,7 @@ class CMail {
     
     // THe simplest header
     $headers = "From: {$from}\r\n";
-    $headers = "Mailed-by: Persia PHP\r\n";
+    //$headers = "Mailed-by: Persia PHP\r\n";
     
     // In case any of our lines are larger than 70 characters, we should use wordwrap()
 		$message = wordwrap($message, 70);
