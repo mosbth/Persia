@@ -19,7 +19,7 @@ $lang = Array(
 	'FAILED_SENDING_MAIL' => "Failed to send mail to '%s'. Perhaps malformed mailadress?",
 
 	// Change email confirmation mail
-	'MAIL_LOST_PASSWORD_SUBJECT' => "[Persia] Have you lost your password?",
+	'MAIL_LOST_PASSWORD_SUBJECT' => "".WS_MAILSUBJECTLABEL."Have you lost your password?",
 	'MAIL_LOST_PASSWORD_BODY' => 
 		"Hi," .
 		"\n" .
@@ -30,10 +30,7 @@ $lang = Array(
 		"The key is active for one hour. After that you will need to redo the procedure again. The key follows: " . 
 		"\n\n" .
 		"%s" . 
-		"\n\n" .
-		"Best regards,\n" .
-		"The Development Team Of Persia\n" .
-		"http://phpersia.org\n",
+		WS_MAILSIGNATURE,
 
 
 );

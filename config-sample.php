@@ -10,6 +10,8 @@
 //
 // Author: Mikael Roos, mos@bth.se
 //
+// TBD: This file is not lang-supported, how to enable that?
+//
 
 
 // -------------------------------------------------------------------------------------------
@@ -80,6 +82,20 @@ define('MENU_NAVBAR', 		serialize($menuNavBar));
 // www.student.bth.se
 //define('reCAPTCHA_PUBLIC',	'6LeUxbkSAAAAADjelI32xn2VdBwsMJLLiBO2umtO');	
 //define('reCAPTCHA_PRIVATE',	'6LeUxbkSAAAAAPRDQ8cAvEOgXMJZwb1rY2C5XauB');	
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Set the default email adress to be used as from in mail sent from the system to 
+// account users. Be sure to set a valid domain to avoid spamfilters.
+//
+define('WS_MAILFROM', 				'Persia Development Team <no-reply@nowhere.org>');
+define('WS_MAILSUBJECTLABEL', '[Persia] ');
+define('WS_MAILSIGNATURE', 	
+	"\n\nBest regards,\n" .
+	"The Development Team Of Persia\n" .
+	"http://phpersia.org\n"
+);
 
 
 ?>

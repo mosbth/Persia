@@ -21,7 +21,7 @@ $lang = Array(
 	'FAILED_SENDING_MAIL' => "Failed to send mail to '%s'. Perhaps malformed mailadress?",
 
 	// Change email confirmation mail
-	'MAIL_NEW_MAILADRESS_CONFIRMATION_SUBJECT' => "[Persia] New mailadress saved in the profile",
+	'MAIL_NEW_MAILADRESS_CONFIRMATION_SUBJECT' => "".WS_MAILSUBJECTLABEL."New mailadress saved in the profile",
 	'MAIL_NEW_MAILADRESS_CONFIRMATION_BODY' => 
 		"Hi," .
 		"\n" .
@@ -30,10 +30,7 @@ $lang = Array(
 		"This will now be the mailadress we use to send you information and messages from the system. " . 
 		"This mailadress may also be used for assistance if you forget your password. " . 
 		"So, it's important that this mailadress is correct." .
-		"\n\n" .
-		"Best regards,\n" .
-		"The Development Team Of Persia\n" .
-		"http://phpersia.org\n",
+		WS_MAILSIGNATURE,
 
 
 );
