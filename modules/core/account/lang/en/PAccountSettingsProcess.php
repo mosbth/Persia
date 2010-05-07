@@ -23,15 +23,14 @@ $lang = Array(
 	// Change email confirmation mail
 	'MAIL_NEW_MAILADRESS_CONFIRMATION_SUBJECT' => "[Persia] New mailadress saved in the profile",
 	'MAIL_NEW_MAILADRESS_CONFIRMATION_BODY' => 
-		"Hi,\n" .
+		"Hi," .
 		"\n" .
-		"This is a confirmation mail since you appear to have changed\n" . 
-		"your mailadress.\n" .
-		"\n" .
-		"This will now be the mailadress we use to send you information\n" . 
-		" and messages from the system. It may also be used for password\n" . 
-		"recovery so ensure that it is correct.\n" .
-		"\n" .
+		"This is a confirmation mail since you appear to have changed the mailadress in your profile." .
+		"\n\n" .
+		"This will now be the mailadress we use to send you information and messages from the system. " . 
+		"This mailadress may also be used for assistance if you forget your password. " . 
+		"So, it's important that this mailadress is correct." .
+		"\n\n" .
 		"Best regards,\n" .
 		"The Development Team Of Persia\n" .
 		"http://phpersia.org\n",

@@ -64,6 +64,7 @@ $db = new CDatabaseController();
 $mysqli = $db->Connect();
 
 if(empty($account) || empty($password)) {
+	$_SESSION['account'] = $account;
 	$pc->RedirectTo($redirectFail);
 }
 
@@ -88,7 +89,8 @@ $results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 $row = $results[1]->fetch_object();
 
 if($row->status == 1) {
-	$pc->SetSessionErrorMessage($pc->lang['AUTHENTICATION_FAILED']);
+	$_SESSION['account'] = $account;
+	$pc->SetSessionMessage('loginFailed', $pc->lang['AUTHENTICATION_FAILED']);
 	$pc->RedirectTo($redirectFail);	
 }
 

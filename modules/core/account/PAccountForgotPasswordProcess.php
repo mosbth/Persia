@@ -1,9 +1,10 @@
 <?php
 // ===========================================================================================
 //
-// File: PAccountCreateProcess.php
+// File: PAccountForgotPasswordProcess.php
 //
-// Description: Create a new account.
+// Description: Aid when forgetting passwords, sends email to the accountowner,
+// using the email related to the account.
 //
 // Author: Mikael Roos, mos@bth.se
 //
@@ -35,7 +36,6 @@ $intFilter->FrontControllerIsVisitedOrDie();
 $submitAction	= $pc->POSTisSetOrSetDefault('submit');
 $redirect			= $pc->POSTisSetOrSetDefault('redirect');
 $redirectFail	= $pc->POSTisSetOrSetDefault('redirect-fail');
-$silentLogin	= $pc->POSTisSetOrSetDefault('silent-login');
 
 // Always check whats coming in...
 //$pc->IsNumericOrDie($topicId, 0);
@@ -58,62 +58,38 @@ if(false) {
 
 // -------------------------------------------------------------------------------------------
 //
-// Change the account
+// Find the mail adress and send a rescue mail  
 // 
-else if($submitAction == 'account-create') {
+else if($submitAction == 'send-rescue-mail') {
 
 	// Get the input and check it
-	$account		= $pc->POSTisSetOrSetDefault('account');
-	$password1	= $pc->POSTisSetOrSetDefault('password1');
-	$password2	= $pc->POSTisSetOrSetDefault('password2');
-
+	$account = $pc->POSTisSetOrSetDefault('account');
 	$_SESSION['account'] = $account;
-	//
-	// Check the characters in the username
-	//
-	trim($account);
-	if(preg_replace('/[a-zA-Z0-9]/', '', $account)) {
-		$pc->SetSessionMessage('createAccountFailed', $pc->lang['INVALID_ACCOUNT_NAME']);
-		$pc->RedirectTo($redirectFail);		
-	}
-
-	//
-	// Check the passwords
-	//
-	if(empty($password1) || empty($password2)) {
-		$pc->SetSessionMessage('createAccountFailed', $pc->lang['PASSWORD_CANNOT_BE_EMPTY']);
-		$pc->RedirectTo($redirectFail);
-	} 
-	else if($password1 != $password2) {
-		$pc->SetSessionMessage('createAccountFailed', $pc->lang['PASSWORD_DOESNT_MATCH']);
-		$pc->RedirectTo($redirectFail);
-	}
 
 	//
 	// Check the CAPTCHA
 	//
 	$captcha = new CCaptcha();
 	if(!$captcha->CheckAnswer()) {
-		$pc->SetSessionMessage('createAccountFailed', $pc->lang['CAPTCHA_FAILED']);
+		$pc->SetSessionMessage('forgotPwdFailed', $pc->lang['CAPTCHA_FAILED']);
 		$pc->RedirectTo($redirectFail);		
 	}
-
+	
 	//
-	// Execute the database query to make the update
+	// Execute the database query to find mailadress
 	//
 	$db = new CDatabaseController();
 	$mysqli = $db->Connect();
 
 	// Prepare query
 	$account 	= $mysqli->real_escape_string($account);
-	$password = $mysqli->real_escape_string($password1);
-	$hashingalgoritm = DB_PASSWORDHASHING;
 
 	$query = <<<EOD
-CALL {$db->_['PCreateAccount']}(@accountId, '{$account}', '{$password}', '{$hashingalgoritm}', @status);
+CALL {$db->_['PGetMailAdressFromAccount']}('{$account}', @aAccount, @aMail, @aStatus);
 SELECT 
-	@accountId AS accountid,
-	@status AS status;
+	@aAccount AS account,
+	@aMail AS mail,
+	@aStatus AS status;
 EOD;
 
 	// Perform the query
@@ -122,22 +98,58 @@ EOD;
 	// Get details from resultset
 	$row = $results[1]->fetch_object();
 
-	if($row->status == 1) {
-		$pc->SetSessionMessage('createAccountFailed', $pc->lang['ACCOUNTNAME_ALREADY_EXISTS']);
-		$pc->RedirectTo($redirectFail);	
+	//
+	// Did something fail?
+	//
+	switch($row->status) {
+		case 1: {
+			$pc->SetSessionMessage('forgotPwdFailed', $pc->lang['NO_MAIL_CONNECTED']);
+			$pc->RedirectTo($redirectFail);	
+		} break;
+		
+		case 2: {
+			$pc->SetSessionMessage('forgotPwdFailed', $pc->lang['NO_MATCH']);
+			$pc->RedirectTo($redirectFail);	
+		} break;
 	}
+	$mailadress = $row->mail;
 	
-	$results[1]->close();
-	$mysqli->close();
+	//
+	// Initiate to re-set password, store key1 in the session and the get the key2 to send to the user
+	// The resulting key3 is stored in the database.
+	//
+	$_SESSION['key1'] = md5(uniqid());
+	$query = <<<EOD
+SET @aKey = '{$_SESSION['key1']}';
+CALL {$db->_['PPasswordResetGetKey']}('{$row->account}', @aKey);
+SELECT @aKey AS key2;
+EOD;
+ 
+ 	// Perform the query
+	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
+
+	// Get details from resultset
+	$row = $results[2]->fetch_object();
+
+	//global $gModule;
+	//$url = $pc->AddTrailingSlashIfNeeded(WS_SITELINK) . "?m={$gModule}&amp;p=pwd-reset&amp;key={$row->key}";
 
 	//
-	// Do a silent login and then proceed to $redirect
+	// Send a mail to the mailadress with the key2
 	//
+	$mail = new CMail();
+	$r = $mail->SendMail(	$mailadress, $pc->lang['MAIL_LOST_PASSWORD_SUBJECT'], sprintf($pc->lang['MAIL_LOST_PASSWORD_BODY'], $row->key2));
+	if(!$r) {
+		$pc->SetSessionMessage('mailFailed', sprintf($pc->lang['FAILED_SENDING_MAIL'], $mailadress));
+		$pc->RedirectTo($redirectFail);	
+	}
+		
+	$results[2]->close();
+	$mysqli->close();
 	unset($_SESSION['account']);
-	$_SESSION['silentLoginAccount'] 	= $account;
-	$_SESSION['silentLoginPassword'] 	= $password;
-	$_SESSION['silentLoginRedirect'] 	= $redirect;
-	$pc->RedirectTo($silentLogin);
+
+	$pc->SetSessionMessage('mailSuccess', sprintf($pc->lang['SUCCESSFULLY_SENT_MAIL'], $mailadress));
+	$pc->RedirectTo($redirect);	
 }
 
 

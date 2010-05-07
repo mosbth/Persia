@@ -15,7 +15,6 @@
 //
 // Require the files and actions that are common for all modules and pagecontrollers.
 //
-session_start();
 error_reporting(E_ALL);
 
 //
@@ -61,6 +60,12 @@ if(is_readable($configFile)) {
 } else {
 	require_once('config.php');
 }
+
+//
+// Start a named session
+//
+session_name(preg_replace('/[:\.\/-_]/', '', WS_SITELINK));
+session_start();
 
 //
 // Start a timer to time the generation of this request

@@ -1,9 +1,9 @@
 <?php
 // ===========================================================================================
 //
-// File: PAccountCreate.php
+// File: PAccountForgotPassword2.php
 //
-// Description: Form to create a new account.
+// Description: Aid for those who forgets their password. Step 2.
 //
 // Author: Mikael Roos, mos@bth.se
 //
@@ -31,14 +31,8 @@ $intFilter->FrontControllerIsVisitedOrDie();
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
-$account	= strip_tags($pc->POSTorSESSIONisSetOrSetDefaultClearSESSION('account', ''));
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Always redirect to latest visited page on success.
-//
-$redirectTo = $pc->SESSIONisSetOrSetDefault('history2');
+//$account	= strip_tags($pc->POSTorSESSIONisSetOrSetDefaultClearSESSION('account', ''));
+$key2	= $pc->SESSIONisSetOrSetDefault('key2', '');
 
 
 // -------------------------------------------------------------------------------------------
@@ -52,63 +46,51 @@ $captchaHtml = $captcha->GetHTMLToDisplay($captchaStyle);
 
 // -------------------------------------------------------------------------------------------
 //
-// Show the login-form
+// Show the form
 //
 global $gModule;
 
-$action 			= "?m={$gModule}&amp;p=account-createp";
-$redirect 		= "?m={$gModule}&amp;p=account-settings";
-$redirectFail = "?m={$gModule}&amp;p=account-create";
+$action 			= "?m={$gModule}&amp;p=account-forgot-pwd2p";
+$redirect 		= "?m={$gModule}&amp;p=account-forgot-pwd3";
+$redirectFail = "?m={$gModule}&amp;p=account-forgot-pwd2";
 $silentLogin 	= "?m={$gModule}&amp;p=loginp";
 
 // Get and format messages from session if they are set
 $helpers = new CHTMLHelpers();
 $messages = $helpers->GetHTMLForSessionMessages(
-	Array(), 
-	Array('createAccountFailed'));
+	Array('mailSuccess'), 
+	Array('forgotPwdFailed'));
 
 $htmlMain = <<<EOD
-<h1>{$pc->lang['CREATE_NEW_ACCOUNT_TITLE']}</h1>
+<h1>{$pc->lang['FORGOT_PWD_HEADER']}</h1>
 
-<p>{$pc->lang['CHOOSE_NAME_AND_PASSWORD']}</p>
+{$messages['mailSuccess']}
+<p>{$pc->lang['FORGOT_PWD_DESCRIPTION']}</p>
 
 <form action='{$action}' method='POST'>
 <input type='hidden' name='redirect' 			value='{$redirect}'>
 <input type='hidden' name='redirect-fail' value='{$redirectFail}'>
-<input type='hidden' name='silent-login' 	value='{$silentLogin}'>
 
 <fieldset class='accountsettings'>
 <table width='99%'>
 
 <tr>
-<td><label for="account">{$pc->lang['ACCOUNT_NAME_LABEL']}</label></td>
-<td style='text-align: right;'><input class='account' type='text' name='account' value='{$account}'></td>
+<td><label for="key2">{$pc->lang['FORGOT_PWD_KEY_LABEL']}</label></td>
+<td style='text-align: right;'><input class='account' type='text' name='key2' value='{$key2}' autofocus></td>
 </tr>
 
 <tr>
-<td><label for="account">{$pc->lang['ACCOUNT_PASSWORD_LABEL']}</label></td>
-<td style='text-align: right;'><input class='password' type='password' name='password1'></td>
-</tr>
-
-<tr>
-<td><label for="account">{$pc->lang['ACCOUNT_PASSWORD_AGAIN_LABEL']}</label></td>
-<td style='text-align: right;'><input class='password' type='password' name='password2'></td>
-</tr>
-
-<tr>
-<td><label for="captcha">{$pc->lang['ACCOUNT_NAME_MAGIC']}</label></td>
+<td><label for="captcha">{$pc->lang['FORGOT_PWD_MAGIC']}</label></td>
 <td><div style='float: right'>{$captchaHtml}</div></td>
 </tr>
 
 <tr>
 <td colspan='2' style='text-align: right;'>
-<button type='submit' name='submit' value='account-create'>{$pc->lang['CREATE_ACCOUNT']}</button>
+<button type='submit' name='submit' value='verify-key'>{$pc->lang['VERIFY_KEY']}</button>
 </td>
 </tr>
 
-<tr><td colspan='2'>
-{$messages['createAccountFailed']}
-</td></tr>
+<tr><td colspan='2'>{$messages['forgotPwdFailed']}</td></tr>
 
 </table>
 </fieldset>
@@ -142,7 +124,7 @@ EOD;
 //
 $page = new CHTMLPage();
 
-$page->printPage($pc->lang['CREATE_NEW_ACCOUNT_TITLE'], $htmlLeft, $htmlMain, $htmlRight);
+$page->printPage($pc->lang['FORGOT_PWD_TITLE'], $htmlLeft, $htmlMain, $htmlRight);
 exit;
 
 ?>

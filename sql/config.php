@@ -31,14 +31,17 @@
 $DB_Tables_And_Procedures = Array(
 
 	// Module Core: Accounts, users, groups
-	'User'					 					=> DB_PREFIX . 'User',
-	'PCreateAccount' 					=> DB_PREFIX . 'PCreateAccount',
-	'PAuthenticateAccount' 		=> DB_PREFIX . 'PAuthenticateAccount',
-	'PGetAccountDetails'			=> DB_PREFIX . 'PGetAccountDetails',
-	'PChangeAccountPassword' 	=> DB_PREFIX . 'PChangeAccountPassword',
-	'PChangeAccountEmail' 		=> DB_PREFIX . 'PChangeAccountEmail',
-	'PChangeAccountAvatar' 		=> DB_PREFIX . 'PChangeAccountAvatar',
-	'FCreatePassword' 				=> DB_PREFIX . 'FCreatePassword',
+	'User'					 						=> DB_PREFIX . 'User',
+	'PCreateAccount' 						=> DB_PREFIX . 'PCreateAccount',
+	'PAuthenticateAccount' 			=> DB_PREFIX . 'PAuthenticateAccount',
+	'PGetAccountDetails'				=> DB_PREFIX . 'PGetAccountDetails',
+	'PChangeAccountPassword' 		=> DB_PREFIX . 'PChangeAccountPassword',
+	'PChangeAccountEmail' 			=> DB_PREFIX . 'PChangeAccountEmail',
+	'PChangeAccountAvatar' 			=> DB_PREFIX . 'PChangeAccountAvatar',
+	'FCreatePassword' 					=> DB_PREFIX . 'FCreatePassword',
+	'PGetMailAdressFromAccount' => DB_PREFIX . 'PGetMailAdressFromAccount',
+	'PPasswordResetGetKey' 			=> DB_PREFIX . 'PPasswordResetGetKey',
+	'PPasswordResetActivate' 		=> DB_PREFIX . 'PPasswordResetActivate',
 
 	// For supporting gravatar from gratavar.com
 	'PChangeAccountGravatar' 		=> DB_PREFIX . 'PChangeAccountGravatar',

@@ -59,6 +59,10 @@ CREATE TABLE {$db->_['User']} (
   passwordUser BINARY(40) NOT NULL,
   methodUser CHAR(5) NOT NULL,
 
+  -- Attributes related to resetting the password
+  key3User BINARY(32) NULL UNIQUE,
+  expireUser DATETIME NULL,
+
 	-- Attributes for user profile info
   avatarUser VARCHAR(255) NULL,
   gravatarUser VARCHAR(100) NULL
@@ -272,6 +276,190 @@ BEGIN
 	LIMIT 1
 	;
 	
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to get mail adress of an account/user.
+--
+-- aAccountOrMail: Be the account name or a mailadress.
+-- aAccount: The accountname that matched.
+-- aMail: The resulting mail, if found, else empty.
+-- aStatus: 0 Success
+--          1 Account has no mail
+--          2 No such account nor mail found
+-- 
+DROP PROCEDURE IF EXISTS {$db->_['PGetMailAdressFromAccount']};
+CREATE PROCEDURE {$db->_['PGetMailAdressFromAccount']}
+(
+	IN aAccountOrMail CHAR(100),
+	OUT aAccount CHAR(32),
+	OUT aMail CHAR(100),
+	OUT aStatus INT
+)
+BEGIN
+	DECLARE mailByAccount CHAR(100);
+	DECLARE mailByMail CHAR(100);
+	DECLARE accountByAccount CHAR(32);
+	DECLARE accountByMail CHAR(32);
+
+	-- Is it an accountname with mail?
+	SELECT
+		accountUser, emailUser INTO accountByAccount, mailByAccount 
+	FROM {$db->_['User']} 
+	WHERE 
+		accountUser = aAccountOrMail;
+	
+	-- Is it an mailadress which exists together with an account?
+	SELECT 
+		accountUser, emailUser INTO accountByMail, mailByMail 
+	FROM {$db->_['User']} 
+	WHERE 
+		emailUser = aAccountOrMail;
+	
+	-- Get the correct status to return
+	IF mailByAccount IS NOT NULL THEN
+	BEGIN
+		SET aAccount 	= accountByAccount;
+		SET aMail 		= mailByAccount;
+		SET aStatus 	= 0;
+	END;
+	ELSEIF mailByAccount IS NULL AND accountByAccount IS NOT NULL THEN
+	BEGIN
+		SET aAccount 	= accountByAccount;
+		SET aMail 		= NULL;
+		SET aStatus 	= 1;
+	END;
+	ELSEIF mailByMail IS NOT NULL THEN
+	BEGIN
+		SET aAccount 	= accountByMail;
+		SET aMail 		= mailByMail;
+		SET aStatus	 	= 0;
+	END;
+	ELSE
+	BEGIN
+		SET aAccount 	= NULL;
+		SET aMail 		= NULL;
+		SET aStatus 	= 2;
+	END;
+	END IF;
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to initiate password reset by saving a key with the user.
+-- By sending this same key to {$db->_['PPasswordResetActivate']} will allow to
+-- reset the password.
+--
+-- aKey should have a value initiated by the caller (key1).
+-- The procedure creates a new key (key2) and uses these two keys to generate a third key (key3). 
+-- Key3 is stored in the user table.
+-- Key2 is put in the aKey OUT variable. Both key1 and key2 are later needed to carry out the 
+-- password reset action using {$db->_['PPasswordResetActivate']}.
+--
+-- A procedure could work like this:
+-- Create key1 in PHP using some random value and create a MD5 hash from it.
+-- The procedure creates key2 using similare techniques.
+-- Key3 is created by hashing a combination of key1 and key2.
+-- Key3 is stored in the database.
+-- Key2 is sent to the user via mail.
+-- Key1 is stored in the webbapplications session.
+-- The user takes key2 from the mail and inputs it in a form. 
+-- The webbapplikation takes key2 from the form and key1 from the session and sends it as 
+-- input to the procedure {$db->_['PPasswordResetActivate']} which resets the password.
+--
+-- I'm not really sure on the advantages with this but if feels better than just using 1 key
+-- and sending it in plain text to the user. This could, of course, be further evaluated. 
+--
+DROP PROCEDURE IF EXISTS {$db->_['PPasswordResetGetKey']};
+CREATE PROCEDURE {$db->_['PPasswordResetGetKey']}
+(
+	IN aAccountUser CHAR(32),
+	INOUT aKey CHAR(32)
+)
+BEGIN
+	DECLARE key1 BINARY(32);
+	DECLARE key2 BINARY(32);
+	DECLARE key3 BINARY(32);
+	
+	SET key1 = aKey;
+	SET key2 = BINARY(MD5(UNIX_TIMESTAMP(NOW())));
+	SET key3 = MD5(CONCAT(key1,key2));
+	SET aKey = key2;
+	
+	UPDATE 
+		{$db->_['User']}
+	SET 
+		key3User 		= key3,
+		expireUser 	= ADDTIME(NOW(), '01:00:00')
+	WHERE
+		accountUser = aAccountUser
+	LIMIT 1;
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to carry out a password reset request. It is really a alternative way of loggin in
+-- and authenticating a user based on a token.
+--
+-- aStatus 0 = Success
+-- aStatus 1 = Time expired for key3
+-- aStatus 2 = No match
+--
+DROP PROCEDURE IF EXISTS {$db->_['PPasswordResetActivate']};
+CREATE PROCEDURE {$db->_['PPasswordResetActivate']}
+(
+	OUT aAccountUser CHAR(32),
+	IN aKey1 CHAR(32),
+	IN aKey2 CHAR(32),
+	OUT aStatus INT
+)
+BEGIN
+	DECLARE key1 BINARY(32);
+	DECLARE key2 BINARY(32);
+	DECLARE key3 BINARY(32);
+	DECLARE expire DATETIME;
+	
+	SET key1 = aKey1;
+	SET key2 = aKey2;
+	SET key3 = MD5(CONCAT(key1,key2));
+
+	-- Find the key
+	SELECT 
+		accountUser, expireUser INTO aAccountUser, expire
+	FROM 
+		{$db->_['User']}
+	WHERE
+		key3User 		= key3 AND
+		expireUser 	> NOW();
+		
+	-- Clean up and set correct error messages
+	IF aAccountUser IS NOT NULL THEN
+	BEGIN
+		-- Reset the key
+		UPDATE 
+			{$db->_['User']}
+		SET 
+			key3User 		= NULL,
+			expireUser 	= NULL
+		WHERE
+			accountUser = aAccountUser
+		LIMIT 1;
+
+		SET aStatus = 0;
+	END;
+	ELSEIF expire > NOW() THEN
+	BEGIN
+		SET aStatus = 1;
+	END;
+	ELSE
+	BEGIN
+		SET aStatus = 2;
+	END;
+	END IF;
 END;
 
 

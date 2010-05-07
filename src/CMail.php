@@ -38,12 +38,12 @@ class CMail {
 	// Send the mail.
 	// http://se.php.net/manual/en/function.mail.php
 	//
-	public function SendMail($to, $subject, $message, $from='') {
+	public function SendMail($to, $subject, $message, $from=WS_MAILFROM) {
 
 		// Default value of From-field
-		if(empty($from)) {
-			$from = WS_MAILFROM;
-		}
+		//if(empty($from)) {
+		//	$from = WS_MAILFROM;
+		//}
 		
 		// To send HTML mail, the Content-type header must be set
 		//$headers  = '';

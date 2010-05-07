@@ -135,6 +135,20 @@ class CPageController {
 
 	// ------------------------------------------------------------------------------------
 	//
+	// Check the $_POST first and then the $_SESSION for a value. 
+	// Unset the value in the $_SESSION.
+	//
+	public static function POSTorSESSIONisSetOrSetDefaultClearSESSION($aEntry, $aDefault = '') {
+
+		$post 		= self::POSTisSetOrSetDefault($aEntry, '');		
+		$session 	= self::SESSIONisSetOrSetDefault($aEntry, '');
+		unset($_SESSION["$aEntry"]);
+		return (!empty($post) ? $post : (!empty($session) ? $session : $aDefault));
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
 	// Check if the value is numeric and optional in the range.
 	//
 	public static function IsNumericOrDie($aVar, $aRangeLow = 0, $aRangeHigh = 0) {
@@ -283,6 +297,16 @@ class CPageController {
 		$urlAsString = "{$url['scheme']}://{$userPwd}{$url['host']}{$url['path']}{$newQuery}{$fragment}";
 									
 		return $urlAsString;
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Static function
+	// Add trailing slash if missing. Return the modified url.
+	// 
+	public static function AddTrailingSlashIfNeeded($aUrl) {
+		return (!$aUrl[strlen($aUrl)] == '/') ? $aUrl . '/' : $aUrl;
 	}
 
 

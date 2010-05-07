@@ -1,9 +1,9 @@
 <?php
 // ===========================================================================================
 //
-// File: PLogin.php
+// File: PAccountForgotPassword.php
 //
-// Description: Show a login-form, ask for user name and password.
+// Description: Aid for those who forgets their password. Step 1.
 //
 // Author: Mikael Roos, mos@bth.se
 //
@@ -36,31 +36,33 @@ $account	= strip_tags($pc->POSTorSESSIONisSetOrSetDefaultClearSESSION('account',
 
 // -------------------------------------------------------------------------------------------
 //
-// Always redirect to latest visited page on success.
+// Prepare the CAPTCHA
 //
-$redirectTo = $pc->SESSIONisSetOrSetDefault('history2');
+$captcha = new CCaptcha();
+$captchaStyle = strip_tags($pc->GETIsSetOrSetDefault('captcha-style', 'custom'));
+$captchaHtml = $captcha->GetHTMLToDisplay($captchaStyle);
 
 
 // -------------------------------------------------------------------------------------------
 //
-// Show the login-form
+// Show the form
 //
 global $gModule;
 
-$action 			= "?m={$gModule}&amp;p=loginp";
-$redirect 		= $redirectTo;
-$redirectFail = "?m={$gModule}&amp;p=login";
+$action 			= "?m={$gModule}&amp;p=account-forgot-pwdp";
+$redirect			= "?m={$gModule}&amp;p=account-forgot-pwd2";
+$redirectFail = "?m={$gModule}&amp;p=account-forgot-pwd";
 
 // Get and format messages from session if they are set
 $helpers = new CHTMLHelpers();
 $messages = $helpers->GetHTMLForSessionMessages(
 	Array(), 
-	Array('loginFailed'));
+	Array('forgotPwdFailed'));
 
 $htmlMain = <<<EOD
-<h1>{$pc->lang['LOGIN']}</h1>
+<h1>{$pc->lang['FORGOT_PWD_HEADER']}</h1>
 
-<p>{$pc->lang['LOGIN_INTRO_TEXT']}</p> <!-- {$pc->lang['LOGIN_USING_ACCOUNT_OR_EMAIL']} -->
+<p>{$pc->lang['FORGOT_PWD_DESCRIPTION']}</p>
 
 <form action='{$action}' method='POST'>
 <input type='hidden' name='redirect' 			value='{$redirect}'>
@@ -68,42 +70,47 @@ $htmlMain = <<<EOD
 
 <fieldset class='accountsettings'>
 <table width='99%'>
+
 <tr>
-<td><label for="account">{$pc->lang['USER']}</label></td>
-<td style='text-align: right;'><input class='account' type='text' name='account' value='{$account}'></td>
+<td><label for="account">{$pc->lang['FORGOT_PWD_ACCOUNT_NAME_LABEL']}</label></td>
+<td style='text-align: right;'><input class='account' type='text' name='account' value='{$account}' autofocus></td>
 </tr>
+
 <tr>
-<td><label for="account">{$pc->lang['PASSWORD']}</label></td>
-<td style='text-align: right;'><input class='password' type='password' name='password'></td>
+<td><label for="captcha">{$pc->lang['FORGOT_PWD_MAGIC']}</label></td>
+<td><div style='float: right'>{$captchaHtml}</div></td>
 </tr>
+
+<tr>
 <td colspan='2' style='text-align: right;'>
-<button type='submit' name='submit' value='account-create'>{$pc->lang['LOGIN']}</button>
+<button type='submit' name='submit' value='send-rescue-mail'>{$pc->lang['SEND_RESCUE_MAIL']}</button>
 </td>
 </tr>
 
-<tr><td colspan='2'>
-{$messages['loginFailed']}
-</td></tr>
+<tr><td colspan='2'>{$messages['forgotPwdFailed']}</td></tr>
 
 </table>
 </fieldset>
-</form>
 
-<p>
-[<a href="?m={$gModule}&amp;p=account-create">{$pc->lang['CREATE_NEW_ACCOUNT']}</a>]
-[<a href="?m={$gModule}&amp;p=account-forgot-pwd">{$pc->lang['FORGOT_PASSWORD']}</a>]
-</p>
+</form>
 
 EOD;
 
+//
+// Enable changing and referencing parts of the current url
+//
+$links  = "<a href='" . $pc->ModifyCurrentURL('captcha-style=red') . 				"'>red</a> ";
+$links .= "<a href='" . $pc->ModifyCurrentURL('captcha-style=white') . 			"'>white</a> ";
+$links .= "<a href='" . $pc->ModifyCurrentURL('captcha-style=blackglass') . "'>blackglass</a> ";
+$links .= "<a href='" . $pc->ModifyCurrentURL('captcha-style=clean') . 			"'>clean</a> ";
+$links .= "<a href='" . $pc->ModifyCurrentURL('captcha-style=custom') . 		"'>custom</a> ";
+
 $htmlLeft 	= "";
 $htmlRight	= <<<EOD
-<section>
-<h3 class='columnMenu'>Various ways to sign in</h3>
+<h3 class='columnMenu'>Style the reCAPTCHA widget</h3>
 <p>
-Later...
+{$links}
 </p>
-</section>
 
 EOD;
 
@@ -114,7 +121,7 @@ EOD;
 //
 $page = new CHTMLPage();
 
-$page->printPage($pc->lang['LOGIN'], $htmlLeft, $htmlMain, $htmlRight);
+$page->printPage($pc->lang['FORGOT_PWD_TITLE'], $htmlLeft, $htmlMain, $htmlRight);
 exit;
 
 ?>

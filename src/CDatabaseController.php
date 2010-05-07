@@ -198,6 +198,7 @@ class CDatabaseController {
 		return $res;
 	}
 
+
 	// ------------------------------------------------------------------------------------
 	//
 	// Execute a database query from file, check the number of rows affected.

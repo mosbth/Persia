@@ -13,6 +13,9 @@ $lang = Array(
 	'LOGIN' => "Login",
 	'LOGIN_INTRO_TEXT' => "Login with your account/email and password. mikael/mos@bth.se - hemligt (adm), doe/doe@bth.se - doe (usr)", 
 	'CREATE_NEW_ACCOUNT' => "Create new account", 
+	'FORGOT_PASSWORD' => "I forgot my password", 
+
+
 
 );
 

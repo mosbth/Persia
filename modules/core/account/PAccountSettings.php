@@ -82,9 +82,9 @@ $imageLink = WS_IMAGES;
 
 // Get and format messages from session if they are set
 $helpers = new CHTMLHelpers();
-$successMessages 	= Array('mailSuccess', 'changePwdSuccess');
-$failedMessages 	= Array('mailFailed', 'changePwdFailed');
-$messages = $helpers->GetHTMLForSessionMessages($successMessages, $failedMessages);
+$messages = $helpers->GetHTMLForSessionMessages(
+	Array('mailSuccess', 'changePwdSuccess'),
+	Array('mailFailed', 'changePwdFailed'));
 
 $htmlMain = <<< EOD
 <h1>{$pc->lang['MANAGE_ACCOUNT']}</h1>

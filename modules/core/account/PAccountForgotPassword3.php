@@ -1,9 +1,9 @@
 <?php
 // ===========================================================================================
 //
-// File: PAccountCreate.php
+// File: PAccountForgotPassword3.php
 //
-// Description: Form to create a new account.
+// Description: Aid for those who forgets their password. Step 3.
 //
 // Author: Mikael Roos, mos@bth.se
 //
@@ -31,14 +31,7 @@ $intFilter->FrontControllerIsVisitedOrDie();
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
-$account	= strip_tags($pc->POSTorSESSIONisSetOrSetDefaultClearSESSION('account', ''));
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Always redirect to latest visited page on success.
-//
-$redirectTo = $pc->SESSIONisSetOrSetDefault('history2');
+$account	= $pc->SESSIONisSetOrSetDefault('account', '');
 
 
 // -------------------------------------------------------------------------------------------
@@ -52,67 +45,55 @@ $captchaHtml = $captcha->GetHTMLToDisplay($captchaStyle);
 
 // -------------------------------------------------------------------------------------------
 //
-// Show the login-form
+// Show the form
 //
 global $gModule;
 
-$action 			= "?m={$gModule}&amp;p=account-createp";
+$action 			= "?m={$gModule}&amp;p=account-update";
 $redirect 		= "?m={$gModule}&amp;p=account-settings";
-$redirectFail = "?m={$gModule}&amp;p=account-create";
+$redirectFail = "?m={$gModule}&amp;p=account-forgot-pwd2";
 $silentLogin 	= "?m={$gModule}&amp;p=loginp";
 
 // Get and format messages from session if they are set
 $helpers = new CHTMLHelpers();
 $messages = $helpers->GetHTMLForSessionMessages(
-	Array(), 
-	Array('createAccountFailed'));
+	Array('changePwdSuccess', 'keySuccess'), 
+	Array('changePwdFailed'));
 
 $htmlMain = <<<EOD
-<h1>{$pc->lang['CREATE_NEW_ACCOUNT_TITLE']}</h1>
+<h1>{$pc->lang['FORGOT_PWD_HEADER']}</h1>
 
-<p>{$pc->lang['CHOOSE_NAME_AND_PASSWORD']}</p>
+{$messages['keySuccess']}
+<p>{$pc->lang['FORGOT_PWD_DESCRIPTION']}</p>
 
 <form action='{$action}' method='POST'>
-<input type='hidden' name='redirect' 			value='{$redirect}'>
-<input type='hidden' name='redirect-fail' value='{$redirectFail}'>
-<input type='hidden' name='silent-login' 	value='{$silentLogin}'>
+<input type='hidden' name='redirect' 				value='{$redirect}#basic'>
+<input type='hidden' name='redirect-fail' 	value='{$redirect}#basic'>
 
 <fieldset class='accountsettings'>
 <table width='99%'>
-
 <tr>
 <td><label for="account">{$pc->lang['ACCOUNT_NAME_LABEL']}</label></td>
-<td style='text-align: right;'><input class='account' type='text' name='account' value='{$account}'></td>
+<td style='text-align: right;'><input class='account-dimmed' type='text' name='account' readonly value='{$account}'></td>
 </tr>
-
 <tr>
-<td><label for="account">{$pc->lang['ACCOUNT_PASSWORD_LABEL']}</label></td>
+<td><label for="password1">{$pc->lang['ACCOUNT_PASSWORD_LABEL']}</label></td>
 <td style='text-align: right;'><input class='password' type='password' name='password1'></td>
 </tr>
-
 <tr>
-<td><label for="account">{$pc->lang['ACCOUNT_PASSWORD_AGAIN_LABEL']}</label></td>
+<td><label for="password2">{$pc->lang['ACCOUNT_PASSWORD_AGAIN_LABEL']}</label></td>
 <td style='text-align: right;'><input class='password' type='password' name='password2'></td>
 </tr>
-
-<tr>
-<td><label for="captcha">{$pc->lang['ACCOUNT_NAME_MAGIC']}</label></td>
-<td><div style='float: right'>{$captchaHtml}</div></td>
-</tr>
-
 <tr>
 <td colspan='2' style='text-align: right;'>
-<button type='submit' name='submit' value='account-create'>{$pc->lang['CREATE_ACCOUNT']}</button>
+<button type='submit' name='submit' value='change-password'>{$pc->lang['CHANGE_PASSWORD']}</button>
 </td>
 </tr>
 
-<tr><td colspan='2'>
-{$messages['createAccountFailed']}
-</td></tr>
+<tr><td colspan='2'>{$messages['changePwdSuccess']}{$messages['changePwdFailed']}</td></tr>
 
 </table>
 </fieldset>
-
 </form>
 
 EOD;
@@ -142,7 +123,7 @@ EOD;
 //
 $page = new CHTMLPage();
 
-$page->printPage($pc->lang['CREATE_NEW_ACCOUNT_TITLE'], $htmlLeft, $htmlMain, $htmlRight);
+$page->printPage($pc->lang['FORGOT_PWD_TITLE'], $htmlLeft, $htmlMain, $htmlRight);
 exit;
 
 ?>
