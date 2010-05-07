@@ -62,40 +62,27 @@ if($userId != $accountId) {
 // 
 else if($submitAction == 'change-password') {
 
-	$password1	= $pc->POSTisSetOrSetDefault('password1');
-	$password2	= $pc->POSTisSetOrSetDefault('password2');
+	// 
+	// IAccountChangePasswordProcess
+	// 
+	// Preconditions:
+	//
+	// Variables must be defined by pagecontroller:
+	// $pc
+	// $userId
+	// $password1
+	// $password2
+	// $redirectFail
+	//
+	// Include from pagecontroller using:
+	// include(dirname(__FILE__) . '/IAccountChangePasswordProcess.php');
+	//
+	// Messages that may be set in session reflecting the outcome of the action:
+	// changePwdFailed
+	// changePwdSuccess
+	//
+	include(dirname(__FILE__) . '/IAccountChangePasswordProcess.php');
 
-	if(empty($password1) || empty($password2)) {
-		$pc->SetSessionMessage('changePwdFailed', $pc->lang['PASSWORD_CANNOT_BE_EMPTY']);
-		$pc->RedirectTo($redirectFail);
-	} 
-	else if($password1 != $password2) {
-		$pc->SetSessionMessage('changePwdFailed', $pc->lang['PASSWORD_DOESNT_MATCH']);
-		$pc->RedirectTo($redirectFail);
-	}
-
-	// Execute the database query to make the update
-	$db = new CDatabaseController();
-	$mysqli = $db->Connect();
-
-	// Prepare query
-	$password = $mysqli->real_escape_string($password1);
-
-	$query = <<<EOD
-CALL {$db->_['PChangeAccountPassword']}('{$userId}', '{$password}', @rowcount);
-SELECT @rowcount AS rowcount;
-EOD;
-
-	// Perform the query, 
-	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
-
-	$row = $results[1]->fetch_object();
-
-	if($row->rowcount == 1) {
-		$pc->SetSessionMessage('changePwdSuccess', $pc->lang['CHANGE_PASSWORD_SUCCESS']);
-	}
-
-	$mysqli->close();
 
 	// Redirect to resultpage
 	$pc->RedirectTo($redirect);

@@ -131,9 +131,6 @@ EOD;
 	// Get details from resultset
 	$row = $results[2]->fetch_object();
 
-	//global $gModule;
-	//$url = $pc->AddTrailingSlashIfNeeded(WS_SITELINK) . "?m={$gModule}&amp;p=pwd-reset&amp;key={$row->key}";
-
 	//
 	// Send a mail to the mailadress with the key2
 	//
@@ -147,6 +144,9 @@ EOD;
 	$results[2]->close();
 	$mysqli->close();
 	unset($_SESSION['account']);
+	
+	// Enable custom filter
+	$intFilter->CustomFilterIsSetOrDie('resetPassword', 'set');
 
 	$pc->SetSessionMessage('mailSuccess', sprintf($pc->lang['SUCCESSFULLY_SENT_MAIL'], $mailadress));
 	$pc->RedirectTo($redirect);	

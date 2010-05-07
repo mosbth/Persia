@@ -25,8 +25,7 @@ $pc->LoadLanguage(__FILE__);
 $intFilter = new CInterceptionFilter();
 
 $intFilter->FrontControllerIsVisitedOrDie();
-//$intFilter->UserIsSignedInOrRecirectToSignIn();
-//$intFilter->UserIsMemberOfGroupAdminOrDie();
+$intFilter->CustomFilterIsSetOrDie('resetPassword');
 
 
 // -------------------------------------------------------------------------------------------
@@ -94,9 +93,10 @@ else if($submitAction == 'verify-key') {
 	$key2	= $mysqli->real_escape_string($key2);
 	
 	$query = <<<EOD
-CALL {$db->_['PPasswordResetActivate']}(@aAccount, '{$key1}', '{$key2}', @aStatus);
+CALL {$db->_['PPasswordResetActivate']}(@aAccountId, @aAccountName, '{$key1}', '{$key2}', @aStatus);
 SELECT 
-	@aAccount AS account,
+	@aAccountName AS accountName,
+	@aAccountId AS accountId,
 	@aStatus AS status;
 EOD;
 
@@ -121,7 +121,8 @@ EOD;
 		} break;
 	}
 	
-	$_SESSION['account'] = $row->account;
+	$_SESSION['accountName']	= $row->accountName;
+	$_SESSION['accountId'] 		= $row->accountId;
 	unset($_SESSION['key1']);
 	unset($_SESSION['key2']);
 	$mysqli->close();

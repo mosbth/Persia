@@ -49,11 +49,15 @@ switch($gPage) {
 	case 'account-createp':				require_once(TP_PAGESPATH . 'account/PAccountCreateProcess.php'); break;
 	case 'account-settings':			require_once(TP_PAGESPATH . 'account/PAccountSettings.php'); break;
 	case 'account-update':				require_once(TP_PAGESPATH . 'account/PAccountSettingsProcess.php'); break;
-	case 'account-forgot-pwd':		require_once(TP_PAGESPATH . 'account/PAccountForgotPassword.php'); break;
-	case 'account-forgot-pwdp':		require_once(TP_PAGESPATH . 'account/PAccountForgotPasswordProcess.php'); break;
+
+	// Process for aid with resetting password
+	case 'account-forgot-pwd':		require_once(TP_PAGESPATH . 'account/PAccountForgotPassword1.php'); break;
+	case 'account-forgot-pwdp':		require_once(TP_PAGESPATH . 'account/PAccountForgotPassword1Process.php'); break;
 	case 'account-forgot-pwd2':		require_once(TP_PAGESPATH . 'account/PAccountForgotPassword2.php'); break;
 	case 'account-forgot-pwd2p':	require_once(TP_PAGESPATH . 'account/PAccountForgotPassword2Process.php'); break;
 	case 'account-forgot-pwd3':		require_once(TP_PAGESPATH . 'account/PAccountForgotPassword3.php'); break;
+	case 'account-forgot-pwd3p':	require_once(TP_PAGESPATH . 'account/PAccountForgotPassword3Process.php'); break;
+	case 'account-forgot-pwd4':		require_once(TP_PAGESPATH . 'account/PAccountForgotPassword4.php'); break;
 
 	//
 	// Administration

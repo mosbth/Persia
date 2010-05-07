@@ -1,7 +1,7 @@
 <?php
 // ===========================================================================================
 //
-// File: PAccountForgotPassword2Process.php
+// File: PAccountForgotPassword3Process.php
 //
 // Description: Language file
 //

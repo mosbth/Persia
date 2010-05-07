@@ -9,8 +9,8 @@
 //
 
 $lang = Array(
-	'FORGOT_PWD_TITLE' => "Assistance for those who forget their password (2/3).",
-	'FORGOT_PWD_HEADER' => "I forgot my password (2/3)",
+	'FORGOT_PWD_TITLE' => "Assistance for resetting a password (2/4).",
+	'FORGOT_PWD_HEADER' => "I forgot my password (2/4)",
 	'FORGOT_PWD_DESCRIPTION' => 
 		"Ensure that you got the mail. Copy and paste the key from the mail to verify it. " . 
 		"The key is valid for 1 hour. " . 

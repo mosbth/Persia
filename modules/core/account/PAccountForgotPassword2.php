@@ -23,8 +23,7 @@ $pc->LoadLanguage(__FILE__);
 $intFilter = new CInterceptionFilter();
 
 $intFilter->FrontControllerIsVisitedOrDie();
-//$intFilter->UserIsSignedInOrRecirectToSignIn();
-//$intFilter->UserIsMemberOfGroupAdminOrDie();
+$intFilter->CustomFilterIsSetOrDie('resetPassword');
 
 
 // -------------------------------------------------------------------------------------------

@@ -412,7 +412,8 @@ END;
 DROP PROCEDURE IF EXISTS {$db->_['PPasswordResetActivate']};
 CREATE PROCEDURE {$db->_['PPasswordResetActivate']}
 (
-	OUT aAccountUser CHAR(32),
+	OUT aAccountId INT UNSIGNED,
+	OUT aAccountName CHAR(32),
 	IN aKey1 CHAR(32),
 	IN aKey2 CHAR(32),
 	OUT aStatus INT
@@ -429,7 +430,7 @@ BEGIN
 
 	-- Find the key
 	SELECT 
-		accountUser, expireUser INTO aAccountUser, expire
+		idUser, accountUser, expireUser INTO aAccountId, aAccountName, expire
 	FROM 
 		{$db->_['User']}
 	WHERE
@@ -437,7 +438,7 @@ BEGIN
 		expireUser 	> NOW();
 		
 	-- Clean up and set correct error messages
-	IF aAccountUser IS NOT NULL THEN
+	IF aAccountId IS NOT NULL THEN
 	BEGIN
 		-- Reset the key
 		UPDATE 
@@ -446,7 +447,7 @@ BEGIN
 			key3User 		= NULL,
 			expireUser 	= NULL
 		WHERE
-			accountUser = aAccountUser
+			idUser = aAccountId
 		LIMIT 1;
 
 		SET aStatus = 0;

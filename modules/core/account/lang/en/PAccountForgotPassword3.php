@@ -9,8 +9,8 @@
 //
 
 $lang = Array(
-	'FORGOT_PWD_TITLE' => "Assistance for those who forget their password (3/3).",
-	'FORGOT_PWD_HEADER' => "I forgot my password (3/3)",
+	'FORGOT_PWD_TITLE' => "Assistance for resetting a password (3/4).",
+	'FORGOT_PWD_HEADER' => "I forgot my password (3/4)",
 	'FORGOT_PWD_DESCRIPTION' => 
 		"Set a new password for your account.",
 	'BASIC_ACCOUNT_INFO' => "Account &amp; Password",

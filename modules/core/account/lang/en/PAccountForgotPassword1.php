@@ -1,7 +1,7 @@
 <?php
 // ===========================================================================================
 //
-// File: PAccountForgotPassword.php
+// File: PAccountForgotPassword1.php
 //
 // Description: Language file
 //
@@ -9,8 +9,8 @@
 //
 
 $lang = Array(
-	'FORGOT_PWD_TITLE' => "Assistance for those who forget their password. (1/3)",
-	'FORGOT_PWD_HEADER' => "I forgot my password (1/3)",
+	'FORGOT_PWD_TITLE' => "Assistance for resetting a password (1/4).",
+	'FORGOT_PWD_HEADER' => "I forgot my password (1/4)",
 	'FORGOT_PWD_DESCRIPTION' => 
 		"Enter the accountname or the mailadress that is connected to the account. " . 
 		"A mail will be sent to the mailadress stored in your profile. The mail will " .

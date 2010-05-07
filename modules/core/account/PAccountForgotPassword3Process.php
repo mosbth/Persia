@@ -1,10 +1,10 @@
 <?php
 // ===========================================================================================
 //
-// File: PAccountForgotPassword2Process.php
+// File: PAccountForgotPassword3Process.php
 //
-// Description: Aid when forgetting passwords, sends email to the account owner,
-// using the email related to the account. Step 2.
+// Description: Aid when forgetting passwords, change password and perform silent login. 
+// Step 3.
 //
 // Author: Mikael Roos, mos@bth.se
 //
@@ -25,8 +25,7 @@ $pc->LoadLanguage(__FILE__);
 $intFilter = new CInterceptionFilter();
 
 $intFilter->FrontControllerIsVisitedOrDie();
-//$intFilter->UserIsSignedInOrRecirectToSignIn();
-//$intFilter->UserIsMemberOfGroupAdminOrDie();
+$intFilter->CustomFilterIsSetOrDie('resetPassword');
 
 
 // -------------------------------------------------------------------------------------------
@@ -36,6 +35,7 @@ $intFilter->FrontControllerIsVisitedOrDie();
 $submitAction	= $pc->POSTisSetOrSetDefault('submit');
 $redirect			= $pc->POSTisSetOrSetDefault('redirect');
 $redirectFail	= $pc->POSTisSetOrSetDefault('redirect-fail');
+$silentLogin	= $pc->POSTisSetOrSetDefault('silent-login');
 
 // Always check whats coming in...
 //$pc->IsNumericOrDie($topicId, 0);
@@ -60,74 +60,35 @@ if(false) {
 //
 // Find the mail adress and send a rescue mail  
 // 
-else if($submitAction == 'verify-key') {
+else if($submitAction == 'change-password') {
 
-	// Get the input and check it
-	$key2 = strip_tags($pc->POSTisSetOrSetDefault('key2'));
-	$_SESSION['key2'] = $key2;
+	$userId = $pc->SESSIONisSetOrSetDefault('accountId');
+	// 
+	// IAccountChangePasswordProcess
+	// 
+	// Preconditions:
+	//
+	// Variables must be defined by pagecontroller:
+	// $pc
+	// $userId
+	// $password1
+	// $password2
+	// $redirectFail
+	//
+	// Include from pagecontroller using:
+	// include(dirname(__FILE__) . '/IAccountChangePasswordProcess.php');
+	//
+	// Messages that may be set in session reflecting the outcome of the action:
+	// changePwdFailed
+	// changePwdSuccess
+	//
+	include(dirname(__FILE__) . '/IAccountChangePasswordProcess.php');
 
-	//
-	// Check key1 from the session
-	//
-	$key1 = $pc->SESSIONisSetOrSetDefault('key1', '');
-	if(empty($key1)) {
-		$pc->SetSessionMessage('forgotPwdFailed', $pc->lang['SESSION_KEY_LOST']);
-		$pc->RedirectTo($redirectFail);		
-	}
-
-	//
-	// Check the CAPTCHA
-	//
-	$captcha = new CCaptcha();
-	if(!$captcha->CheckAnswer()) {
-		$pc->SetSessionMessage('forgotPwdFailed', $pc->lang['CAPTCHA_FAILED']);
-		$pc->RedirectTo($redirectFail);		
-	}
-	
-	//
-	// Execute the database query to verify the key
-	//
-	$db = new CDatabaseController();
-	$mysqli = $db->Connect();
-
-	// Prepare query
-	$key2	= $mysqli->real_escape_string($key2);
-	
-	$query = <<<EOD
-CALL {$db->_['PPasswordResetActivate']}(@aAccount, '{$key1}', '{$key2}', @aStatus);
-SELECT 
-	@aAccount AS account,
-	@aStatus AS status;
-EOD;
-
-	// Perform the query
-	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
-
-	// Get details from resultset
-	$row = $results[1]->fetch_object();
-
-	//
-	// Did something fail?
-	//
-	switch($row->status) {
-		case 1: {
-			$pc->SetSessionMessage('forgotPwdFailed', $pc->lang['KEY_TIME_EXPIRED']);
-			$pc->RedirectTo($redirectFail);	
-		} break;
-		
-		case 2: {
-			$pc->SetSessionMessage('forgotPwdFailed', $pc->lang['NO_MATCH']);
-			$pc->RedirectTo($redirectFail);	
-		} break;
-	}
-	
-	$_SESSION['account'] = $row->account;
-	unset($_SESSION['key1']);
-	unset($_SESSION['key2']);
-	$mysqli->close();
-
-	$pc->SetSessionMessage('keySuccess', $pc->lang['SUCCESSFULLY_VERIFIED_KEY']);
-	$pc->RedirectTo($redirect);	
+	// Use the account and the password to do a silent login	
+	$_SESSION['silentLoginAccount'] 	= $pc->SESSIONisSetOrSetDefault('accountName');
+	$_SESSION['silentLoginPassword'] 	= $password1;
+	$_SESSION['silentLoginRedirect'] 	= $redirect;
+	$pc->RedirectTo($silentLogin);
 }
 
 

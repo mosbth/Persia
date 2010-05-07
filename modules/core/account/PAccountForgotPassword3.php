@@ -23,24 +23,14 @@ $pc->LoadLanguage(__FILE__);
 $intFilter = new CInterceptionFilter();
 
 $intFilter->FrontControllerIsVisitedOrDie();
-//$intFilter->UserIsSignedInOrRecirectToSignIn();
-//$intFilter->UserIsMemberOfGroupAdminOrDie();
+$intFilter->CustomFilterIsSetOrDie('resetPassword');
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
-$account	= $pc->SESSIONisSetOrSetDefault('account', '');
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Prepare the CAPTCHA
-//
-$captcha = new CCaptcha();
-$captchaStyle = strip_tags($pc->GETIsSetOrSetDefault('captcha-style', 'custom'));
-$captchaHtml = $captcha->GetHTMLToDisplay($captchaStyle);
+$account	= $pc->SESSIONisSetOrSetDefault('accountName', '');
 
 
 // -------------------------------------------------------------------------------------------
@@ -49,15 +39,15 @@ $captchaHtml = $captcha->GetHTMLToDisplay($captchaStyle);
 //
 global $gModule;
 
-$action 			= "?m={$gModule}&amp;p=account-update";
-$redirect 		= "?m={$gModule}&amp;p=account-settings";
-$redirectFail = "?m={$gModule}&amp;p=account-forgot-pwd2";
+$action 			= "?m={$gModule}&amp;p=account-forgot-pwd3p";
+$redirect 		= "?m={$gModule}&amp;p=account-forgot-pwd4";
+$redirectFail = "?m={$gModule}&amp;p=account-forgot-pwd3";
 $silentLogin 	= "?m={$gModule}&amp;p=loginp";
 
 // Get and format messages from session if they are set
 $helpers = new CHTMLHelpers();
 $messages = $helpers->GetHTMLForSessionMessages(
-	Array('changePwdSuccess', 'keySuccess'), 
+	Array('keySuccess'), 
 	Array('changePwdFailed'));
 
 $htmlMain = <<<EOD
@@ -67,8 +57,9 @@ $htmlMain = <<<EOD
 <p>{$pc->lang['FORGOT_PWD_DESCRIPTION']}</p>
 
 <form action='{$action}' method='POST'>
-<input type='hidden' name='redirect' 				value='{$redirect}#basic'>
-<input type='hidden' name='redirect-fail' 	value='{$redirect}#basic'>
+<input type='hidden' name='redirect' 			value='{$redirect}'>
+<input type='hidden' name='redirect-fail'	value='{$redirectFail}'>
+<input type='hidden' name='silent-login' 	value='{$silentLogin}'>
 
 <fieldset class='accountsettings'>
 <table width='99%'>
@@ -90,7 +81,7 @@ $htmlMain = <<<EOD
 </td>
 </tr>
 
-<tr><td colspan='2'>{$messages['changePwdSuccess']}{$messages['changePwdFailed']}</td></tr>
+<tr><td colspan='2'>{$messages['changePwdFailed']}</td></tr>
 
 </table>
 </fieldset>
@@ -99,20 +90,12 @@ $htmlMain = <<<EOD
 EOD;
 
 //
-// Enable changing and referencing parts of the current url
+// 
 //
-$links  = "<a href='" . $pc->ModifyCurrentURL('captcha-style=red') . 				"'>red</a> ";
-$links .= "<a href='" . $pc->ModifyCurrentURL('captcha-style=white') . 			"'>white</a> ";
-$links .= "<a href='" . $pc->ModifyCurrentURL('captcha-style=blackglass') . "'>blackglass</a> ";
-$links .= "<a href='" . $pc->ModifyCurrentURL('captcha-style=clean') . 			"'>clean</a> ";
-$links .= "<a href='" . $pc->ModifyCurrentURL('captcha-style=custom') . 		"'>custom</a> ";
-
 $htmlLeft 	= "";
 $htmlRight	= <<<EOD
-<h3 class='columnMenu'>Style the reCAPTCHA widget</h3>
-<p>
-{$links}
-</p>
+<h3 class='columnMenu'></h3>
+<p></p>
 
 EOD;
 
