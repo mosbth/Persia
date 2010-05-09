@@ -478,7 +478,8 @@ DROP PROCEDURE IF EXISTS {$db->_['PGetOrCreateAccountId']};
 CREATE PROCEDURE {$db->_['PGetOrCreateAccountId']}
 (
 	OUT aUserId INT,
-	IN aUserAccount CHAR(32)
+	IN aUserAccount CHAR(32),
+	IN aMail CHAR(100)
 )
 BEGIN
 	DECLARE status INT;
@@ -490,6 +491,7 @@ BEGIN
 	IF aUserId IS NULL THEN
 	BEGIN
 		CALL {$db->_['PCreateAccount']}(aUserId, aUserAccount, aUserAccount, 'PLAIN', status);
+		CALL {$db->_['PChangeAccountEmail']}(aUserId, aMail, status);
 	END;
 	END IF;
 

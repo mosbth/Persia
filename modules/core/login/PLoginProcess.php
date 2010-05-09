@@ -153,6 +153,7 @@ else if($submit == 'login-ldap') {
 	// $pc
 	// $account 
 	// $password
+	// $mail (OUT, sets the mailadress if it exists)
 	// $redirectFail
 	//
 	// Include from pagecontroller using:
@@ -173,7 +174,7 @@ else if($submit == 'login-ldap') {
 	// These should then be checked each time the user performs a login.
 	//
 	$query = <<< EOD
-CALL {$db->_['PGetOrCreateAccountId']}(@accountId, '{$account}');
+CALL {$db->_['PGetOrCreateAccountId']}(@accountId, '{$account}', '{$mail}');
 SELECT
 	@accountId AS accountId;
 EOD;

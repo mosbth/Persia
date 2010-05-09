@@ -13,6 +13,7 @@
 // Author: Mikael Roos, mos@bth.se
 //
 
+
 // -------------------------------------------------------------------------------------------
 //
 // Redirect to the choosen pagecontroller.
@@ -45,19 +46,23 @@ switch($gPage) {
 	//
 	// User, profile and settings
 	//
-	case 'account-create':				require_once(TP_PAGESPATH . 'account/PAccountCreate.php'); break;
-	case 'account-createp':				require_once(TP_PAGESPATH . 'account/PAccountCreateProcess.php'); break;
+	
+	// Create new account
+	case 'account-create': 	if(CREATE_NEW_ACCOUNT) require_once(TP_PAGESPATH . 'account/PAccountCreate.php'); break;
+	case 'account-createp':	if(CREATE_NEW_ACCOUNT) require_once(TP_PAGESPATH . 'account/PAccountCreateProcess.php'); break;
+
+	// Maintain account profile
 	case 'account-settings':			require_once(TP_PAGESPATH . 'account/PAccountSettings.php'); break;
 	case 'account-update':				require_once(TP_PAGESPATH . 'account/PAccountSettingsProcess.php'); break;
 
 	// Process for aid with resetting password
-	case 'account-forgot-pwd':		require_once(TP_PAGESPATH . 'account/PAccountForgotPassword1.php'); break;
-	case 'account-forgot-pwdp':		require_once(TP_PAGESPATH . 'account/PAccountForgotPassword1Process.php'); break;
-	case 'account-forgot-pwd2':		require_once(TP_PAGESPATH . 'account/PAccountForgotPassword2.php'); break;
-	case 'account-forgot-pwd2p':	require_once(TP_PAGESPATH . 'account/PAccountForgotPassword2Process.php'); break;
-	case 'account-forgot-pwd3':		require_once(TP_PAGESPATH . 'account/PAccountForgotPassword3.php'); break;
-	case 'account-forgot-pwd3p':	require_once(TP_PAGESPATH . 'account/PAccountForgotPassword3Process.php'); break;
-	case 'account-forgot-pwd4':		require_once(TP_PAGESPATH . 'account/PAccountForgotPassword4.php'); break;
+	case 'account-forgot-pwd':		if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword1.php'); break;
+	case 'account-forgot-pwdp':		if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword1Process.php'); break;
+	case 'account-forgot-pwd2':		if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword2.php'); break;
+	case 'account-forgot-pwd2p':	if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword2Process.php'); break;
+	case 'account-forgot-pwd3':		if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword3.php'); break;
+	case 'account-forgot-pwd3p':	if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword3Process.php'); break;
+	case 'account-forgot-pwd4':		if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword4.php'); break;
 
 	//
 	// Administration
@@ -140,5 +145,6 @@ switch($gPage) {
 	default:			require_once(TP_PAGESPATH . 'home/P404.php'); break;
 }
 
+require_once(TP_PAGESPATH . 'home/P404.php')
 
 ?>

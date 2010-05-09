@@ -58,8 +58,9 @@ class CLDAP {
 	// ------------------------------------------------------------------------------------
 	//
 	// Authenticate user, return userid or false.
+	// Sets $mail if it exists in the user profile.
 	//
-	public function Authenticate($aDs, $aBaseDn, $aUid, $aPassword) {
+	public function Authenticate($aDs, $aBaseDn, $aUid, $aPassword, &$mail) {
 
 		if(empty($aPassword)) {
 			return false;
@@ -79,9 +80,12 @@ class CLDAP {
 			return false;
 		}
 
-		//Binding using dn and password...";
+		// Binding using dn and password. 
 		$info	=	ldap_get_entries($aDs, $sr);
 		$r		=	@ldap_bind($aDs, $info[0]['dn'], $password);
+		
+		// Get the mail if available
+		$mail = isset($info[$i]['mail'][0]) ? $info[$i]['mail'][0] : '';
 
 		if($r) {
 			return $aUid;

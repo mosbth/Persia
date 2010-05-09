@@ -100,6 +100,15 @@ define('WS_MAILSIGNATURE',
 
 // -------------------------------------------------------------------------------------------
 //
+// Display the following actions if they are enabled.
+// Set true to enable, false to disable.
+// 
+define('CREATE_NEW_ACCOUNT', true);
+define('FORGOT_PASSWORD', true);
+
+
+// -------------------------------------------------------------------------------------------
+//
 // Settings for LDAP and LDAP authentication.
 //
 //define('LDAP_AUTH_SERVER', 'ldap.dbwebb.se');

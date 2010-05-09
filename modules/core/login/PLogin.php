@@ -54,6 +54,26 @@ $messages = $helpers->GetHTMLForSessionMessages(
 	Array(), 
 	Array('loginFailed'));
 
+// Only display LDAP login button if LDAP is enabled.
+$ldapButton = <<<EOD
+<tr>
+<td colspan='2' style='text-align: right;'>
+<button type='submit' name='submit' value='login-ldap'>Login (LDAP)</button>
+</td>
+</tr>
+EOD;
+$ldapButton = defined('LDAP_AUTH_SERVER') ? $ldapButton : '';
+
+// Only display if enabled
+$createNewUser = "[<a href='?m={$gModule}&amp;p=account-create'>{$pc->lang['CREATE_NEW_ACCOUNT']}</a>] ";
+$createNewUser = CREATE_NEW_ACCOUNT ? $createNewUser : '';
+
+// Only display if enabled
+$forgotPassword = "[<a href='?m={$gModule}&amp;p=account-forgot-pwd'>{$pc->lang['FORGOT_PASSWORD']}</a>] ";
+$forgotPassword = FORGOT_PASSWORD ? $forgotPassword : '';
+
+
+// Create main HTML
 $htmlMain = <<<EOD
 <h1>{$pc->lang['LOGIN']}</h1>
 
@@ -80,11 +100,7 @@ $htmlMain = <<<EOD
 </td>
 </tr>
 
-<tr>
-<td colspan='2' style='text-align: right;'>
-<button type='submit' name='submit' value='login-ldap'>Login (LDAP)</button>
-</td>
-</tr>
+{$ldapButton}
 
 <tr><td colspan='2'>{$messages['loginFailed']}</td></tr>
 
@@ -92,10 +108,7 @@ $htmlMain = <<<EOD
 </fieldset>
 </form>
 
-<p>
-[<a href="?m={$gModule}&amp;p=account-create">{$pc->lang['CREATE_NEW_ACCOUNT']}</a>]
-[<a href="?m={$gModule}&amp;p=account-forgot-pwd">{$pc->lang['FORGOT_PASSWORD']}</a>]
-</p>
+<p>{$createNewUser}{$forgotPassword}</p>
 
 EOD;
 
@@ -104,7 +117,7 @@ $htmlRight	= <<<EOD
 <section>
 <h3 class='columnMenu'>Various ways to sign in</h3>
 <p>
-Later...
+Now supporting bot local database and LDAP.
 </p>
 </section>
 

@@ -14,6 +14,7 @@
 // $pc
 // $account 
 // $password
+// $mail (OUT, sets the mailadress if it exists)
 // $redirectFail
 //
 // Include from pagecontroller using:
@@ -48,7 +49,7 @@ $ds = $ldap->ConnectAndSetOptions();
 // Should check that its connected but returnvalue $ds varies
 
 // Authenticate user and password
-$res = $ldap->Authenticate($ds, $basedn, $account, $password);
+$res = $ldap->Authenticate($ds, $basedn, $account, $password, $mail);
 
 if(!$res) {
 	$pc->SetSessionMessage('loginFailed', $pc->lang['AUTHENTICATION_FAILED']);
