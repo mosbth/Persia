@@ -50,6 +50,7 @@ class CLDAP {
 	public function ConnectAndSetOptions() {
 	
 		$ds	= ldap_connect($this->iServer, $this->iPortNr);
+		echo $ds;
 		ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 		return $ds;
 	}
