@@ -85,7 +85,7 @@ class CLDAP {
 		$r		=	@ldap_bind($aDs, $info[0]['dn'], $password);
 		
 		// Get the mail if available
-		$mail = isset($info[$i]['mail'][0]) ? $info[$i]['mail'][0] : '';
+		$mail = isset($info[0]['mail'][0]) ? $info[0]['mail'][0] : '';
 
 		if($r) {
 			return $aUid;
