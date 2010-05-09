@@ -173,7 +173,7 @@ else if($submit == 'login-ldap') {
 	// These should then be checked each time the user performs a login.
 	//
 	$query = <<< EOD
-CALL {$db->_['PGetOrCreateAccountId']}(@accountId, {$account});
+CALL {$db->_['PGetOrCreateAccountId']}(@accountId, '{$account}');
 SELECT
 	@accountId AS accountId;
 EOD;
