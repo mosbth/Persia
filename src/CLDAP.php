@@ -67,23 +67,22 @@ class CLDAP {
 		}
 		
 		// Escape characters
-		$ds 			= self::EscapeChars($aDs);
 		$basedn 	= self::EscapeChars($aBaseDn, true);
 		$uid 			= $aUid;
 		$password	= self::EscapeChars($aPassword);
 		
 		// Do anonmomous bind and check that id exists
-		$r 	= ldap_bind($ds);
-		$sr	= ldap_search($ds, $basedn, "uid={$uid}");
+		$r 	= ldap_bind($aDs);
+		$sr	= ldap_search($aDs, $basedn, "uid={$uid}");
 
 		// Should be 1 on success
-		if(ldap_count_entries($ds, $sr) == 0) {
+		if(ldap_count_entries($aDs, $sr) == 0) {
 			return false;
 		}
 
 		//Binding using dn and password...";
-		$info	=	ldap_get_entries($ds, $sr);
-		$r		=	@ldap_bind($ds, $info[0]['dn'], $password);
+		$info	=	ldap_get_entries($aDs, $sr);
+		$r		=	@ldap_bind($aDs, $info[0]['dn'], $password);
 
 		if($r) {
 			return $aUid;
