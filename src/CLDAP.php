@@ -50,7 +50,6 @@ class CLDAP {
 	public function ConnectAndSetOptions() {
 	
 		$ds	= ldap_connect($this->iServer, $this->iPortNr);
-		echo $ds;
 		ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 		return $ds;
 	}
@@ -67,7 +66,7 @@ class CLDAP {
 		}
 		
 		// Escape characters
-		$basedn 	= self::EscapeChars($aBaseDn, true);
+		$basedn 	= $aBaseDn;
 		$uid 			= $aUid;
 		$password	= self::EscapeChars($aPassword);
 		
