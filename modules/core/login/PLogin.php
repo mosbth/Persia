@@ -21,17 +21,14 @@ $pc->LoadLanguage(__FILE__);
 // Interception Filter, controlling access, authorithy and other checks.
 //
 $intFilter = new CInterceptionFilter();
-
 $intFilter->FrontControllerIsVisitedOrDie();
-//$intFilter->UserIsSignedInOrRecirectToSignIn();
-//$intFilter->UserIsMemberOfGroupAdminOrDie();
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
-$account	= strip_tags($pc->POSTorSESSIONisSetOrSetDefaultClearSESSION('account', ''));
+$account	= strip_tags($pc->GetAndClearSessionMessage('loginAccount'));
 
 
 // -------------------------------------------------------------------------------------------
@@ -76,14 +73,20 @@ $htmlMain = <<<EOD
 <td><label for="account">{$pc->lang['PASSWORD']}</label></td>
 <td style='text-align: right;'><input class='password' type='password' name='password'></td>
 </tr>
+
+<tr>
 <td colspan='2' style='text-align: right;'>
-<button type='submit' name='submit' value='account-create'>{$pc->lang['LOGIN']}</button>
+<button type='submit' name='submit' value='login-local'>{$pc->lang['LOGIN']}</button>
 </td>
 </tr>
 
-<tr><td colspan='2'>
-{$messages['loginFailed']}
-</td></tr>
+<tr>
+<td colspan='2' style='text-align: right;'>
+<button type='submit' name='submit' value='login-ldap'>Login (LDAP)</button>
+</td>
+</tr>
+
+<tr><td colspan='2'>{$messages['loginFailed']}</td></tr>
 
 </table>
 </fieldset>

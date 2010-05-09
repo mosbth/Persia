@@ -1,7 +1,7 @@
 <?php
 // ===========================================================================================
 //
-// File: PLoginProcess.php
+// File: ILoginLDAPProcess.php
 //
 // Description: Language file
 //
@@ -9,9 +9,7 @@
 //
 
 $lang = Array(
-	'BOTH_MUST_HAVE_VALUES' => "Failed to login. Enter both accountname and password.",
-
-
+	'AUTHENTICATION_FAILED' => "Failed to login. Check the accountname and password and try again.",
 
 );
 

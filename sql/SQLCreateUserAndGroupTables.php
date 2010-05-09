@@ -466,6 +466,38 @@ END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
+-- SP to get account id from account name. If the name does not exists then create a new account
+-- for that account name.
+-- This is ordinary used to silently create new accounts when using an external authentication
+-- server, for example LDAP or OpenID.
+--
+-- aUserId is the id of the user, existing or created.
+-- aUserAccount is the name of the account.
+--
+DROP PROCEDURE IF EXISTS {$db->_['PGetOrCreateAccountId']};
+CREATE PROCEDURE {$db->_['PGetOrCreateAccountId']}
+(
+	OUT aUserId INT,
+	IN aUserAccount CHAR(32)
+)
+BEGIN
+	DECLARE status INT;
+	
+	-- Get account id
+	SELECT idUser INTO aUserId FROM {$db->_['User']} WHERE accountUser = aUserAccount;
+
+	-- Create user if it does not exists
+	IF aUserId IS NULL THEN
+	BEGIN
+		CALL {$db->_['PCreateAccount']}(aUserId, aUserAccount, aUserAccount, 'PLAIN', status);
+	END;
+	END IF;
+
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
 -- SP to create an account/user.
 --
 -- aMethod is the hashing-algoritm to be used for storing the password.
@@ -475,7 +507,7 @@ DROP PROCEDURE IF EXISTS {$db->_['PCreateAccount']};
 CREATE PROCEDURE {$db->_['PCreateAccount']}
 (
 	OUT aUserId INT,
-	IN aUserAccount CHAR(20),
+	IN aUserAccount CHAR(32),
 	IN aPassword CHAR(32),
 	IN aMethod CHAR(5),
 	OUT aStatus INT

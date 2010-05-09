@@ -15,9 +15,6 @@ $lang = Array(
 	'PASSWORD_NOT_UPDATED' => "The password was not updated in the database. The old password is still valid. This may be a problem, try to login to verify that it works as expected or re-change your password again.",
 	'CHANGE_PASSWORD_SUCCESS' => "The password was changed.",
 
-	// general
-	'SUBMIT_ACTION_NOT_SUPPORTED' => "The submit is not supported. Failing.",
-
 );
 
 ?>

@@ -42,6 +42,7 @@ $DB_Tables_And_Procedures = Array(
 	'PGetMailAdressFromAccount' => DB_PREFIX . 'PGetMailAdressFromAccount',
 	'PPasswordResetGetKey' 			=> DB_PREFIX . 'PPasswordResetGetKey',
 	'PPasswordResetActivate' 		=> DB_PREFIX . 'PPasswordResetActivate',
+	'PGetOrCreateAccountId' 		=> DB_PREFIX . 'PGetOrCreateAccountId',
 
 	// For supporting gravatar from gratavar.com
 	'PChangeAccountGravatar' 		=> DB_PREFIX . 'PChangeAccountGravatar',

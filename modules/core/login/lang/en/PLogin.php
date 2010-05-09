@@ -16,7 +16,6 @@ $lang = Array(
 	'FORGOT_PASSWORD' => "I forgot my password", 
 
 
-
 );
 
 ?>

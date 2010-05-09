@@ -3,7 +3,7 @@
 //
 // File: IAccountChangePasswordProcess.php
 //
-// Description: Submitaction to change password. 
+// Description: Submit-action to change password. 
 // To be included in a pagecontroller that has the correct environment set.
 // Its in a own file since several pagecontroller needs this action.
 // I considered doing this in a function, class or some other way. But

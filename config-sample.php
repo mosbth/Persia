@@ -98,4 +98,11 @@ define('WS_MAILSIGNATURE',
 );
 
 
+// -------------------------------------------------------------------------------------------
+//
+// Settings for LDAP and LDAP authentication.
+//
+//define('LDAP_AUTH_SERVER', 'ldap.dbwebb.se');
+//define('LDAP_AUTH_BASEDN', 'dc=dbwebb,dc=se');
+
 ?>

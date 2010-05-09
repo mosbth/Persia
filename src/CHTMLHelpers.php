@@ -45,15 +45,37 @@ class CHTMLHelpers {
 		$imageLink = WS_IMAGES;
 		$messages = Array();
 		foreach($aSuccessList as $val) {
-			$m = CPageController::GetSessionMessage($val);
+			$m = CPageController::GetAndClearSessionMessage($val);
 			$messages[$val] = empty($m) ? '' : "<div class='userFeedbackPositive' style=\"background: url('{$imageLink}/silk/accept.png') no-repeat;\">{$m}</div>";
 		}
 		foreach($aFailedList as $val) {
-			$m = CPageController::GetSessionMessage($val);
+			$m = CPageController::GetAndClearSessionMessage($val);
 			$messages[$val] = empty($m) ? '' : "<div class='userFeedbackNegative' style=\"background: url('{$imageLink}/silk/cancel.png') no-repeat;\">{$m}</div>";
 		}
 
 		return $messages;
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Static function, HTML helper
+	// Create a horisontal sidebar menu
+	//
+	public static function GetSidebarMenu($aMenuitems, $aTarget="") {
+
+		global $gPage;
+
+		$target = empty($aTarget) ? $gPage : $aTarget;
+
+		$menu = "<ul>";
+		foreach($aMenuitems as $key => $value) {
+			$selected = (strcmp($target, substr($value, 3)) == 0) ? " class='sel'" : "";
+			$menu .= "<li{$selected}><a href='{$value}'>{$key}</a></li>";
+		}
+		$menu .= '</ul>';
+		
+		return $menu;
 	}
 
 

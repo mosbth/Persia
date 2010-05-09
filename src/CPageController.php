@@ -62,6 +62,9 @@ class CPageController {
 
 	// ------------------------------------------------------------------------------------
 	//
+	// OBSOLETE. Replaced by SetSessionMessage.
+	//
+	//
 	// Set global error message/notice, used and cleared by CHTMLPage
 	//
 	public static function SetSessionErrorMessage($aMessage) {
@@ -70,6 +73,8 @@ class CPageController {
 
 
 	// ------------------------------------------------------------------------------------
+	//
+	// OBSOLETE. Replaced by SetSessionMessage.
 	//
 	// Set global success message/notice, used and cleared by CHTMLPage
 	//
@@ -84,15 +89,26 @@ class CPageController {
 	//
 	public static function SetSessionMessage($aVar, $aMessage) {
 		$message = isset($_SESSION[$aVar]) ? $_SESSION[$aVar] : '';
-		$_SESSION[$aVar]	= $message . '<p>' . $aMessage . '</p>';
+		$_SESSION[$aVar] = $message . $aMessage;
 	}
 
 
 	// ------------------------------------------------------------------------------------
 	//
-	// Set message in session, set the message by using SetSessionMessage
+	// Get (and Clear) message in session, set the message by using SetSessionMessage
+	//
+	// This method should be rewritten to not unset the message, but then all occurences of
+	// it should be found in the code and replaced with GetAndClearSessionMessage.
 	//
 	public static function GetSessionMessage($aVar) {
+		return self::GetAndClearSessionMessage($aVar);
+	}
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Get and Clear message in session, set the message by using SetSessionMessage
+	//
+	public static function GetAndClearSessionMessage($aVar) {
 
 		$message = "";
 		if(isset($_SESSION[$aVar])) {    
@@ -173,6 +189,7 @@ class CPageController {
 	}
 
 
+/* OBSOLETE?
 	// ------------------------------------------------------------------------------------
 	//
 	// Static function, HTML helper
@@ -193,6 +210,7 @@ class CPageController {
 		
 		return $menu;
 	}
+*/
 
 
 	// ------------------------------------------------------------------------------------
