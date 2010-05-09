@@ -164,7 +164,8 @@ else if($submit == 'login-ldap') {
 	// loginAccount
 	//
 	include(dirname(__FILE__) . '/ILoginLDAPProcess.php');
-
+	echo $mail;
+	
 	//
 	// The account is authenticated in the LDAP.
 	// But it also must exists in the local database, if it does, then login.
