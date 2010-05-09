@@ -182,9 +182,9 @@ EOD;
 	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 	
 	// Get account details 	
-	$row = $results[0]->fetch_object();
+	$row = $results[1]->fetch_object();
 	$accountId = $row->accountId;
-	$results[0]->close(); 
+	$results[1]->close(); 
 }
 
 
