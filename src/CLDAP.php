@@ -86,7 +86,7 @@ class CLDAP {
 		
 		// Get the mail if available
 		$mail = isset($info[0]['mail'][0]) ? $info[0]['mail'][0] : '';
-echo $mail;
+
 		if($r) {
 			return $aUid;
 		}
