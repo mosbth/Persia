@@ -42,7 +42,7 @@ $gModulesAvailable = Array(
 		'rom'		=> TP_MODULESPATH . 'forum_romanum',
 
 		// Filearchive, sample user interface to work with file uploads.
-		'files'	=> TP_MODULESPATH . 'files',
+		'files'	=> TP_MODULESPATH . 'filearchive',
 
 			// Dada, optional module
 //		'dada'	=> TP_MODULESPATH . 'dada',	

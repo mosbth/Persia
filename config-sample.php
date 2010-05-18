@@ -145,7 +145,8 @@ define('FORGOT_PASSWORD', true);
 //
 // Settings for file upload and file archive.
 //
-define('FILE_UPLOAD_PATH', '/usr/home/mos/tmp/'); // Must be writable by webserver
+define('FILE_ARCHIVE_PATH', '/usr/home/mos/archive/'); // Must be writable by webserver
+define('FILE_MAX_SIZE', 30000); // Filesize in bytes
 
 
 ?>
