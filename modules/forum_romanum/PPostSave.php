@@ -58,16 +58,11 @@ $content 	= strip_tags($content, $tagsAllowed);
 $db 	= new CDatabaseController();
 $mysqli = $db->Connect();
 
-// Get the SP names
-$spPInsertOrUpdatePost 	= DBSP_PInsertOrUpdatePost;
-$spPGetPostDetails			= DBSP_PGetPostDetails;
-$tArticle 		= DBT_Article;
-
 // Create the query
 $query = <<< EOD
 SET @aPostId = {$postId};
 SET @aTopicId = {$topicId};
-CALL {$spPInsertOrUpdatePost}(@aPostId, @aTopicId, @isPublished, @hasDraft, '{$userId}', '{$title}', '{$content}', '{$action}');
+CALL {$db->_['PInsertOrUpdatePost']}(@aPostId, @aTopicId, @isPublished, @hasDraft, '{$userId}', '{$title}', '{$content}', '{$action}');
 SELECT 
 	@aPostId AS postId,
 	@aTopicId AS topicId,
@@ -90,7 +85,7 @@ SELECT
 		A.draftTitleArticle AS draftTitle,
 		A.draftContentArticle AS draftContent,
 		A.draftModifiedArticle AS draftModified
-	FROM {$tArticle} AS A
+	FROM {$db->_['Article']} AS A
 	WHERE 
 		A.idArticle = @aPostId 
 	;
@@ -98,11 +93,7 @@ SELECT
 EOD;
 
 // Perform the query
-$res = $db->MultiQuery($query); 
-
-// Use results
-$results = Array();
-$db->RetrieveAndStoreResultsFromMultiQuery($results);
+$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 
 // Get inserted/updated id
 $row = $results[3]->fetch_object();
@@ -148,5 +139,6 @@ EOD;
 	$pc->RedirectTo(sprintf($success, $topicId, $postId));
 }
 exit;
+
 
 ?>

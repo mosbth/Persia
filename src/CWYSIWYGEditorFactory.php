@@ -52,6 +52,8 @@ class CWYSIWYGEditorFactory {
 
 			case 'WYMeditor': { return new CWYSIWYGEditor_WYMeditor('text', 'text', '', 'wymupdate');	} break;
 
+			case 'PersiaEditor': { return new CWYSIWYGEditor_PersiaEditor('text', 'text');	} break;
+
 			case 'plain': 
 			default: { 					return new CWYSIWYGEditor_Plain('text', 'size98percentx300'); } break;
 		}

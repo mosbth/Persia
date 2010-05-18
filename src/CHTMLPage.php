@@ -51,11 +51,12 @@ class CHTMLPage {
 		$footer			= WS_FOOTER;
 		
 		$apps		= $this->PrepareApplicationMenu();
-		$login	= $this->prepareLoginLogoutMenu();
-		$nav 		= $this->prepareNavigationBar();
-		$body		= $this->preparePageBody($aHTMLLeft, $aHTMLMain, $aHTMLRight);
-		$w3c		= $this->prepareValidatorTools();
-		$timer	= $this->prepareTimer();
+		$login	= $this->PrepareLoginLogoutMenu();
+		$nav 		= $this->PrepareNavigationBar();
+		$body		= $this->PreparePageBody($aHTMLLeft, $aHTMLMain, $aHTMLRight);
+		$w3c		= $this->PrepareValidatorTools();
+		$timer	= $this->PrepareTimer();
+		$track	= $this->PrepareGoogleAnalytics();
 
 		$jQuery 		= ($enablejQuery) ? "<script type='text/javascript' src='" . JS_JQUERY . "'></script> <!-- jQuery --> " : '';
 		$javascript = (empty($aJavaScript)) ? '' : "<script type='text/javascript'>{$aJavaScript}</script>";
@@ -87,6 +88,7 @@ class CHTMLPage {
 			<div id='footer'><p>{$footer}</p></div>
 			<div id='bottom'><p>{$timer}{$w3c}</p></div>
 		</div>
+		{$track}
 	</body>
 </html>
 
@@ -127,6 +129,8 @@ EOD;
 		$m = "m={$gModule}&amp;";
 		$pc = $this->iPc;
 		$gravatar = $pc->SESSIONIsSetOrSetDefault('gravatarUserMicro');
+		$gravatar = empty($gravatar) ? '' : "<a href='?{$m}p=account-settings'><img src='{$gravatar}' alt=''></a>";
+
 		$html = "";
 
 		// If user is logged in, show details about user and some links.
@@ -140,8 +144,8 @@ EOD;
         
 			$html = <<<EOD
 <div id='loginbar'>
-	<p> 
-	<a href='?{$m}p=account-settings'><img src='{$gravatar}' alt=''></a>
+	<p>
+	{$gravatar}
 	<a href='?{$m}p=account-settings'>{$_SESSION['accountUser']}</a>  	
 	<!--
 	{$admHtml} 
@@ -274,6 +278,36 @@ EOD;
 		}
 	}
 
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Prepare code to enable Google Analytics, if enabled
+	//
+	public function PrepareGoogleAnalytics() {
+
+		$html = "";		
+		if(defined('GA_TRACKERID') && defined('GA_DOMAIN')) {    
+
+			$trackerid 	= GA_TRACKERID;
+			$domain 		= GA_DOMAIN;
+			
+			$html = <<<EOD
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("{$trackerid}");
+pageTracker._setDomainName("{$domain}");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+EOD;
+		}
+
+		return $html;   
+	}
+	
 
 	// ------------------------------------------------------------------------------------
 	//

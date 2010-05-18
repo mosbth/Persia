@@ -1,9 +1,9 @@
 <?php
 // ===========================================================================================
 //
-// PTopics.php
+// File: PTopics.php
 //
-// Show the title of all/some topics
+// Description: Show the title of all/some topics
 //
 // Author: Mikael Roos, mos@bth.se
 //
@@ -47,17 +47,12 @@ $intFilter->FrontControllerIsVisitedOrDie();
 $db 	= new CDatabaseController();
 $mysqli = $db->Connect();
 
-// Get the SP names
-$spPGetTopicList = DBSP_PGetTopicList;
-
 $query = <<< EOD
-CALL {$spPGetTopicList}();
+CALL {$db->_['PGetTopicList']}();
 EOD;
 
 // Perform the query
-$results = Array();
-$res = $db->MultiQuery($query); 
-$db->RetrieveAndStoreResultsFromMultiQuery($results);
+$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 
 // Get the list of topics
 $list = <<<EOD

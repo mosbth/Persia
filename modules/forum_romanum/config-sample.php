@@ -66,4 +66,75 @@ $menuNavBar = Array (
 define('MENU_NAVBAR', 		serialize($menuNavBar));
 
 
+// -------------------------------------------------------------------------------------------
+//
+// Server keys for reCAPTCHA. Get your own keys for your server.
+// http://recaptcha.net/whyrecaptcha.html
+//
+
+// dev.phpersia.org
+define('reCAPTCHA_PUBLIC',	'6LcswbkSAAAAAN4kRL5qcAdiZLRo54fhlCVnt880');	
+define('reCAPTCHA_PRIVATE',	'6LcswbkSAAAAACFVN50SNO6lOC8uAlIB2cJwxknl');	
+
+// www.student.bth.se
+//define('reCAPTCHA_PUBLIC',	'6LeUxbkSAAAAADjelI32xn2VdBwsMJLLiBO2umtO');	
+//define('reCAPTCHA_PRIVATE',	'6LeUxbkSAAAAAPRDQ8cAvEOgXMJZwb1rY2C5XauB');	
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Choose the hashing algoritm to use for storing new passwords. Can be changed during
+// execution since various methods is simoultaneously supported by the database.
+//
+// Changing to PLAIN may imply writing an own function in PHP to encode the passwords. 
+// Storing is then done as plaintext in the database, withouth using a salt.
+//
+// This enables usage of more complex hashing and encryption algoritms that are currently not
+// supported within MySQL.
+//
+//define('DB_PASSWORDHASHING', 'MD5');
+define('DB_PASSWORDHASHING', 'SHA-1');
+//define('DB_PASSWORDHASHING', 'PLAIN');
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Set the default email adress to be used as from in mail sent from the system to 
+// account users. Be sure to set a valid domain to avoid spamfilters.
+//
+define('WS_MAILFROM', 				'Persia Development Team <no-reply@nowhere.org>');
+define('WS_MAILSUBJECTLABEL', '[Persia] ');
+define('WS_MAILSIGNATURE', 	
+	"\n\nBest regards,\n" .
+	"The Development Team Of Persia\n" .
+	"http://phpersia.org\n"
+);
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Display the following actions if they are enabled.
+// Set true to enable, false to disable.
+// 
+define('CREATE_NEW_ACCOUNT', true);
+define('FORGOT_PASSWORD', true);
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Settings for LDAP and LDAP authentication.
+//
+//define('LDAP_AUTH_SERVER', 'ldap.dbwebb.se');
+//define('LDAP_AUTH_BASEDN', 'dc=dbwebb,dc=se');
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Settings for Google Analytics.
+// http://www.google.com/analytics/
+//
+//define('GA_DOMAIN', '.phpersia.org');
+//define('GA_TRACKERID', 'UA-6902244-4');
+
+
 ?>

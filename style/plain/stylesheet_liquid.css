@@ -13,7 +13,6 @@
 @import url("font.css");  				/* all font related definitions  */
 @import url("color.css");					/* all color related definitions */
 @import url("form.css");					/* forms related styles */
-@import url("editor.css");				/* for WYSIWYG editor */
 @import url("article.css"); 			/* for displaying articles */
 @import url("heightwidth.css"); 	/* various (general) height and width definitions */
  

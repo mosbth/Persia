@@ -83,7 +83,7 @@ $htmlMain = <<<EOD
 <input type='hidden' name='redirect' 			value='{$redirect}'>
 <input type='hidden' name='redirect-fail' value='{$redirectFail}'>
 
-<fieldset class='accountsettings'>
+<fieldset class='loginform'>
 <table width='99%'>
 <tr>
 <td><label for="account">{$pc->lang['USER']}</label></td>

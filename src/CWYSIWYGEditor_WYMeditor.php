@@ -53,13 +53,9 @@ class CWYSIWYGEditor_WYMeditor extends CWYSIWYGEditor {
 	public function GetHTMLHead() {
 	
 		$tpJavaScript = WS_JAVASCRIPT;
-		$jquery 			= JS_JQUERY;
 
 		$head = <<<EOD
 <!-- Updated for WYMeditor ============================================================== -->
-
-<!-- jQuery library is required, see http://jquery.com/ -->
-<script type="text/javascript" src="{$jquery}"></script>
 
 <!-- WYMeditor main JS file, minified version -->
 <script type="text/javascript" src="{$tpJavaScript}/wymeditor/wymeditor/jquery.wymeditor.min.js"></script>

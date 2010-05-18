@@ -72,17 +72,12 @@ EOD;
 $db 	= new CDatabaseController();
 $mysqli = $db->Connect();
 
-// Get the SP names
-$spPGetTopicDetailsAndPosts = DBSP_PGetTopicDetailsAndPosts;
-
 $query = <<< EOD
-CALL {$spPGetTopicDetailsAndPosts}({$topicId});
+CALL {$db->_['PGetTopicDetailsAndPosts']}({$topicId});
 EOD;
 
 // Perform the query
-$results = Array();
-$res = $db->MultiQuery($query); 
-$db->RetrieveAndStoreResultsFromMultiQuery($results);
+$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 	
 // Get topic details
 $row = $results[0]->fetch_object();

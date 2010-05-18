@@ -1,11 +1,9 @@
 <?php
 // ===========================================================================================
 //
-// SQLCreateUserAndGroupTables.php
+// File: SQLCoreAccount.php
 //
-// SQL statements to create the tables for the User and group tables.
-//
-// WARNING: Do not forget to check input variables for SQL injections. 
+// Description: SQL statements to create the tables for the User and group tables.
 //
 // Author: Mikael Roos
 //
@@ -13,14 +11,7 @@
 // Get (or create) an instance of the database object.
 $db = CDatabaseController::GetInstance();
 
-// Get the tablenames
-$tGroup 			= DBT_Group;
-$tGroupMember = DBT_GroupMember;
-$tStatistics 	= DBT_Statistics;
-
-// Get the SP/UDF/trigger names
-$trInsertUser			= DBTR_TInsertUser;
-
+// Link to images
 $imageLink = WS_IMAGES;
 
 // Create the query
@@ -35,9 +26,9 @@ $query = <<<EOD
 --
 -- Drop all tables first
 --
-DROP TABLE IF EXISTS {$tGroupMember};
+DROP TABLE IF EXISTS {$db->_['GroupMember']};
 DROP TABLE IF EXISTS {$db->_['User']};
-DROP TABLE IF EXISTS {$tGroup};
+DROP TABLE IF EXISTS {$db->_['Group']};
 
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -73,7 +64,7 @@ CREATE TABLE {$db->_['User']} (
 --
 -- Table for the Group
 --
-CREATE TABLE {$tGroup} (
+CREATE TABLE {$db->_['Group']} (
 
   -- Primary key(s)
   idGroup CHAR(3) NOT NULL PRIMARY KEY,
@@ -87,7 +78,7 @@ CREATE TABLE {$tGroup} (
 --
 -- Table for the GroupMember
 --
-CREATE TABLE {$tGroupMember} (
+CREATE TABLE {$db->_['GroupMember']} (
 
   -- Primary key(s)
   --
@@ -99,7 +90,7 @@ CREATE TABLE {$tGroupMember} (
   GroupMember_idGroup CHAR(3) NOT NULL,
 	
   FOREIGN KEY (GroupMember_idUser) REFERENCES {$db->_['User']}(idUser),
-  FOREIGN KEY (GroupMember_idGroup) REFERENCES {$tGroup}(idGroup),
+  FOREIGN KEY (GroupMember_idGroup) REFERENCES {$db->_['Group']}(idGroup),
 
   PRIMARY KEY (GroupMember_idUser, GroupMember_idGroup)
   
@@ -112,8 +103,8 @@ CREATE TABLE {$tGroupMember} (
 --
 -- Table for the Statistics
 --
-DROP TABLE IF EXISTS {$tStatistics};
-CREATE TABLE {$tStatistics} (
+DROP TABLE IF EXISTS {$db->_['Statistics']};
+CREATE TABLE {$db->_['Statistics']} (
 
   -- Primary key(s)
   -- Foreign keys
@@ -132,12 +123,12 @@ CREATE TABLE {$tStatistics} (
 -- Create trigger for Statistics
 -- Add row when new user is created
 --
-DROP TRIGGER IF EXISTS {$trInsertUser};
-CREATE TRIGGER {$trInsertUser}
+DROP TRIGGER IF EXISTS {$db->_['TInsertUser']};
+CREATE TRIGGER {$db->_['TInsertUser']}
 AFTER INSERT ON {$db->_['User']}
 FOR EACH ROW
 BEGIN
-  INSERT INTO {$tStatistics} (Statistics_idUser) VALUES (NEW.idUser);
+  INSERT INTO {$db->_['Statistics']} (Statistics_idUser) VALUES (NEW.idUser);
 END;
 
 
@@ -171,6 +162,53 @@ END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
+-- Function to return a link to the users avatar or gravatar.
+-- First check if gravatar exists, then check avatar. If neither exists just return an 
+-- unknown figure.
+--
+DROP FUNCTION IF EXISTS {$db->_['FGetAvatar']};
+CREATE FUNCTION {$db->_['FGetAvatar']}
+(
+	aUserId INT UNSIGNED,
+	aSize INT
+)
+RETURNS CHAR(255)
+BEGIN
+	DECLARE link1 CHAR(255);
+	DECLARE link2 CHAR(255);
+	DECLARE link CHAR(255);
+
+	-- Get avatars from user table
+	SELECT 
+		avatarUser, {$db->_['FGetGravatarLinkFromEmail']}(gravatarUser, aSize) 
+	INTO 
+		link1, link2 
+	FROM
+		{$db->_['User']}
+	WHERE 
+		idUser = aUserId;
+	
+	-- Has gravatar?
+	IF link2 != '' THEN
+	BEGIN
+		SET link = link2;
+	END;
+	ELSEIF link1 != '' THEN
+	BEGIN
+		SET link = link1;
+	END;
+	ELSE
+	BEGIN
+		SET link = CONCAT('{$imageLink}', '/egg_60x60.png');
+	END;
+	END IF;
+	
+	RETURN link;		
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
 -- SP to show/display details of an account/user.
 --
 DROP PROCEDURE IF EXISTS {$db->_['PGetAccountDetails']};
@@ -191,9 +229,9 @@ BEGIN
 		G.idGroup AS groupakronym,
 		G.nameGroup AS groupdesc
 	FROM {$db->_['User']} AS U
-		INNER JOIN {$tGroupMember} AS Gm
+		INNER JOIN {$db->_['GroupMember']} AS Gm
 			ON U.idUser = Gm.GroupMember_idUser
-		INNER JOIN {$tGroup} AS G
+		INNER JOIN {$db->_['Group']} AS G
 			ON G.idGroup = Gm.GroupMember_idGroup
 	WHERE
 		U.idUser = aUserId
@@ -549,7 +587,7 @@ BEGIN
 		--
 		-- Insert default group memberships
 		--
-		INSERT INTO {$tGroupMember} 
+		INSERT INTO {$db->_['GroupMember']} 
 			(GroupMember_idUser, GroupMember_idGroup) 
 		VALUES 
 			(aUserId, 'usr')
@@ -664,8 +702,8 @@ END;
 --
 -- Add default groups
 --
-INSERT INTO {$tGroup} (idGroup, nameGroup) VALUES ('adm', 'Administrators of the site');
-INSERT INTO {$tGroup} (idGroup, nameGroup) VALUES ('usr', 'Regular users of the site');
+INSERT INTO {$db->_['Group']} (idGroup, nameGroup) VALUES ('adm', 'Administrators of the site');
+INSERT INTO {$db->_['Group']} (idGroup, nameGroup) VALUES ('usr', 'Regular users of the site');
 
 EOD;
 
@@ -704,7 +742,7 @@ CALL {$db->_['PChangeAccountAvatar']}(@aUserId, '{$avatar}');
 --
 -- Add first user as adm groupmember
 --
-INSERT INTO {$tGroupMember} (GroupMember_idUser, GroupMember_idGroup) 
+INSERT INTO {$db->_['GroupMember']} (GroupMember_idUser, GroupMember_idGroup) 
 	VALUES (1, 'adm');
 
 

@@ -52,7 +52,7 @@ $mysqli = $db->Connect();
 //
 // Execute several queries and print out the result.
 //
-$queries = Array('SQLCreateUserAndGroupTables.php', 'SQLCreateArticleTable.php');
+$queries = Array('SQLCoreAccount.php', 'SQLCoreArticle.php', 'SQLForumRomanum.php');
 
 foreach($queries as $val) {
 

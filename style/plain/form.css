@@ -1,79 +1,65 @@
 /* =====================================================================================
  *
  * 
- * All definitions related to forms and inputs 
- *
+ * Definitions related to fieldset, forms and form elements. 
+ * Definitions for fonts and colors are in their own file, color.css and font.css.
  * 
  */
  
 
 /* -------------------------------------------------------------------------------------
-/* Login */
+/* General settings */
+/* Login form*/
+/* Editor settings */
+/* Account profile settings */
 
-fieldset.loginform {
-	margin: 0 auto;
-	padding: 10px;
-	width: 400px;
-	border: 10px #eee ridge;
-}
-
-fieldset.loginform input.account,
-fieldset.loginform input.password {
-	font-family: Verdana, Sans-serif;
-	width: 16em;
-	font-size: 1.2em;
-	padding: 0.3em;
-}
-
-fieldset.loginform button {
-	font-family: Verdana, Sans-serif;
-	width: 10em;	
-	font-size: 1.2em;
-	padding: 0.3em;
-}
-
-
-/* -------------------------------------------------------------------------------------
-/* User/Account Settings */
-
+/* fieldset */
+fieldset.loginform,
+fieldset.editor,
 fieldset.accountsettings {
 	padding: 10px;
 	border: 2px #eee solid;
 }
 
-fieldset.accountsettings input.account,
-fieldset.accountsettings input.account-dimmed,
-fieldset.accountsettings input.email,
-fieldset.accountsettings input.avatar,
-fieldset.accountsettings input.gravatar,
-fieldset.accountsettings input.groups,
-fieldset.accountsettings input.captcha,
-fieldset.accountsettings input.password {
-	font-family: Verdana, Sans-serif;
+/* input */
+fieldset.loginform input,
+fieldset.editor input, 
+fieldset.accountsettings input {
 	width: 24em;
-	font-size: 1.2em;
-	padding: 0.3em;
+	height: 2em;
+	font-size: 1.3em;
 }
 
-fieldset.accountsettings input.avatar {
-	width: 28em;
+/* textarea */
+fieldset.editor textarea {
+	font-family: inherit;
+	font-size: inherit;
+	padding: 0.5em
 }
 
-fieldset.accountsettings input.captcha {
-	width: 300px;
-}
-
-fieldset.accountsettings input.account-dimmed {
-	color: #999;
-}
-
+/* button */
+fieldset.loginform button,
+fieldset.editor button,
 fieldset.accountsettings button {
-	font-family: Verdana, Sans-serif;
-	width: 12em;	
-	font-size: 1.2em;
-	padding: 0.3em;
-	margin-top: 0.5em;
+	min-width: 12em;
+	height: 2em;
+	font-size: 1.3em;
 }
+
+
+/* -------------------------------------------------------------------------------------
+/* Custom settings for individual fields */
+
+/* Custom Account profile settings */
+fieldset.accountsettings input.avatar { width: 28em; }
+fieldset.accountsettings input.captcha { width: 300px; }
+fieldset.accountsettings input.account-dimmed { color: #999; }
+
+/* Custom Editor settings */
+fieldset.editor input.title { width: 400px; }
+fieldset.editor textarea.size98percentx300 { width: 98%; height: 300px; }
+fieldset.editor button { min-width: 8em;}
+
 
 
 /* -------------------------------------------------------------------------------------

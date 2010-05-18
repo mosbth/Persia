@@ -71,6 +71,22 @@ define('MENU_NAVBAR', 		serialize($menuNavBar));
 
 // -------------------------------------------------------------------------------------------
 //
+// Choose the hashing algoritm to use for storing new passwords. Can be changed during
+// execution since various methods is simoultaneously supported by the database.
+//
+// Changing to PLAIN may imply writing an own function in PHP to encode the passwords. 
+// Storing is then done as plaintext in the database, withouth using a salt.
+//
+// This enables usage of more complex hashing and encryption algoritms that are currently not
+// supported within MySQL.
+//
+#define('DB_PASSWORDHASHING', 'MD5');
+define('DB_PASSWORDHASHING', 'SHA-1');
+#define('DB_PASSWORDHASHING', 'PLAIN');
+
+
+// -------------------------------------------------------------------------------------------
+//
 // Server keys for reCAPTCHA. Get your own keys for your server.
 // http://recaptcha.net/whyrecaptcha.html
 //
@@ -113,5 +129,15 @@ define('FORGOT_PASSWORD', true);
 //
 //define('LDAP_AUTH_SERVER', 'ldap.dbwebb.se');
 //define('LDAP_AUTH_BASEDN', 'dc=dbwebb,dc=se');
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Settings for Google Analytics.
+// http://www.google.com/analytics/
+//
+//define('GA_DOMAIN', '.phpersia.org');
+//define('GA_TRACKERID', 'UA-6902244-4');
+
 
 ?>

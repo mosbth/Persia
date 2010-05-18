@@ -25,7 +25,6 @@ $intFilter = new CInterceptionFilter();
 
 $intFilter->FrontControllerIsVisitedOrDie();
 $intFilter->UserIsSignedInOrRecirectToSignIn();
-//$intFilter->UserIsMemberOfGroupAdminOrDie();
 
 
 // -------------------------------------------------------------------------------------------
@@ -58,19 +57,13 @@ $publishDisabled = 'disabled="disabled"';
 $db 	= new CDatabaseController();
 $mysqli = $db->Connect();
 
-// Get the SP names
-$spPGetTopicDetails = DBSP_PGetTopicDetails;
-$spPGetPostDetails	= DBSP_PGetPostDetails;
-
 $query = <<< EOD
-CALL {$spPGetTopicDetails}({$topicId}, {$postId});
-CALL {$spPGetPostDetails}({$postId});
+CALL {$db->_['PGetTopicDetails']}({$topicId}, {$postId});
+CALL {$db->_['PGetPostDetails']}({$postId});
 EOD;
 
 // Perform the query
-$results = Array();
-$res = $db->MultiQuery($query); 
-$db->RetrieveAndStoreResultsFromMultiQuery($results);
+$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 
 // Get topic details
 $row = $results[0]->fetch_object();
@@ -316,7 +309,7 @@ $img = WS_IMAGES;
 
 $htmlMain = <<<EOD
 <h1>{$h1}</h1>
-<fieldset class='article'>
+<fieldset class='editor'>
 
 <!-- Form to keep status values during ajax-calls-->
 <form>
@@ -362,6 +355,7 @@ $htmlRight	= <<<EOD
 <h3 class='columnMenu'>{$pc->lang['CHANGE_EDITOR']}</h3>
 <p>
 <a href='?m={$gModule}&amp;p=post-edit&amp;editor=plain&amp;id={$postId}&amp;topic={$topicId}'>Plain</a> | 
+<a href='?m={$gModule}&amp;p=post-edit&amp;editor=PersiaEditor&amp;id={$postId}&amp;topic={$topicId}'>PersiaEditor</a> | 
 <em>
 <a href='?m={$gModule}&amp;p=post-edit&amp;editor=NicEdit&amp;id={$postId}&amp;topic={$topicId}'>NicEdit</a> |
 <a href='?m={$gModule}&amp;p=post-edit&amp;editor=WYMeditor&amp;id={$postId}&amp;topic={$topicId}'>WYMeditor</a> |
