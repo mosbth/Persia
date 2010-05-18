@@ -108,7 +108,7 @@ EOD;
 //
 $page = new CHTMLPage();
 
-$page->PrintPage("Topics", $htmlLeft, $htmlMain, $htmlRight);
+$page->PrintPage("File upload", $htmlLeft, $htmlMain, $htmlRight);
 exit;
 
 ?>
