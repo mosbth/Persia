@@ -26,7 +26,6 @@ fieldset.accountsettings {
 fieldset.standard legend {
 	border:3px solid #ccc; 
 	padding: 0.2em 2em 0.2em 0.2em;
-	margin-bottom: 10em; 
 	font-family: inherit;
 	font-size: 1.2em;
 	text-transform: uppercase; /* capitalize uppercase */
@@ -62,6 +61,7 @@ fieldset.editor textarea {
 /* button */
 fieldset.standard button {
 	clear: left;
+	height: 2em;
 	font-size: 1.2em;
 	text-transform: uppercase; /* capitalize uppercase */
 	font-weight: bold; 
