@@ -50,7 +50,6 @@ $menuApps = Array (
 	'Persia' 				=> 'http://dev.phpersia.org/persia/',
 	'GitHub'	 			=> 'http://github.com/mosbth',
 	// 'Forum Romanum' => 'http://dev.phpersia.org/persia/?m=rom',
-	'File archive' 	=> 'http://dev.phpersia.org/persia/?m=files',
 );
 define('MENU_APPLICATION', 		serialize($menuApps));
 
@@ -139,13 +138,6 @@ define('FORGOT_PASSWORD', true);
 //
 //define('GA_DOMAIN', '.phpersia.org');
 //define('GA_TRACKERID', 'UA-6902244-4');
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Settings for file upload and file archive.
-//
-define('FILE_UPLOAD_PATH', '/usr/home/mos/tmp/'); // Must be writable by webserver
 
 
 ?>

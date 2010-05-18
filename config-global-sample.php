@@ -34,9 +34,18 @@ define('JS_JQUERY', 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.mi
 // These modules (TP_MODULESPATH) are available.
 //
 $gModulesAvailable = Array(
-		'core'	=> TP_MODULESPATH . 'core',								// The core, always included
-		'rom'		=> TP_MODULESPATH . 'forum_romanum',			// Forum Romanum, included by default
-//		'dada'	=> TP_MODULESPATH . 'dada',							// Dada, optional module
+
+		// The core, always included
+		'core'	=> TP_MODULESPATH . 'core',								
+
+		// Forum Romanum, included by default
+		'rom'		=> TP_MODULESPATH . 'forum_romanum',
+
+		// Filearchive, sample user interface to work with file uploads.
+		'files'	=> TP_MODULESPATH . 'files',
+
+			// Dada, optional module
+//		'dada'	=> TP_MODULESPATH . 'dada',	
 	);
 
 

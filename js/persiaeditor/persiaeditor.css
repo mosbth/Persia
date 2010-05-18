@@ -1,0 +1,46 @@
+/* =====================================================================================
+ *
+ * File: persiaeditor.css
+ *
+ * Description: Stylesheet for the PersiaEditor.
+ * 
+ */
+ 
+/* Wraps around the editor */
+div.persiaEditorContainer {
+	border: 2px #ccc solid;
+	background: transparent;
+}
+
+/* Header with menues and buttons */
+div.persiaEditorHeader {
+	height: 2em;
+	background: white;
+	border: 1px #ccc solid;
+	padding: 0.5em;
+}
+
+/* Footer */
+div.persiaEditorFooter {
+	border: solid black 1px;
+	height: 2em;
+	background: white;
+	display: none;
+}
+
+div.persiaEditorFooterResize {
+	overflow:hidden;
+	width:22px; height:5px;
+	margin-left:auto;
+	margin-right:auto;
+	background-image:url(handle.png);
+	cursor:n-resize;
+	content: "===";
+}
+
+/* Should be moved when done, not part of package */
+textarea.text {
+	width: 500px;
+	height: 200px;
+	border: 1px #ccc solid;
+}

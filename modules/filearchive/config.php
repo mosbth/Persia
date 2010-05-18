@@ -19,8 +19,8 @@
 // Settings for the database connection
 //
 define('DB_HOST', 			'localhost');		// The database host
-define('DB_USER', 			'mos');					// The username of the database
-define('DB_PASSWORD', 	'secret');			// The users password
+define('DB_USER', 			'Mikael');			// The username of the database
+define('DB_PASSWORD', 	'hemligt');			// The users password
 define('DB_DATABASE', 	'persia');			// The name of the database to use
 define('DB_PREFIX', 		'pe_');		    	// Prefix to use infront of tablename and views
 
@@ -30,7 +30,7 @@ define('DB_PREFIX', 		'pe_');		    	// Prefix to use infront of tablename and vi
 // Settings for this website (WS), some used as default values in CHTMPLPage.php
 //
 define('WS_SITELINK',   'http://dev.phpersia.org/persia/'); 	// Link to site.
-define('WS_TITLE', 			'Persia');		    										// The title of this site.
+define('WS_TITLE', 			'Persia File Archive');								// The title of this site.
 define('WS_STYLESHEET', 'style/plain/stylesheet_liquid.css');	// Default stylesheet of the site.
 define('WS_IMAGES',			WS_SITELINK . 'img/'); 								// Images
 define('WS_FAVICON', 		WS_IMAGES . 'favicon.ico'); 					// Small icon to display in browser
@@ -49,7 +49,7 @@ define('WS_JAVASCRIPT',	WS_SITELINK . '/js/');	// JavaScript code
 $menuApps = Array (
 	'Persia' 				=> 'http://dev.phpersia.org/persia/',
 	'GitHub'	 			=> 'http://github.com/mosbth',
-	// 'Forum Romanum' => 'http://dev.phpersia.org/persia/?m=rom',
+	'Forum Romanum' => 'http://dev.phpersia.org/persia/?m=rom',
 	'File archive' 	=> 'http://dev.phpersia.org/persia/?m=files',
 );
 define('MENU_APPLICATION', 		serialize($menuApps));
@@ -57,17 +57,31 @@ define('MENU_APPLICATION', 		serialize($menuApps));
 
 // -------------------------------------------------------------------------------------------
 //
-// Define the navigation menu.
+// Define the site navigation menu.
 //
 $menuNavBar = Array (
-	'Home' 				=> '?p=home',
-	'Template'	 	=> '?p=template',
-	'About' 			=> '?p=about',
-	'404' 				=> '?p=NOT_EXISTING',
-	'Install' 		=> '?p=install',
-	'Sourcecode' 	=> '?p=ls',
+	'Home' 				=> '?m=files&amp;p=home',
+	'Archive'	 		=> '?m=files&amp;p=archive',
+	'Upload'			=> '?m=files&amp;p=upload',
+	'Install' 		=> '?m=files&amp;p=install',
+	'Sourcecode' 	=> '?m=files&amp;p=ls',
 );
 define('MENU_NAVBAR', 		serialize($menuNavBar));
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Server keys for reCAPTCHA. Get your own keys for your server.
+// http://recaptcha.net/whyrecaptcha.html
+//
+
+// dev.phpersia.org
+define('reCAPTCHA_PUBLIC',	'6LcswbkSAAAAAN4kRL5qcAdiZLRo54fhlCVnt880');	
+define('reCAPTCHA_PRIVATE',	'6LcswbkSAAAAACFVN50SNO6lOC8uAlIB2cJwxknl');	
+
+// www.student.bth.se
+//define('reCAPTCHA_PUBLIC',	'6LeUxbkSAAAAADjelI32xn2VdBwsMJLLiBO2umtO');	
+//define('reCAPTCHA_PRIVATE',	'6LeUxbkSAAAAAPRDQ8cAvEOgXMJZwb1rY2C5XauB');	
 
 
 // -------------------------------------------------------------------------------------------
@@ -81,24 +95,9 @@ define('MENU_NAVBAR', 		serialize($menuNavBar));
 // This enables usage of more complex hashing and encryption algoritms that are currently not
 // supported within MySQL.
 //
-#define('DB_PASSWORDHASHING', 'MD5');
+//define('DB_PASSWORDHASHING', 'MD5');
 define('DB_PASSWORDHASHING', 'SHA-1');
-#define('DB_PASSWORDHASHING', 'PLAIN');
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Server keys for reCAPTCHA. Get your own keys for your server.
-// http://recaptcha.net/whyrecaptcha.html
-//
-
-// dev.phpersia.org
-//define('reCAPTCHA_PUBLIC',	'6LcswbkSAAAAAN4kRL5qcAdiZLRo54fhlCVnt880');	
-//define('reCAPTCHA_PRIVATE',	'6LcswbkSAAAAACFVN50SNO6lOC8uAlIB2cJwxknl');	
-
-// www.student.bth.se
-//define('reCAPTCHA_PUBLIC',	'6LeUxbkSAAAAADjelI32xn2VdBwsMJLLiBO2umtO');	
-//define('reCAPTCHA_PRIVATE',	'6LeUxbkSAAAAAPRDQ8cAvEOgXMJZwb1rY2C5XauB');	
+//define('DB_PASSWORDHASHING', 'PLAIN');
 
 
 // -------------------------------------------------------------------------------------------
@@ -137,15 +136,17 @@ define('FORGOT_PASSWORD', true);
 // Settings for Google Analytics.
 // http://www.google.com/analytics/
 //
-//define('GA_DOMAIN', '.phpersia.org');
-//define('GA_TRACKERID', 'UA-6902244-4');
+define('GA_DOMAIN', '.phpersia.org');
+define('GA_TRACKERID', 'UA-6902244-4');
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Settings for file upload and file archive.
 //
-define('FILE_UPLOAD_PATH', '/usr/home/mos/tmp/'); // Must be writable by webserver
+define('FILE_ARCHIVE_PATH', '/usr/home/mos/archive/'); // Must be writable by webserver
+define('FILE_MAX_SIZE', 30000); // Filesize in bytes
+
 
 
 ?>

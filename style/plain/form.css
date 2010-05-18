@@ -14,14 +14,35 @@
 /* Account profile settings */
 
 /* fieldset */
+fieldset.standard,
 fieldset.loginform,
 fieldset.editor,
 fieldset.accountsettings {
-	padding: 10px;
-	border: 2px #eee solid;
+	padding: 1.5em 0.5em 1em 0.5em;
+	border: 2px #ccc solid;
+}
+
+/* legend */
+fieldset.standard legend {
+	border:3px solid #ccc; 
+	padding: 0.2em 2em 0.2em 0.2em;
+	margin-bottom: 10em; 
+	font-family: inherit;
+	font-size: 1.2em;
+	text-transform: uppercase; /* capitalize uppercase */
+	font-weight: bold; 
+}
+
+/* label */
+fieldset.standard label {
+	clear: left;
+	float:left;
+	padding-right: 0.5em;
+	text-align: left;
 }
 
 /* input */
+fieldset.standard input,
 fieldset.loginform input,
 fieldset.editor input, 
 fieldset.accountsettings input {
@@ -31,6 +52,7 @@ fieldset.accountsettings input {
 }
 
 /* textarea */
+fieldset.standard textarea,
 fieldset.editor textarea {
 	font-family: inherit;
 	font-size: inherit;
@@ -38,12 +60,21 @@ fieldset.editor textarea {
 }
 
 /* button */
+fieldset.standard button {
+	clear: left;
+	font-size: 1.2em;
+	text-transform: uppercase; /* capitalize uppercase */
+	font-weight: bold; 
+}
+
 fieldset.loginform button,
 fieldset.editor button,
 fieldset.accountsettings button {
 	min-width: 12em;
 	height: 2em;
 	font-size: 1.3em;
+	text-transform: uppercase; /* capitalize uppercase */
+	font-weight: bold; 
 }
 
 

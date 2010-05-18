@@ -117,7 +117,7 @@ $htmlRight	= <<<EOD
 <section>
 <h3 class='columnMenu'>Various ways to sign in</h3>
 <p>
-Now supporting bot local database and LDAP.
+Now supporting both local database and LDAP.
 </p>
 </section>
 
