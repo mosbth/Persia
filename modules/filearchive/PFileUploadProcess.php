@@ -31,7 +31,7 @@ $intFilter->UserIsSignedInOrRecirectToSignIn();
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
-$submitAction	= $pc->POSTisSetOrSetDefault('submit');
+$submitAction	= $pc->POSTisSetOrSetDefault('do-submit');
 $redirect			= $pc->POSTisSetOrSetDefault('redirect');
 $redirectFail	= $pc->POSTisSetOrSetDefault('redirect-fail');
 
@@ -58,6 +58,37 @@ if(!is_dir($archivePath)) {
 // 
 if(false) {
 
+}
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Upload multiple files by a traditional form
+// 
+else if($submitAction == 'ajax-enabled') {
+
+	if (move_uploaded_file($_FILES['file']['tmp_name'], $archivePath . basename($_FILES['file']['name']))) {
+		$success = 1;
+	} else {
+		$success = 0;
+	}
+
+//
+// Replace the following with the PHP JSON extension when knowing we have PHP 5.2.0 or higher.
+// http://www.php.net/manual/en/book.json.php
+//
+	$json = <<<EOD
+{
+	"success": {$success},
+	"name": "{$_FILES['file']['name']}",
+	"type": "{$_FILES['file']['type']}",
+	"size": {$_FILES['file']['size']},
+	"error": {$_FILES['file']['error']},
+}
+EOD;
+
+	echo $json;
+	exit;
 }
 
 
@@ -104,6 +135,8 @@ else if($submitAction == 'multiple-by-traditional-form') {
 	print "</pre>";
 	exit;
 }
+
+
 
 
 /*

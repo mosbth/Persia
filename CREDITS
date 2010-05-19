@@ -44,9 +44,24 @@ Resides in the src/ library, using the recapcha-php modul to perform the action.
 -- [ JavaScript ] ---------------------------------------------------------------------------------
 
 * jQuery
-* jGrowl
-* jquery.autosave
+"jQuery is a fast and concise JavaScript Library that simplifies HTML document traversing, event 
+handling, animating, and Ajax interactions for rapid web development. jQuery is designed to change 
+the way that you write JavaScript."
+http://jquery.com/
+
 * jQuery Form Plugin
+The jQuery Form Plugin allows you to easily and unobtrusively upgrade HTML forms to use AJAX.
+http://malsup.com/jquery/form/
+http://github.com/malsup/form
+
+* PHPJS
+Code PHP in JavaScript. Including only those functions that are used by Persia.
+Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) 
+licenses.
+(http://github.com/mosbth/Persia/tree/master/js/phpjs/)
+http://phpjs.org
+
+* jGrowl
 * markItUp
 * nicedit
 * WYMEditor
