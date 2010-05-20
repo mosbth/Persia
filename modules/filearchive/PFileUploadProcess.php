@@ -63,9 +63,38 @@ if(false) {
 
 // -------------------------------------------------------------------------------------------
 //
+// Upload single file and return html success/failure message.
+// 
+else if($submitAction == 'upload-return-html') {
+
+	// http://www.php.net/manual/en/features.file-upload.errors.php
+	$errorMessages = Array (
+		UPLOAD_ERR_INI_SIZE 	=> $pc->lang['UPLOAD_ERR_INI_SIZE'],
+		UPLOAD_ERR_FORM_SIZE 	=> $pc->lang['UPLOAD_ERR_FORM_SIZE'],
+		UPLOAD_ERR_PARTIAL 		=> $pc->lang['UPLOAD_ERR_PARTIAL'],
+		UPLOAD_ERR_NO_FILE 		=> $pc->lang['UPLOAD_ERR_NO_FILE'],
+		UPLOAD_ERR_NO_TMP_DIR => $pc->lang['UPLOAD_ERR_NO_TMP_DIR'],
+		UPLOAD_ERR_CANT_WRITE => $pc->lang['UPLOAD_ERR_CANT_WRITE'],
+		UPLOAD_ERR_EXTENSION 	=> $pc->lang['UPLOAD_ERR_EXTENSION'],		
+	);
+		
+	$html = '';
+	if (move_uploaded_file($_FILES['file']['tmp_name'], $archivePath . basename($_FILES['file']['name']))) {
+		$html = CHTMLHelpers::GetHTMLUserFeedbackPositive(sprintf($pc->lang['FILE_UPLOAD_SUCCESS'], $_FILES['file']['name'], $_FILES['file']['size'], $_FILES['file']['type']));
+	} else {
+		$html = CHTMLHelpers::GetHTMLUserFeedbackNegative(sprintf($pc->lang['FILE_UPLOAD_FAILED'], $_FILES['file']['error'], $errorMessages[$_FILES['file']['error']]));
+	}
+
+	echo $html;
+	exit;
+}
+
+
+// -------------------------------------------------------------------------------------------
+//
 // Upload multiple files by a traditional form
 // 
-else if($submitAction == 'ajax-enabled') {
+else if($submitAction == 'ajax-enabled' || $submitAction == 'iframe-enabled') {
 
 	if (move_uploaded_file($_FILES['file']['tmp_name'], $archivePath . basename($_FILES['file']['name']))) {
 		$success = 1;
@@ -73,18 +102,21 @@ else if($submitAction == 'ajax-enabled') {
 		$success = 0;
 	}
 
-//
-// Replace the following with the PHP JSON extension when knowing we have PHP 5.2.0 or higher.
-// http://www.php.net/manual/en/book.json.php
-//
+	//
+	// Replace the following with the PHP JSON extension when knowing we have PHP 5.2.0 or higher.
+	// http://www.php.net/manual/en/book.json.php
+	//
 	$json = <<<EOD
+<textarea>
 {
 	"success": {$success},
 	"name": "{$_FILES['file']['name']}",
-	"type": "{$_FILES['file']['type']}",
+	"mimetype": "{$_FILES['file']['type']}",
 	"size": {$_FILES['file']['size']},
 	"error": {$_FILES['file']['error']},
 }
+</textarea>
+
 EOD;
 
 	echo $json;
@@ -136,88 +168,6 @@ else if($submitAction == 'multiple-by-traditional-form') {
 	exit;
 }
 
-
-
-
-/*
-// Get the input and check it
-	$account		= $pc->POSTisSetOrSetDefault('account');
-	$password1	= $pc->POSTisSetOrSetDefault('password1');
-	$password2	= $pc->POSTisSetOrSetDefault('password2');
-
-	$_SESSION['account'] = $account;
-	//
-	// Check the characters in the username
-	//
-	trim($account);
-	if(preg_replace('/[a-zA-Z0-9]/', '', $account)) {
-		$pc->SetSessionMessage('createAccountFailed', $pc->lang['INVALID_ACCOUNT_NAME']);
-		$pc->RedirectTo($redirectFail);		
-	}
-
-	//
-	// Check the passwords
-	//
-	if(empty($password1) || empty($password2)) {
-		$pc->SetSessionMessage('createAccountFailed', $pc->lang['PASSWORD_CANNOT_BE_EMPTY']);
-		$pc->RedirectTo($redirectFail);
-	} 
-	else if($password1 != $password2) {
-		$pc->SetSessionMessage('createAccountFailed', $pc->lang['PASSWORD_DOESNT_MATCH']);
-		$pc->RedirectTo($redirectFail);
-	}
-
-	//
-	// Check the CAPTCHA
-	//
-	$captcha = new CCaptcha();
-	if(!$captcha->CheckAnswer()) {
-		$pc->SetSessionMessage('createAccountFailed', $pc->lang['CAPTCHA_FAILED']);
-		$pc->RedirectTo($redirectFail);		
-	}
-
-	//
-	// Execute the database query to make the update
-	//
-	$db = new CDatabaseController();
-	$mysqli = $db->Connect();
-
-	// Prepare query
-	$account 	= $mysqli->real_escape_string($account);
-	$password = $mysqli->real_escape_string($password1);
-	$hashingalgoritm = DB_PASSWORDHASHING;
-
-	$query = <<<EOD
-CALL {$db->_['PCreateAccount']}(@accountId, '{$account}', '{$password}', '{$hashingalgoritm}', @status);
-SELECT 
-	@accountId AS accountid,
-	@status AS status;
-EOD;
-
-	// Perform the query
-	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
-
-	// Get details from resultset
-	$row = $results[1]->fetch_object();
-
-	if($row->status == 1) {
-		$pc->SetSessionMessage('createAccountFailed', $pc->lang['ACCOUNTNAME_ALREADY_EXISTS']);
-		$pc->RedirectTo($redirectFail);	
-	}
-	
-	$results[1]->close();
-	$mysqli->close();
-
-	//
-	// Do a silent login and then proceed to $redirect
-	//
-	unset($_SESSION['account']);
-	$_SESSION['silentLoginAccount'] 	= $account;
-	$_SESSION['silentLoginPassword'] 	= $password;
-	$_SESSION['silentLoginRedirect'] 	= $redirect;
-	$pc->RedirectTo($silentLogin);
-}
-*/
 
 // -------------------------------------------------------------------------------------------
 //

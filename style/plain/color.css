@@ -148,7 +148,7 @@ div.errorMessage {
 }
 
 div.successMessage {
-	background-color: #green;
+	background-color: green;
 	color: white;
 }
 
@@ -161,6 +161,8 @@ fieldset.code {
 /* -------------------------------------------------------------------------------------
  * User notices, feedback and messages
  */
+span.userFeedbackPositive,
+span.userFeedbackNegative,
 div.userFeedbackPositive,
 div.userFeedbackNegative {
 	/*background: url('img/silk/accept.png') no-repeat;*/

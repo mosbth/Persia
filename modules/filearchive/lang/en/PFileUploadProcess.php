@@ -10,18 +10,21 @@
 
 $lang = Array(
 
+	// 
+	'FILE_UPLOAD_SUCCESS' => "File '%1s' (%2d bytes) was uploaded. The file was recognized having mimetype '%3s'.",
+	'FILE_UPLOAD_FAILED' => "Failed to upload the file. Error code = %1d. %2s",
 
+	// Error messages
+	'UPLOAD_ERR_INI_SIZE' => "The uploaded file exceeds the 'upload_max_filesize' directive in php.ini.",
+	'UPLOAD_ERR_FORM_SIZE' => "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.",
+	'UPLOAD_ERR_PARTIAL' => "The uploaded file was only partially uploaded.",
+	'UPLOAD_ERR_NO_FILE' => "No file was uploaded. ",
+	'UPLOAD_ERR_NO_TMP_DIR' => "Missing a temporary folder. Introduced in PHP 4.3.10 and PHP 5.0.3.",
+	'UPLOAD_ERR_CANT_WRITE' => "Failed to write file to disk. Introduced in PHP 5.1.0.",
+	'UPLOAD_ERR_EXTENSION' => "A PHP extension stopped the file upload. PHP does not provide a way to ascertain which extension caused the file upload to stop; examining the list of loaded extensions with phpinfo() may help. Introduced in PHP 5.2.0. ",		
 
-
-
-	'PASSWORD_DOESNT_MATCH' => "The passwords does not match.",
-	'PASSWORD_CANNOT_BE_EMPTY' => "The password was empty, a password must not be empty.",
-	'ACCOUNTNAME_ALREADY_EXISTS' => "The accountname already exists, please choose another accountname.",
-	'CAPTCHA_FAILED' => "CAPTCHA check failed: The magic word did not match, please try again.",
-	'INVALID_ACCOUNT_NAME' => "The accountname contains invalid characters. The accountname must consist of any combination of characters (a-zA-z) or figures (0-9).",
-
-
-
+	// General
+	'SUBMIT_ACTION_NOT_SUPPORTED' => "Submit action is not supported.",
 
 );
 

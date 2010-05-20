@@ -54,9 +54,11 @@ h1, h2, h3 { }
 /* -------------------------------------------------------------------------------------
  * User notices, feedback and messages
  */
+span.userFeedbackPositive,
+span.userFeedbackNegative,
 div.userFeedbackPositive,
 div.userFeedbackNegative {
-	text-indent: 1.5em;
+	padding-left: 1.5em;
 	font-style: italic;
 }
 

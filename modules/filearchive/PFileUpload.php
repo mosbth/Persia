@@ -48,7 +48,7 @@ $imageLink = WS_IMAGES;
 $js = WS_JAVASCRIPT;
 $needjQuery = TRUE;
 $htmlHead = <<<EOD
-<!-- jGrowl latest -->
+<!-- jGrowl notices -->
 <link rel='stylesheet' href='{$js}/jGrowl/jquery.jgrowl.css' type='text/css' />
 <script type='text/javascript' src='{$js}/jGrowl/jquery.jgrowl.js'></script>  
 
@@ -76,6 +76,7 @@ $(document).ready(function() {
 	loader.src = "{$imageLink}/loader.gif";
 	loader.align = "baseline";
 
+
 	// ----------------------------------------------------------------------------------------------
 	//
 	// Upgrade form to make Ajax submit
@@ -83,33 +84,33 @@ $(document).ready(function() {
 	// http://malsup.com/jquery/form/
 	//
 	$('#form1').ajaxForm({
+		// $.ajax options can be used here too, for example: 
+		//timeout: 1000, 
+
 		// return a datatype of json
-		dataType: 'json',
+		//dataType: 'json',
 		
 		// remove short delay before posting form when uploading files
 		//forceSync: true,
 		
 		// form should always target the server response to an iframe. This is useful in conjuction with file uploads.
-		// iframe: true,
+		//iframe: true,
 		
 		// do stuff before submitting form
 		beforeSubmit: function(data, status) {
 						$.jGrowl('Before submit...');
 						$('#status1').html(loader);
+						//$('#debug1').html('');
 				},
 				
 		// define a callback function
 		success: function(data, status) {
-						$.jGrowl("Uploaded file '" + data.name + "' with size=" + data.size + " as " + data.type + ".");
-						$('#debug1').html(print_r(data, true));
-						if(data.success == 1) {
-							$('#status1').html("Uploaded file '" + data.name + "' with size=" + data.size + " as " + data.type + ".");
-						} else {
-							$('#status1').html("Failed to upload file. Error code = " + data.error);						
-						}
+						$.jGrowl("Uploaded file. Done.");
+						$('#status1').html(data);
+						//$('#debug1').html(print_r(data, true));
 				}	
+		});
 	});
-});
 
 EOD;
 
@@ -132,29 +133,41 @@ $messages = $helpers->GetHTMLForSessionMessages(
 	Array('createAccountFailed'));
 
 $htmlMain = <<<EOD
+<div class='section'>
 <h1>Sample file uploads</h1>
 <p>
 Each file you upload will be visible in the 'Archive'.
 </p>
+</div>
 
+<div class='section'>
 <p>
-This is a Ajax-enabled form for file upload. It uses 
+This is a Ajax-enabled form for file upload. It uses jQuery form plugin as described here: 
+<a href='http://jquery.malsup.com/form/#file-upload'>http://jquery.malsup.com/form/#file-upload</a>.
 </p>
 
 <form id='form1' enctype="multipart/form-data" action="{$action}" method="post">
 <fieldset class='standard'>
-<legend>Ajax-enabled file upload</legend>
+<legend>Ajax-style file upload</legend>
 <input type="hidden" name="MAX_FILE_SIZE" value="{$maxFileSize}">
 <label for='file'>File to upload:</label>
 <input name='file' type='file'>
-<button type='submit' name='do-submit' value='ajax-enabled'>Upload</button>
-<span id='status1'>&nbsp;</span>
-<pre id='debug1' style='border: 1px dotted black; background: white;'>&nbsp;</pre>
+<div id='clear'>&nbsp;</div>
+<button id='submit-ajax' type='submit' name='do-submit' value='upload-return-html'>Upload</button>
+<span id='status1'></span>
+</div>
+
+<!--
+<p>Debug output using print_r()</p>
+<pre id='debug1' style='border: 1px dotted black; background: white;'></pre>
+-->
+
 </fieldset>
 </form>
 
+<div class='section'>
 <p>
-This is a standard forms <code>&lt;input type='file'&gt;</code> kind of file upload.
+This is a standard forms <code>&lt;input type='file' name='file'&gt;</code> kind of file upload.
 </p>
 
 <form enctype="multipart/form-data" action="{$action}" method="post">
@@ -166,9 +179,11 @@ This is a standard forms <code>&lt;input type='file'&gt;</code> kind of file upl
 <button type='submit' name='do-submit' value='single-by-traditional-form'>Upload</button>
 </fieldset>
 </form>
+</div>
 
+<div class='section'>
 <p>
-Standard forms using multiple file upload.
+Standard forms using multiple file upload (<code>&lt;input type='file' name='file[]'&gt;</code>).
 </p>
 
 <form enctype="multipart/form-data" action="{$action}" method="post">
@@ -181,6 +196,7 @@ Standard forms using multiple file upload.
 <button type='submit' name='do-submit' value='multiple-by-traditional-form'>Upload</button>
 </fieldset>
 </form>
+</div>
 
 EOD;
 

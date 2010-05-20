@@ -36,21 +36,38 @@ class CHTMLHelpers {
 	
 	// ------------------------------------------------------------------------------------
 	//
+	// Create a positive (Ok/Success) feedback message for the user.
+	//
+	public static function GetHTMLUserFeedbackPositive($aMessage) {
+		return "<span class='userFeedbackPositive' style=\"background: url('".WS_IMAGES."/silk/accept.png') no-repeat;\">{$aMessage}</span>";
+	}
+	
+	
+	// ------------------------------------------------------------------------------------
+	//
+	// Create a negative (Failed) feedback message for the user.
+	//
+	public static function GetHTMLUserFeedbackNegative($aMessage) {
+		return "<span class='userFeedbackNegative' style=\"background: url('".WS_IMAGES."/silk/cancel.png') no-repeat;\">{$aMessage}</span>";
+	}
+	
+	
+	// ------------------------------------------------------------------------------------
+	//
 	// Create feedback notices if functions was successful or not. The messages are stored
 	// in the session. This is useful in submitting form and providing user feedback.
 	// This method reviews arrays of messages and stores them all in an resulting array.
 	//
-	public function GetHTMLForSessionMessages($aSuccessList, $aFailedList) {
+	public static function GetHTMLForSessionMessages($aSuccessList, $aFailedList) {
 	
-		$imageLink = WS_IMAGES;
 		$messages = Array();
 		foreach($aSuccessList as $val) {
 			$m = CPageController::GetAndClearSessionMessage($val);
-			$messages[$val] = empty($m) ? '' : "<div class='userFeedbackPositive' style=\"background: url('{$imageLink}/silk/accept.png') no-repeat;\">{$m}</div>";
+			$messages[$val] = empty($m) ? '' : self::GetHTMLUserFeedbackPositive($m);
 		}
 		foreach($aFailedList as $val) {
 			$m = CPageController::GetAndClearSessionMessage($val);
-			$messages[$val] = empty($m) ? '' : "<div class='userFeedbackNegative' style=\"background: url('{$imageLink}/silk/cancel.png') no-repeat;\">{$m}</div>";
+			$messages[$val] = empty($m) ? '' : self::GetHTMLUserFeedbackNegative($m);
 		}
 
 		return $messages;
