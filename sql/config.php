@@ -58,6 +58,21 @@ $DB_Tables_And_Procedures = Array(
 	'FCheckUserIsOwnerOrAdmin' 					=> DB_PREFIX . 'FCheckUserIsOwnerOrAdmin',
 	'TAddArticle' 											=> DB_PREFIX . 'TAddArticle',
 
+	//
+	// Module Core: File
+	//
+	'CSizeFileName' 					=> 256,
+	'CSizeFileNameUnique' 		=> 13,
+	'CSizePathToDisk' 				=> 256,
+	
+	 // Max 127 chars according http://tools.ietf.org/html/rfc4288#section-4.2
+	'CSizeMimetype'		 				=> 127,
+	
+	'File' 										=> DB_PREFIX . 'File',
+	'PInsertFile' 						=> DB_PREFIX . 'PInsertFile',
+	'PListFiles' 							=> DB_PREFIX . 'PListFiles',
+
+
 	// -------------------------------------------------------------------------------------------
 	//
 	// Module Forum_Romanum
