@@ -328,6 +328,17 @@ class CPageController {
 	}
 
 
+	// ------------------------------------------------------------------------------------
+	//
+	// Static function
+	// Add trailing DIRECTORY_SEPARATOR if missing. Return the modified path.
+	// 
+	public static function AddTrailingSeparatorIfNeeded($aPath) {
+		$l = strlen(DIRECTORY_SEPARATOR);
+		return $aPath . (substr_compare($aPath, DIRECTORY_SEPARATOR, strlen($aPath)-$l, $l) == 0 ? '' : DIRECTORY_SEPARATOR);
+	}
+
+
 } // End of Of Class
 
 ?>

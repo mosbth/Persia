@@ -123,14 +123,16 @@ global $gModule;
 
 $maxFileSize 	= FILE_MAX_SIZE;
 $action 			= "?m={$gModule}&amp;p=uploadp";
-$redirect 		= "?m={$gModule}&amp;p=upload";
-$redirectFail = "?m={$gModule}&amp;p=upload";
+//$redirect 		= "?m={$gModule}&amp;p=upload";
+//$redirectFail = "?m={$gModule}&amp;p=upload";
 
 // Get and format messages from session if they are set
+/*
 $helpers = new CHTMLHelpers();
 $messages = $helpers->GetHTMLForSessionMessages(
 	Array(), 
-	Array('createAccountFailed'));
+	Array());
+*/
 
 $htmlMain = <<<EOD
 <div class='section'>

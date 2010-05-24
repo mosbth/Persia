@@ -95,11 +95,14 @@ $archiveDb = <<<EOD
 <tbody>
 EOD;
 
+global $gModule;
+$editDetails = "?m={$gModule}&amp;p=file-details&amp;file=";
+
 while($row = $results[0]->fetch_object()) {    
 	$archiveDb .= <<<EOD
 <tr>
-<td title='{$row->path}'>{$row->name}</td>
-<td>{$row->uniquename}</td>
+<td><a href='{$editDetails}{$row->uniquename}' title='Click to view/edit details.'>{$row->name}</a></td>
+<td title='{$row->path}'>{$row->uniquename}</td>
 <td>{$row->size}</td>
 <td>{$row->mimetype}</td>
 <td>{$row->created}</td>

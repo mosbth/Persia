@@ -25,6 +25,8 @@ $query = <<<EOD
 --
 -- Table for File
 --
+-- uniqueNameFile must be unique in combination with the userid.
+--
 DROP TABLE IF EXISTS {$db->_['File']};
 CREATE TABLE {$db->_['File']} (
 
@@ -43,9 +45,12 @@ CREATE TABLE {$db->_['File']} (
 	mimetypeFile VARCHAR({$db->_['CSizeMimetype']}) NOT NULL,
 	createdFile DATETIME NOT NULL,
 	modifiedFile DATETIME NULL,
-	deletedFile DATETIME NULL
+	deletedFile DATETIME NULL,
 
-);
+	-- Index
+	INDEX (uniqueNameFile)
+
+) ENGINE MyISAM CHARACTER SET {$db->_['DefaultCharacterSet']} COLLATE {$db->_['DefaultCollate']};
 
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -94,6 +99,63 @@ BEGIN
 	WHERE
 		File_idUser = aUserId AND
 		deletedFile IS NULL;
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to show details of a file
+--
+DROP PROCEDURE IF EXISTS {$db->_['PFileDetails']};
+CREATE PROCEDURE {$db->_['PFileDetails']}
+(
+	IN aUserId INT UNSIGNED,
+	IN aUniqueFilename VARCHAR({$db->_['CSizeFileNameUnique']})
+)
+BEGIN
+	SELECT 
+		idFile AS fileid, 
+		File_idUser AS owner, 
+		nameFile AS name, 
+		uniqueNameFile AS uniquename,
+		pathToDiskFile AS path, 
+		sizeFile AS size, 
+		mimetypeFile AS mimetype, 
+		createdFile AS created,
+		modifiedFile AS modified,
+		deletedFile AS deleted
+	FROM {$db->_['File']}
+	WHERE
+		File_idUser = aUserId AND
+		uniqueNameFile = aUniqueFilename;		
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to update details of a file
+-- The userid sent in must be owner or admin to be able to change the file details.
+--
+DROP PROCEDURE IF EXISTS {$db->_['PFileDetailsUpdate']};
+CREATE PROCEDURE {$db->_['PFileDetailsUpdate']}
+(
+	IN aFileId INT UNSIGNED,
+	IN aUserId INT UNSIGNED,
+	IN aFilename VARCHAR({$db->_['CSizeFileName']}), 
+	IN aMimetype VARCHAR({$db->_['CSizeMimetype']})
+)
+BEGIN
+	UPDATE {$db->_['File']}
+	SET
+		nameFile 			= aFilename,
+		mimetypeFile 	= aMimetype,
+		modifiedFile	= NOW()
+	WHERE 
+		idFile = aFileId AND
+		(
+			{$db->_['FCheckUserIsAdmin']}(aUserId) OR
+			File_idUser = aUserId
+		);
 END;
 
 

@@ -14,13 +14,22 @@
 /* Account profile settings */
 
 /* fieldset */
-fieldset.standard,
 fieldset.loginform,
 fieldset.editor,
-fieldset.accountsettings {
+fieldset.accountsettings,
+fieldset.standard {
 	padding: 1.5em 0.5em 1em 0.5em;
 	border: 2px #ccc solid;
 }
+
+/* Wrapper around whole form */
+fieldset.standard div.form-wrapper {}
+
+/* Wrapper around button bar */
+fieldset.standard div.buttonbar {}
+
+/* Status output from form being submitted */
+fieldset.standard div.form-status {}
 
 /* legend */
 fieldset.standard legend {
@@ -34,25 +43,25 @@ fieldset.standard legend {
 
 /* label */
 fieldset.standard label {
-	clear: left;
+	clear: both;
 	float:left;
 	padding-right: 0.5em;
 	text-align: left;
 }
 
 /* input */
-fieldset.standard input,
 fieldset.loginform input,
 fieldset.editor input, 
-fieldset.accountsettings input {
+fieldset.accountsettings input,
+fieldset.standard input {
 	width: 24em;
 	height: 2em;
 	font-size: 1.3em;
 }
 
 /* textarea */
-fieldset.standard textarea,
-fieldset.editor textarea {
+fieldset.editor textarea,
+fieldset.standard textarea {
 	font-family: inherit;
 	font-size: inherit;
 	padding: 0.5em
@@ -67,6 +76,7 @@ fieldset.standard button {
 	font-weight: bold; 
 }
 
+/* Custom button settings */
 fieldset.loginform button,
 fieldset.editor button,
 fieldset.accountsettings button {
@@ -76,6 +86,40 @@ fieldset.accountsettings button {
 	text-transform: uppercase; /* capitalize uppercase */
 	font-weight: bold; 
 }
+
+/* -------------------------------------------------------------------------------------
+/* filedetails, custom settings */
+
+fieldset.filedetails {}
+
+fieldset.filedetails div.form-wrapper {
+	margin: auto;
+	width: 90%;
+}
+
+fieldset.filedetails div.buttonbar {
+	float: right;
+	margin-top: 1em;
+}
+
+fieldset.filedetails div.form-status {
+	float: left;
+	margin-top: 1em;
+}
+
+fieldset.filedetails label {
+	float: right;
+	display: block;
+	width: 100%;
+	margin-top: 0.5em;
+}
+
+fieldset.filedetails input {
+	float: right;
+	width: 100%;
+}
+
+
 
 
 /* -------------------------------------------------------------------------------------

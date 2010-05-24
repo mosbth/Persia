@@ -37,8 +37,8 @@ $redirectFail	= $pc->POSTisSetOrSetDefault('redirect-fail');
 $userId		= $_SESSION['idUser'];
 
 // All files are stored in the users own directory
-$account = $pc->SESSIONisSetOrSetDefault('accountUser');
-$archivePath = FILE_ARCHIVE_PATH . DIRECTORY_SEPARATOR . $account . DIRECTORY_SEPARATOR;
+$account 			= $pc->SESSIONisSetOrSetDefault('accountUser');
+$archivePath 	= $pc->AddTrailingSeparatorIfNeeded(FILE_ARCHIVE_PATH) . $account . DIRECTORY_SEPARATOR;
 if(!is_dir($archivePath)) {
 	mkdir($archivePath);
 }

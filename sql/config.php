@@ -21,6 +21,9 @@ $DB_Tables_And_Procedures = Array(
 	//
 	// Module Core
 	//
+	'DefaultCharacterSet'	=> 'utf8',
+	'DefaultCollate'			=> 'utf8_unicode_ci',
+
 
 	//
 	// Module Core: Accounts, users, groups, profile
@@ -42,6 +45,7 @@ $DB_Tables_And_Procedures = Array(
 	'PGetOrCreateAccountId' 		=> DB_PREFIX . 'PGetOrCreateAccountId',
 	'TInsertUser' 							=> DB_PREFIX . 'TInsertUser',
 	'FGetAvatar' 								=> DB_PREFIX . 'FGetAvatar',
+	'FCheckUserIsAdmin' 				=> DB_PREFIX . 'FCheckUserIsAdmin',
 
 	// For supporting gravatar from gratavar.com
 	'PChangeAccountGravatar' 		=> DB_PREFIX . 'PChangeAccountGravatar',
@@ -62,7 +66,7 @@ $DB_Tables_And_Procedures = Array(
 	// Module Core: File
 	//
 	'CSizeFileName' 					=> 256,
-	'CSizeFileNameUnique' 		=> 13,
+	'CSizeFileNameUnique' 		=> 13, // Smallest size of PHP uniq().
 	'CSizePathToDisk' 				=> 256,
 	
 	 // Max 127 chars according http://tools.ietf.org/html/rfc4288#section-4.2
@@ -70,6 +74,8 @@ $DB_Tables_And_Procedures = Array(
 	
 	'File' 										=> DB_PREFIX . 'File',
 	'PInsertFile' 						=> DB_PREFIX . 'PInsertFile',
+	'PFileDetails'						=> DB_PREFIX . 'PFileDetails',
+	'PFileDetailsUpdate'			=> DB_PREFIX . 'PFileDetailsUpdate',
 	'PListFiles' 							=> DB_PREFIX . 'PListFiles',
 
 

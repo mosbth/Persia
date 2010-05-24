@@ -700,6 +700,33 @@ END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
+--  Create UDF that checks if user is member of group adm.
+--
+DROP FUNCTION IF EXISTS {$db->_['FCheckUserIsAdmin']};
+CREATE FUNCTION {$db->_['FCheckUserIsAdmin']}
+(
+	aUserId INT
+)
+RETURNS BOOLEAN
+BEGIN
+	DECLARE isAdmin INT;
+	
+	SELECT idUser INTO isAdmin
+	FROM {$db->_['User']} AS U
+		INNER JOIN {$db->_['GroupMember']} AS GM
+			ON U.idUser = GM.GroupMember_idUser
+		INNER JOIN {$db->_['Group']} AS G
+			ON G.idGroup = GM.GroupMember_idGroup
+	WHERE
+		idGroup = 'adm' AND
+		idUser = aUserId;
+		
+	RETURN (isAdmin OR 0);		
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
 -- Add default groups
 --
 INSERT INTO {$db->_['Group']} (idGroup, nameGroup) VALUES ('adm', 'Administrators of the site');
