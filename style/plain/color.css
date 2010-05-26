@@ -162,10 +162,13 @@ fieldset.code {
  * User notices, feedback and messages
  */
 span.userFeedbackPositive,
+div.userFeedbackPositive {
+	background: url('../../img/silk/tick.png') no-repeat;
+}
+
 span.userFeedbackNegative,
-div.userFeedbackPositive,
 div.userFeedbackNegative {
-	/*background: url('img/silk/accept.png') no-repeat;*/
+	background: url('../../img/silk/exclamation.png') no-repeat;
 }
 
 /* -------------------------------------------------------------------------------------

@@ -1,9 +1,9 @@
 <?php
 // ===========================================================================================
 //
-// PTemplate.php
+// File: PTemplate.php
 //
-// Language file
+// Description: Language file
 //
 // Author: Mikael Roos, mos@bth.se
 //

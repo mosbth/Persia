@@ -102,11 +102,17 @@ $mysqli = $db->Connect();
 
 // Create the query
 $query 	= <<< EOD
-CALL {$db->_['PFileDetails']}('{$userId}', '{$filename}');
+CALL {$db->_['PFileDetails']}('{$userId}', '{$filename}', @success);
+SELECT @success AS success;
 EOD;
 
 // Perform the query
 $results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
+
+$row = $results[2]->fetch_object();
+if($row->success) {
+	$pc->RedirectToModuleAndPage('', 'p403', '', $db->_['FFileCheckPermissionMessages'][$row->success]);
+}
 
 $row = $results[0]->fetch_object();
 $fileid 		= $row->fileid;
@@ -119,6 +125,7 @@ $created 		= $row->created;
 $modified 	= $row->modified;
 $deleted 		= $row->deleted;
 
+$results[2]->close();
 $results[0]->close();
 $mysqli->close();
 
@@ -138,6 +145,9 @@ $helpers = new CHTMLHelpers();
 $messages = $helpers->GetHTMLForSessionMessages(
 	Array('success'), 
 	Array('failed'));
+
+$hideDeleteButton 	= empty($deleted) ? '' : 'hide' ;
+$hideRestoreButton 	= empty($deleted) ? 'hide' : '' ;
 
 $htmlMain = <<<EOD
 <div class='section'>
@@ -169,7 +179,7 @@ $htmlMain = <<<EOD
 <input name='mimetype' type='text' value='{$mimetype}' maxlength='{$db->_['CSizeMimetype']}'>
 
 <label for='created'>{$pc->lang['FILE_DETAILS_CREATED']}</label>
-<input name='created' type='datetime' value='{$created}'disabled>
+<input name='created' type='datetime' value='{$created}' disabled>
 
 <label for='modified'>{$pc->lang['FILE_DETAILS_MODIFIED']}</label>
 <input name='modified' type='datetime' value='{$modified}' disabled placeholder='{$pc->lang['FILE_TIME_FOR_MODIFIED']}'>
@@ -178,8 +188,9 @@ $htmlMain = <<<EOD
 <input name='deleted' type='datetime' value='{$deleted}' disabled placeholder='{$pc->lang['FILE_TIME_FOR_DELETED']}'>
 
 <div class='buttonbar'>
-<button type='submit' name='do-submit' value='save-file-details'>{$pc->lang['FILE_DETAILS_SAVE']}</button>
-<button type='submit' name='do-submit' value='delete-file'>{$pc->lang['DELETE_FILE']}</button>
+<button type='submit' class='save' name='do-submit' value='save-file-details'>{$pc->lang['FILE_DETAILS_SAVE']}</button>
+<button type='submit' class='delete {$hideDeleteButton}' name='do-submit' value='delete-file'>{$pc->lang['DELETE_FILE']}</button>
+<button type='submit' class='restore {$hideRestoreButton}' name='do-submit' value='restore-file'>{$pc->lang['RESTORE_FILE']}</button>
 </div> <!-- buttonbar -->
 
 <div class='form-status'>{$messages['success']}{$messages['failed']}</div> 

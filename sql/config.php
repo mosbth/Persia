@@ -14,6 +14,12 @@
 // 2010-05-11: Now organised according the new array-format, dropped the define()
 //
 
+//
+// Enable language support for error messages
+//
+$pc = new CPageController();
+$pc->LoadLanguage(__FILE__);
+
 
 $DB_Tables_And_Procedures = Array(
 
@@ -77,6 +83,14 @@ $DB_Tables_And_Procedures = Array(
 	'PFileDetails'						=> DB_PREFIX . 'PFileDetails',
 	'PFileDetailsUpdate'			=> DB_PREFIX . 'PFileDetailsUpdate',
 	'PListFiles' 							=> DB_PREFIX . 'PListFiles',
+	'PFileDetailsDeleted' 		=> DB_PREFIX . 'PFileDetailsDeleted',
+
+	// Check permissions and success values
+	'FFileCheckPermission' 				=> DB_PREFIX . 'FFileCheckPermission',
+	'FFileCheckPermissionMessages' => Array(
+			'1' => $pc->lang['FILE_NO_PERMISSION'],
+			'2' => $pc->lang['FILE_DOES_NOT_EXISTS'],
+		),
 
 
 	// -------------------------------------------------------------------------------------------

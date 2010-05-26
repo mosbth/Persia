@@ -243,7 +243,7 @@ class CPageController {
 	// Redirect to another local page using module, page and arguments (Array)
 	// Defaults to current module home-page.
 	//
-	public static function RedirectToModuleAndPage($aModule='', $aPage='home', $aArguments='') {
+	public static function RedirectToModuleAndPage($aModule='', $aPage='home', $aArguments='', $aMessage='') {
 
 		global $gModule;
 		
@@ -252,6 +252,12 @@ class CPageController {
 		$aUri = WS_SITELINK . "?{$m}&{$p}";
 
 		// Enable sending $aArguments as an Array later on. When needed.
+		
+		
+		// Set message in SESSION, if defined
+		if(!empty($aMessage)) {
+			self::SetSessionMessage($aPage, $aMessage);
+		}
 
 		header("Location: {$aUri}");
 		exit;

@@ -27,9 +27,12 @@ $lang = Array(
 	'FILE_DETAILS_DELETED' => "Deleted:",
 	'FILE_DETAILS_SAVE' => "Save",
 	'DELETE_FILE' => "Delete file",
+	'RESTORE_FILE' => "Restore file",
 
-	'FILE_TIME_FOR_MODIFIED' => "Display time when file details was last saved",
-	'FILE_TIME_FOR_DELETED' => "Displays time when file was deleted",
+
+
+	'FILE_TIME_FOR_MODIFIED' => "Time when file details was last saved",
+	'FILE_TIME_FOR_DELETED' => "Time when file was deleted",
 
 
 

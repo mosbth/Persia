@@ -139,9 +139,15 @@ switch($gPage) {
 	*/
 	
 	//
+	// Trying to access a forbidden page, or having no permissions.
+	//
+	case 'p403':	require_once(TP_MODULESPATH . '/core/home/P403.php'); break;
+
+	//
 	// Default case, trying to access some unknown page, should present some error message
 	// or show the home-page
 	//
+	case 'p404':
 	default:			require_once(TP_PAGESPATH . 'home/P404.php'); break;
 }
 

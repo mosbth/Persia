@@ -39,7 +39,7 @@ class CHTMLHelpers {
 	// Create a positive (Ok/Success) feedback message for the user.
 	//
 	public static function GetHTMLUserFeedbackPositive($aMessage) {
-		return "<span class='userFeedbackPositive' style=\"background: url('".WS_IMAGES."/silk/accept.png') no-repeat;\">{$aMessage}</span>";
+		return "<span class='userFeedbackPositive'>{$aMessage}</span>";
 	}
 	
 	
@@ -48,7 +48,7 @@ class CHTMLHelpers {
 	// Create a negative (Failed) feedback message for the user.
 	//
 	public static function GetHTMLUserFeedbackNegative($aMessage) {
-		return "<span class='userFeedbackNegative' style=\"background: url('".WS_IMAGES."/silk/cancel.png') no-repeat;\">{$aMessage}</span>";
+		return "<span class='userFeedbackNegative'>{$aMessage}</span>";
 	}
 	
 	

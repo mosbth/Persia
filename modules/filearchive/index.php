@@ -73,9 +73,14 @@ switch($gPage) {
 	case 'ls':	require_once(TP_MODULESPATH . '/core/viewfiles/PListDirectory.php'); break;
 
 	//
+	// Trying to access a forbidden page, or having no permissions.
+	//
+	case 'p403':	require_once(TP_MODULESPATH . '/core/home/P403.php'); break;
+
 	// Default case, trying to access some unknown page, should present some error message
 	// or show the home-page
 	//
+	case 'p404':
 	default:		require_once(TP_MODULESPATH . '/core/home/P404.php'); break;
 }
 

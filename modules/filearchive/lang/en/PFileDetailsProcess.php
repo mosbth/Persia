@@ -17,6 +17,7 @@ $lang = Array(
 	'FILE_DETAILS_UPDATED' => "File details updated.",
 
 
+
 	// General
 	'SUBMIT_ACTION_NOT_SUPPORTED' => "Submit action is not supported.",
 

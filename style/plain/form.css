@@ -87,6 +87,22 @@ fieldset.accountsettings button {
 	font-weight: bold; 
 }
 
+/* save button */
+fieldset.standard button.save {
+	background: url('../../img/silk/disk.png') no-repeat 3px 4px;
+	text-indent: 18px; 
+}
+
+/* delete button */
+fieldset.standard button.delete {
+	background: url('../../img/silk/delete.png') no-repeat 3px 4px;
+	text-indent: 15px; 
+}
+
+/* To hide a element */
+.hide {display: none;}
+
+
 /* -------------------------------------------------------------------------------------
 /* filedetails, custom settings */
 
@@ -118,8 +134,6 @@ fieldset.filedetails input {
 	float: right;
 	width: 100%;
 }
-
-
 
 
 /* -------------------------------------------------------------------------------------

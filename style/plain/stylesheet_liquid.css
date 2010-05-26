@@ -151,9 +151,10 @@ div.clear {
 	clear: both;
 }
 
-p.last {
-	margin-bottom: 0;
+p.last {margin-bottom: 0;}
 }
+
+.hide {display: none;}
 
 
 /* -------------------------------------------------------------------------------------

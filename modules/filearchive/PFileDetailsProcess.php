@@ -89,12 +89,59 @@ else if($submitAction == 'save-file-details') {
 
 	// Create the query
 	$query 	= <<< EOD
-CALL {$db->_['PFileDetailsUpdate']}({$fileid}, '{$userId}', '{$name}', '{$mimetype}');
+CALL {$db->_['PFileDetailsUpdate']}({$fileid}, '{$userId}', '{$name}', '{$mimetype}', @success);
+SELECT @success AS success;
 EOD;
 
-	// Perform the query and assume it all whent okey
+	// Perform the query and manage results
 	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
+	
+	$row = $results[1]->fetch_object();
+	if($row->success) {
+		$pc->SetSessionMessage('failed', $db->_['FFileCheckPermissionMessages'][$row->success]);
+		$pc->RedirectTo($redirectFail);
+	}
+
+	$results[1]->close();
 	$mysqli->close();
+	
+	$pc->SetSessionMessage('success', $pc->lang['FILE_DETAILS_UPDATED']);
+	$pc->RedirectTo($redirectFail);
+}
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Set a file to be deleted/not deleted.
+// 
+else if($submitAction == 'delete-file' || $submitAction == 'restore-file') {
+
+	// Get the input
+	$fileid		= $pc->POSTisSetOrSetDefault('fileid');
+	$deleteOrRestore = ($submitAction == 'delete-file') ? 1 : (($submitAction == 'restore-file') ? 2 : 0);
+	
+	// Save metadata of the file in the database
+	$db = new CDatabaseController();
+	$mysqli = $db->Connect();
+
+	// Create the query
+	$query 	= <<< EOD
+CALL {$db->_['PFileDetailsDeleted']}({$fileid}, '{$userId}', '{$deleteOrRestore}', @success);
+SELECT @success AS success;
+EOD;
+
+	// Perform the query and manage results
+	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
+	
+	$row = $results[1]->fetch_object();
+	if($row->success) {
+		$pc->SetSessionMessage('failed', $db->_['FFileCheckPermissionMessages'][$row->success]);
+		$pc->RedirectTo($redirectFail);
+	}
+
+	$results[1]->close();
+	$mysqli->close();
+	
 	$pc->SetSessionMessage('success', $pc->lang['FILE_DETAILS_UPDATED']);
 	$pc->RedirectTo($redirectFail);
 }

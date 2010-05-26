@@ -86,11 +86,10 @@ $archiveDb = <<<EOD
 <thead>
 <th>Name</th>
 <th>Unique</th>
-<th>Type</th>
 <th>Size</th>
+<th>Type</th>
 <th>Created</th>
 <th>Modified</th>
-<th>Deleted</th>
 </thead>
 <tbody>
 EOD;
@@ -107,7 +106,6 @@ while($row = $results[0]->fetch_object()) {
 <td>{$row->mimetype}</td>
 <td>{$row->created}</td>
 <td>{$row->modified}</td>
-<td>{$row->deleted}</td>
 </tr>
 EOD;
 }
