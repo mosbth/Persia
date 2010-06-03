@@ -1,7 +1,7 @@
 <?php
 // ===========================================================================================
 //
-// File: PFileDetails.php
+// File: PFileDetailsEdit.php
 //
 // Description: Language file
 //
@@ -11,16 +11,11 @@
 $lang = Array(
 
 	// 
-	'FILE_DETAILS_TITLE' => "View file details",
-	'FILE_DETAILS_HEADER' => "View file details",
-	'FILE_DETAILS_DESCRIPTION' => 
-		"Here are the details about this fil. You can edit these details. " . 
-		"There is also a public download page for this file.",
-	'FILE_DETAILS_CAPTION' => "File details for: %s",
-	'FILE_DOWNLOAD_PAGE' => "Download page",
+	'FILE_DETAILS_TITLE' => "Edit file details",
+	'FILE_DETAILS_HEADER' => "Edit file details",
+	'FILE_DETAILS_DESCRIPTION' => "You can edit some parts of the metadata that are stored about the file.",
 
-
-	// the headers
+	// the form
 	'FILE_DETAILS_LEGEND' => "File details",
 	'FILE_DETAILS_FILENAME' => "Filename:",
 	'FILE_DETAILS_UNIQUENAME' => "Unique name:",
@@ -30,7 +25,12 @@ $lang = Array(
 	'FILE_DETAILS_CREATED' => "Created:",
 	'FILE_DETAILS_MODIFIED' => "Modified:",
 	'FILE_DETAILS_DELETED' => "Deleted:",
-	'FILE_DETAILS_EDIT' => "Edit details",
+	'FILE_DETAILS_SAVE' => "Save",
+	'DELETE_FILE' => "Delete file",
+	'RESTORE_FILE' => "Restore file",
+
+	'FILE_TIME_FOR_MODIFIED' => "Time when details was last saved",
+	'FILE_TIME_FOR_DELETED' => "Time when file was deleted",
 
 
 

@@ -1,7 +1,7 @@
 <?php
 // ===========================================================================================
 //
-// File: PFileDetailsProcess.php
+// File: PFileDetailsEditProcess.php
 //
 // Description: Language file
 //

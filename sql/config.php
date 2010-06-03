@@ -80,7 +80,8 @@ $DB_Tables_And_Procedures = Array(
 	
 	'File' 										=> DB_PREFIX . 'File',
 	'PInsertFile' 						=> DB_PREFIX . 'PInsertFile',
-	'PFileDetails'						=> DB_PREFIX . 'PFileDetails',
+	'PFileUpdateUniqueName' 	=> DB_PREFIX . 'PFileUpdateUniqueName',
+	'PFileDetails'			 			=> DB_PREFIX . 'PFileDetails',
 	'PFileDetailsUpdate'			=> DB_PREFIX . 'PFileDetailsUpdate',
 	'PListFiles' 							=> DB_PREFIX . 'PListFiles',
 	'PFileDetailsDeleted' 		=> DB_PREFIX . 'PFileDetailsDeleted',

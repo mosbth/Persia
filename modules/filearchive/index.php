@@ -25,12 +25,15 @@ switch($gPage) {
 	//
 	// File Archive
 	//
-	case 'home':					require_once($currentDir . 'PIndex.php'); break;
-	case 'archive':				require_once($currentDir . 'PFileArchive.php'); break;
-	case 'file-details':	require_once($currentDir . 'PFileDetails.php'); break;
-	case 'file-detailsp':	require_once($currentDir . 'PFileDetailsProcess.php'); break;
-	case 'upload':				require_once($currentDir . 'PFileUpload.php'); break;
-	case 'uploadp':				require_once($currentDir . 'PFileUploadProcess.php'); break;
+	case 'home':								require_once($currentDir . 'PIndex.php'); break;
+	case 'archive':							require_once($currentDir . 'PFileArchive.php'); break;
+	case 'file-details':				require_once($currentDir . 'PFileDetails.php'); break;
+	case 'file-details-edit':		require_once($currentDir . 'PFileDetailsEdit.php'); break;
+	case 'file-details-editp':	require_once($currentDir . 'PFileDetailsEditProcess.php'); break;
+	case 'upload':							require_once($currentDir . 'PFileUpload.php'); break;
+	case 'uploadp':							require_once($currentDir . 'PFileUploadProcess.php'); break;
+	case 'download':						require_once($currentDir . 'PFileDownload.php'); break;
+	case 'download-now':				require_once($currentDir . 'PFileDownloadProcess.php'); break;
 
 
 	//

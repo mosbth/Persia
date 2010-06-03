@@ -80,6 +80,11 @@ else if($submitAction == 'upload-return-html') {
 		UPLOAD_ERR_EXTENSION 	=> $pc->lang['UPLOAD_ERR_EXTENSION'],		
 	);
 	
+	// Check that uploaded filesize is within limit
+	if ($_FILES['file']['size'] > FILE_MAX_SIZE) {
+		exit(CHTMLHelpers::GetHTMLUserFeedbackNegative(sprintf($pc->lang['FILE_UPLOAD_FAILED_MAXSIZE'], FILE_MAX_SIZE)));
+	}
+
 	// Create a unique filename
 	do {
 		$file = uniqid();
@@ -87,34 +92,49 @@ else if($submitAction == 'upload-return-html') {
 	} while(file_exists($path));
 
 	// Move the uploaded file
-	$html = '';
-	if (move_uploaded_file($_FILES['file']['tmp_name'], $path)) {
-		$html = CHTMLHelpers::GetHTMLUserFeedbackPositive(sprintf($pc->lang['FILE_UPLOAD_SUCCESS'], $_FILES['file']['name'], $_FILES['file']['size'], $_FILES['file']['type']));
-	} else {
-		$html = CHTMLHelpers::GetHTMLUserFeedbackNegative(sprintf($pc->lang['FILE_UPLOAD_FAILED'], $_FILES['file']['error'], $errorMessages[$_FILES['file']['error']]));
+	if (!move_uploaded_file($_FILES['file']['tmp_name'], $archivePath . $file)) {
+		exit(CHTMLHelpers::GetHTMLUserFeedbackNegative(sprintf($pc->lang['FILE_UPLOAD_FAILED'], $_FILES['file']['error'], $errorMessages[$_FILES['file']['error']])));
 	}
-
-	//
+	
 	// Store metadata of the file in the database
-	//
 	$db 		= new CDatabaseController();
 	$mysqli = $db->Connect();
 
 	// Create the query
 	$query 	= <<< EOD
-CALL {$db->_['PInsertFile']}('{$userId}', '{$_FILES['file']['name']}', '{$file}', '{$path}', {$_FILES['file']['size']}, '{$_FILES['file']['type']}');
+CALL {$db->_['PInsertFile']}('{$userId}', '{$_FILES['file']['name']}', '{$path}', '{$file}', {$_FILES['file']['size']}, '{$_FILES['file']['type']}', @fileId, @status);
+SELECT @fileId AS fileid, @status AS status;
 EOD;
 
 	// Perform the query
 	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 
-	// Assume it all whent okey
+	// Check if the unique key was accepted, else, create a new one and try again
+	$row = $results[1]->fetch_object();
+	$status = $row->status;
+	$fileid = $row->fileid;
+	$results[1]->close();
+
+	// Did the unique key update correctly?	
+	if($row->status) {
+		// Create query to set new unique name
+		do {
+			$newid = uniqid();
+			$query 	= <<< EOD
+CALL {$db->_['PFileUpdateUniqueName']}('{$fileid}', '{$newid}', @status);
+SELECT @status AS status;
+EOD;
+
+			$row 		= $results[1]->fetch_object();
+			$status = $row->status;
+			$results[1]->close();
+		} while ($status != 0);
+	}
 
 	$mysqli->close();
 
 	// Echo out the result
-	echo $html;
-	exit;
+	exit(CHTMLHelpers::GetHTMLUserFeedbackPositive(sprintf($pc->lang['FILE_UPLOAD_SUCCESS'], $_FILES['file']['name'], $_FILES['file']['size'], $_FILES['file']['type'])));
 }
 
 

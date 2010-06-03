@@ -39,8 +39,8 @@ CREATE TABLE {$db->_['File']} (
 	
 	-- Attributes
 	nameFile VARCHAR({$db->_['CSizeFileName']}) NOT NULL,
-	uniqueNameFile VARCHAR({$db->_['CSizeFileNameUnique']}) NOT NULL,
 	pathToDiskFile VARCHAR({$db->_['CSizePathToDisk']}) NOT NULL,
+	uniqueNameFile VARCHAR({$db->_['CSizeFileNameUnique']}) NULL UNIQUE,
 	sizeFile INT UNSIGNED NOT NULL,
 	mimetypeFile VARCHAR({$db->_['CSizeMimetype']}) NOT NULL,
 	createdFile DATETIME NOT NULL,
@@ -48,6 +48,7 @@ CREATE TABLE {$db->_['File']} (
 	deletedFile DATETIME NULL,
 
 	-- Index
+	INDEX (File_idUser),
 	INDEX (uniqueNameFile)
 
 ) ENGINE MyISAM CHARACTER SET {$db->_['DefaultCharacterSet']} COLLATE {$db->_['DefaultCollate']};
@@ -55,23 +56,78 @@ CREATE TABLE {$db->_['File']} (
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
--- SP to insert new file
+-- SP to insert new file. 
+--
+-- The unique key is created from caller. First the file entry is inserted. Then try to add the
+-- unique key. 
+--
+-- @aStatus contains the following values:
+-- 0 Success to update unique key.
+-- 1 failed to update unique key.
+-- 
+-- If failed, the caller must then create a new unique key and update it.
+-- This key is commonly used as a unique value to identify the file, a value that can be used 
+-- in urls.
 --
 DROP PROCEDURE IF EXISTS {$db->_['PInsertFile']};
 CREATE PROCEDURE {$db->_['PInsertFile']}
 (
 	IN aUserId INT UNSIGNED,
 	IN aFilename VARCHAR({$db->_['CSizeFileName']}), 
-	IN aUniqueFilename VARCHAR({$db->_['CSizeFileNameUnique']}), 
 	IN aPathToDisk VARCHAR({$db->_['CSizePathToDisk']}), 
+	IN aUniqueFilename VARCHAR({$db->_['CSizeFileNameUnique']}),
 	IN aSize INT UNSIGNED,
-	IN aMimetype VARCHAR({$db->_['CSizeMimetype']})
+	IN aMimetype VARCHAR({$db->_['CSizeMimetype']}),
+	OUT aFileId INT UNSIGNED,
+	OUT aStatus TINYINT UNSIGNED
 )
 BEGIN
+	-- Insert the file
 	INSERT INTO {$db->_['File']}	
-		(File_idUser, nameFile, uniqueNameFile, pathToDiskFile, sizeFile, mimetypeFile, createdFile) 
+			(File_idUser, nameFile, pathToDiskFile, sizeFile, mimetypeFile, createdFile) 
 		VALUES 
-		(aUserId, aFilename, aUniqueFilename, aPathToDisk, aSize, aMimetype, NOW());
+			(aUserId, aFilename, aPathToDisk, aSize, aMimetype, NOW());
+	
+	SELECT LAST_INSERT_ID() INTO aFileId;
+	
+	-- Try to update the unique key, will succeed most of the times
+	UPDATE IGNORE {$db->_['File']} 
+		SET	uniqueNameFile = aUniqueFilename
+		WHERE idFile = LAST_INSERT_ID() LIMIT 1;
+
+	-- 1 if inserted, 0 if duplicate key
+	SELECT (ROW_COUNT()+1) MOD 2 INTO aStatus;
+
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to update unique key for file. 
+--
+-- Use this to update the unique key if it failed during insertion of a new file. 
+-- You may call this procedure until it succeeds.
+--
+-- @aStatus contains the following values:
+-- 0 Success to update unique key.
+-- 1 failed to update unique key.
+--
+DROP PROCEDURE IF EXISTS {$db->_['PFileUpdateUniqueName']};
+CREATE PROCEDURE {$db->_['PFileUpdateUniqueName']}
+(
+	IN aFileId INT UNSIGNED,
+	IN aUniqueFilename VARCHAR({$db->_['CSizeFileNameUnique']}),
+	OUT aStatus TINYINT UNSIGNED
+)
+BEGIN
+	-- Try to update the unique key
+	UPDATE IGNORE {$db->_['File']} 
+		SET	uniqueNameFile = aUniqueFilename
+		WHERE idFile = aFileId;
+
+	-- 1 if inserted, 0 if duplicate key
+	SELECT (ROW_COUNT()+1) MOD 2 INTO aStatus;
+
 END;
 
 
@@ -105,6 +161,7 @@ END;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- Function to check if file exists and if user has permissions to us it.
+--
 -- Return values:
 --  0 success
 --  1 no permission to update file ({$db->_['FFileCheckPermissionMessages'][1]})
@@ -118,7 +175,7 @@ CREATE FUNCTION {$db->_['FFileCheckPermission']}
 )
 RETURNS TINYINT UNSIGNED
 BEGIN
-	DECLARE i TINYINT UNSIGNED;
+	DECLARE i INT UNSIGNED;
 	
 	-- File exists and user have permissions to update file?
 	SELECT idFile INTO i FROM {$db->_['File']} 
@@ -160,8 +217,7 @@ BEGIN
 	-- Get the id of the file
 	SELECT idFile INTO fileid FROM {$db->_['File']}
 	WHERE
-		uniqueNameFile = aUniqueFilename AND
-		File_idUser = aUserId;
+		uniqueNameFile = aUniqueFilename;
 
 	-- Check permissions
 	SELECT {$db->_['FFileCheckPermission']}(fileid, aUserId) INTO aSuccess;
@@ -169,7 +225,8 @@ BEGIN
 	-- Get details from file
 	SELECT 
 		idFile AS fileid, 
-		File_idUser AS owner, 
+		File_idUser AS userid, 
+		U.accountUser AS owner, 
 		nameFile AS name, 
 		uniqueNameFile AS uniquename,
 		pathToDiskFile AS path, 
@@ -178,10 +235,11 @@ BEGIN
 		createdFile AS created,
 		modifiedFile AS modified,
 		deletedFile AS deleted
-	FROM {$db->_['File']}
+	FROM {$db->_['File']} AS F
+		INNER JOIN {$db->_['User']} AS U
+			ON F.File_idUser = U.idUser
 	WHERE
-		uniqueNameFile = aUniqueFilename AND
-		File_idUser = aUserId;
+		uniqueNameFile = aUniqueFilename;
 END;
 
 

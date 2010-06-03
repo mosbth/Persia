@@ -9,8 +9,8 @@
 //
 
 $lang = Array(
-	'403_TITLE' => "403 Forbidden.",
-	'403_HEADER' => "403 Forbidden.",
+	'403_TITLE' => "403 Forbidden",
+	'403_HEADER' => "403 Forbidden",
 	'403_DESCRIPTION' => 
 		"You are trying to reach a resource that is declared as 'forbidden'. ".
 		"There may be several resons for this. " . 

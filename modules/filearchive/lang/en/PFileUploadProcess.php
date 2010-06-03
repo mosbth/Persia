@@ -13,6 +13,7 @@ $lang = Array(
 	// 
 	'FILE_UPLOAD_SUCCESS' => "File '%1s' (%2d bytes) was uploaded. The file was recognized having mimetype '%3s'.",
 	'FILE_UPLOAD_FAILED' => "Failed to upload the file. Error code = %1d. %2s",
+	'FILE_UPLOAD_FAILED_MAXSIZE' => "Failed to upload the file. Filesize, as defined in config.php (%s), is to large.",
 
 	// Error messages
 	'UPLOAD_ERR_INI_SIZE' => "The uploaded file exceeds the 'upload_max_filesize' directive in php.ini.",

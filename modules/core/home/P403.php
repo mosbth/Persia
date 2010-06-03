@@ -31,7 +31,8 @@ $intFilter->FrontControllerIsVisitedOrDie();
 //
 global $gPage;
 
-$message = CHTMLHelpers::GetHTMLUserFeedbackNegative($pc->GetAndClearSessionMessage($gPage));
+$message = $pc->GetAndClearSessionMessage($gPage);
+$message = (empty($message)) ? '' : CHTMLHelpers::GetHTMLUserFeedbackNegative($message);
 
 $htmlMain = <<<EOD
 <h1>{$pc->lang['403_HEADER']}</h1>

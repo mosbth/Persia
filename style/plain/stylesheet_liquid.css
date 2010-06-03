@@ -7,14 +7,15 @@
  * 
  */
  
-@import url("nav.css");						/* definitions to navigation menu bar */
-@import url("settingsbar.css");   /* definitions to settings side bar */
-@import url("settingsmenu.css");	/* definitions to settings menu bar */
-@import url("font.css");  				/* all font related definitions  */
-@import url("color.css");					/* all color related definitions */
-@import url("form.css");					/* forms related styles */
-@import url("article.css"); 			/* for displaying articles */
-@import url("heightwidth.css"); 	/* various (general) height and width definitions */
+@import url(nav.css);						/* definitions to navigation menu bar */
+@import url(settingsbar.css);   /* definitions to settings side bar */
+@import url(settingsmenu.css);	/* definitions to settings menu bar */
+@import url(font.css);  				/* all font definitions  */
+@import url(color.css);					/* all color definitions */
+@import url(form.css);					/* forms styles */
+@import url(table.css);					/* table styles */
+@import url(article.css); 			/* for displaying articles */
+@import url(heightwidth.css); 	/* various (general) height and width definitions */
  
 
 /* -------------------------------------------------------------------------------------
@@ -225,16 +226,6 @@ a.noUnderline:link    { text-decoration:none; }
 a.noUnderline:visited { text-decoration:none; }
 a.noUnderline:hover   { text-decoration:underline; }
 a.noUnderline:active  { text-decoration:none; }
-
-
-/* -------------------------------------------------------------------------------------
- *
- * Tables
- *
- */
- 
-th {}
-td {}
 
 
 /* -------------------------------------------------------------------------------------

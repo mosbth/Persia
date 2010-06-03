@@ -45,6 +45,62 @@ $pc->IsNumericOrDie($showLeft, 0, 2);
 $pc->IsNumericOrDie($showRight, 0, 2);
 
 
+/*
+// Link to images
+$imageLink = WS_IMAGES;
+
+// -------------------------------------------------------------------------------------------
+//
+// Add JavaScript and html head stuff related to JavaScript
+//
+$js = WS_JAVASCRIPT;
+$needjQuery = TRUE;
+$htmlHead = <<<EOD
+<!-- jQuery Form Plugin -->
+<script type='text/javascript' src='{$js}/form/jquery.form.js'></script>  
+
+EOD;
+
+$javaScript = <<<EOD
+
+// ----------------------------------------------------------------------------------------------
+//
+// Initiate JavaScript when document is loaded.
+//
+$(document).ready(function() {
+
+	// Preload loader image
+	var loaderImg = new Image();
+	loaderImg.src = "{$imageLink}/loader.gif";
+	loaderImg.align = "baseline";
+
+
+	// ----------------------------------------------------------------------------------------------
+	//
+	// Upgrade form to make Ajax submit
+	//
+	// http://malsup.com/jquery/form/
+	//
+	$('#form1').ajaxForm({
+		// $.ajax options can be used here too, for example: 
+		//timeout: 1000, 
+
+		// do stuff before submitting form
+		beforeSubmit: function(data, status) {
+						$('#status1').html(loaderImg);
+				},
+				
+		// define a callback function
+		success: function(data, status) {
+						$('#status1').html(data);
+				}	
+		});
+	});
+
+EOD;
+*/
+
+
 // -------------------------------------------------------------------------------------------
 //
 // Page specific code

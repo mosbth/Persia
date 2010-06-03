@@ -29,10 +29,15 @@ $intFilter->FrontControllerIsVisitedOrDie();
 //
 // Page specific code
 //
+global $gPage;
+
+$message = $pc->GetAndClearSessionMessage($gPage);
+$message = (empty($message)) ? '' : CHTMLHelpers::GetHTMLUserFeedbackNegative($message);
 
 $htmlMain = <<<EOD
 <h1>{$pc->lang['404_HEADER']}</h1>
 <p>{$pc->lang['404_DESCRIPTION']}</p>
+<p>{$message}</p>
 
 EOD;
 

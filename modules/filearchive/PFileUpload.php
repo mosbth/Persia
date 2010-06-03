@@ -31,11 +31,6 @@ $intFilter->UserIsSignedInOrRecirectToSignIn();
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
-//$articleId	= $pc->GETisSetOrSetDefault('article-id', 0);
-//$userId		= $_SESSION['idUser'];
-
-// Always check whats coming in...
-//$pc->IsNumericOrDie($articleId, 0);
 
 // Link to images
 $imageLink = WS_IMAGES;

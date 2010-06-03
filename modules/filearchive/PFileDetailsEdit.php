@@ -1,9 +1,9 @@
 <?php
 // ===========================================================================================
 //
-// File: PFileDetails.php
+// File: PFileDetailsEdit.php
 //
-// Description: Show metadata of users file. Enable to download and edit file.
+// Description: Show (and edit) metadata of a file.
 //
 // Author: Mikael Roos, mos@bth.se
 //
@@ -80,10 +80,9 @@ $mysqli->close();
 //
 global $gModule;
 
-/*
-$action 			= "?m={$gModule}&amp;p=file-detailsp";
+$action 			= "?m={$gModule}&amp;p=file-details-editp";
 $redirect 		= "?m={$gModule}&amp;p=file-details&amp;file={$filename}";
-$redirectFail = "?m={$gModule}&amp;p=file-details&amp;file={$filename}";
+$redirectFail = "?m={$gModule}&amp;p=file-details-edit&amp;file={$filename}";
 
 // Get and format messages from session if they are set
 $helpers = new CHTMLHelpers();
@@ -93,68 +92,56 @@ $messages = $helpers->GetHTMLForSessionMessages(
 
 $hideDeleteButton 	= empty($deleted) ? '' : 'hide' ;
 $hideRestoreButton 	= empty($deleted) ? 'hide' : '' ;
-*/
-
-$editDetails 	= "?m={$gModule}&amp;p=file-details-edit&amp;file={$uniquename}";
-$download 		= "?m={$gModule}&amp;p=download&amp;file={$uniquename}";
-
-$caption = sprintf($pc->lang['FILE_DETAILS_CAPTION'], $name);
 
 $htmlMain = <<<EOD
 <div class='section'>
 <h1>{$pc->lang['FILE_DETAILS_HEADER']}</h1>
 <p>{$pc->lang['FILE_DETAILS_DESCRIPTION']}</p>
 
-<div class='nav-standard'>
-<ul>
-<li><a href='{$editDetails}'>{$pc->lang['FILE_DETAILS_EDIT']}</a> 
-<li><a href='{$download}'>{$pc->lang['FILE_DOWNLOAD_PAGE']}</a>
-</ul>
-<div class='clear'>&nbsp;</div>
-</div>
-</div> <!-- section -->
+<form id='form1' action="{$action}" method="post">
+<input type='hidden' name='fileid' 				value='{$fileid}'>
+<input type='hidden' name='redirect' 			value='{$redirect}'>
+<input type='hidden' name='redirect-fail' value='{$redirectFail}'>
 
-<div class='section'>
-<table class='standard filedetails-show'>
-<caption>{$caption}</caption>
-<colgroup><col class='header'><col></colgroup>
-<thead></thead>
-<tbody>
-<tr>
-<td>{$pc->lang['FILE_DETAILS_FILENAME']}</td>
-<td>{$name}</td>
-</tr>
-<tr>
-<td>{$pc->lang['FILE_DETAILS_UNIQUENAME']}</td>
-<td title='{$path}'>{$uniquename}</td>
-</tr>
-<tr>
-<td>{$pc->lang['FILE_DETAILS_PATH']}</td>
-<td>{$path}</td>
-</tr>
-<tr>
-<td>{$pc->lang['FILE_DETAILS_SIZE']}</td>
-<td>{$size}</td>
-</tr>
-<tr>
-<td>{$pc->lang['FILE_DETAILS_MIMETYPE']}</td>
-<td>{$mimetype}</td>
-</tr>
-<tr>
-<td>{$pc->lang['FILE_DETAILS_CREATED']}</td>
-<td>{$created}</td>
-</tr>
-<tr>
-<td>{$pc->lang['FILE_DETAILS_MODIFIED']}</td>
-<td>{$modified}</td>
-</tr>
-<tr>
-<td>{$pc->lang['FILE_DETAILS_DELETED']}</td>
-<td>{$deleted}</td>
-</tr>
-</tbody>
-<tfoot></tfoot>
-</table>
+<fieldset class='standard filedetails'>
+<legend>{$pc->lang['FILE_DETAILS_LEGEND']}</legend>
+<div class='form-wrapper'>
+
+<label for='name'>{$pc->lang['FILE_DETAILS_FILENAME']}</label>
+<input name='name' type='text' value='{$name}' maxlength='{$db->_['CSizeFileName']}' autofocus>
+
+<label for='uniquename'>{$pc->lang['FILE_DETAILS_UNIQUENAME']}</label>
+<input name='uniquename' type='text' value='{$uniquename}' disabled>
+
+<label for='path'>{$pc->lang['FILE_DETAILS_PATH']}</label>
+<input name='path' type='text' value='{$path}' disabled>
+
+<label for='size'>{$pc->lang['FILE_DETAILS_SIZE']}</label>
+<input name='size' type='text' value='{$size}' disabled>
+
+<label for='mimetype'>{$pc->lang['FILE_DETAILS_MIMETYPE']}</label>
+<input name='mimetype' type='text' value='{$mimetype}' maxlength='{$db->_['CSizeMimetype']}'>
+
+<label for='created'>{$pc->lang['FILE_DETAILS_CREATED']}</label>
+<input name='created' type='datetime' value='{$created}' disabled>
+
+<label for='modified'>{$pc->lang['FILE_DETAILS_MODIFIED']}</label>
+<input name='modified' type='datetime' value='{$modified}' disabled placeholder='{$pc->lang['FILE_TIME_FOR_MODIFIED']}'>
+
+<label for='deleted'>{$pc->lang['FILE_DETAILS_DELETED']}</label>
+<input name='deleted' type='datetime' value='{$deleted}' disabled placeholder='{$pc->lang['FILE_TIME_FOR_DELETED']}'>
+
+<div class='buttonbar'>
+<button type='submit' class='save' name='do-submit' value='save-file-details'>{$pc->lang['FILE_DETAILS_SAVE']}</button>
+<button type='submit' class='delete {$hideDeleteButton}' name='do-submit' value='delete-file'>{$pc->lang['DELETE_FILE']}</button>
+<button type='submit' class='restore {$hideRestoreButton}' name='do-submit' value='restore-file'>{$pc->lang['RESTORE_FILE']}</button>
+</div> <!-- buttonbar -->
+
+<div class='form-status'>{$messages['success']}{$messages['failed']}</div> 
+
+</div> <!-- wrapper -->
+</fieldset>
+</form>
 </div> <!-- section -->
 
 
@@ -176,6 +163,7 @@ EOD;
 //
 $page = new CHTMLPage();
 
+//$page->PrintPage($pc->lang['FILE_DETAILS_TITLE'], $htmlLeft, $htmlMain, $htmlRight, $htmlHead, $javaScript, $needjQuery);
 $page->PrintPage($pc->lang['FILE_DETAILS_TITLE'], $htmlLeft, $htmlMain, $htmlRight);
 exit;
 

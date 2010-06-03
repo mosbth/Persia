@@ -440,7 +440,7 @@ END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
--- SP to carry out a password reset request. It is really a alternative way of loggin in
+-- SP to carry out a password reset request. It is really an alternative way of loggin in
 -- and authenticating a user based on a token.
 --
 -- aStatus 0 = Success
