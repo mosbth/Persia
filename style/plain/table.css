@@ -2,7 +2,7 @@
  *
  * 
  * Definitions related to tables. 
- * Definitions for fonts and colors are in their own file, color.css and font.css.
+ * 
  * 
  */
  
@@ -40,6 +40,8 @@ table.filedetails-show col.header {
 table.filedetails-show td {
 	padding: 0.5em;
 	font-size: 1.3em;
+	word-wrap: break-word; /* CSS3 */	
+	-ms-word-wrap: break-word; /* IE8 */	
 }
 
 table.filedetails-show caption {
