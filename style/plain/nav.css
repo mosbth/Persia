@@ -51,6 +51,7 @@ div.nav-button li a {
 	border: 0.1em solid #dcdce9;
 	text-decoration: none;
 	text-align: center;
+	padding: 0em 0.1em 0.1em 0em;
 }
 
 div.nav-button li a:hover {
@@ -62,6 +63,7 @@ div.nav-button li a:active {
 	background-position: top left;
 	text-decoration: underline;
 	border: 0.1em solid #4A4A4F;
+	padding: 0.1em 0em 0em 0.1em;
 }
 
 

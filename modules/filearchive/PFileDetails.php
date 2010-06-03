@@ -80,21 +80,6 @@ $mysqli->close();
 //
 global $gModule;
 
-/*
-$action 			= "?m={$gModule}&amp;p=file-detailsp";
-$redirect 		= "?m={$gModule}&amp;p=file-details&amp;file={$filename}";
-$redirectFail = "?m={$gModule}&amp;p=file-details&amp;file={$filename}";
-
-// Get and format messages from session if they are set
-$helpers = new CHTMLHelpers();
-$messages = $helpers->GetHTMLForSessionMessages(
-	Array('success'), 
-	Array('failed'));
-
-$hideDeleteButton 	= empty($deleted) ? '' : 'hide' ;
-$hideRestoreButton 	= empty($deleted) ? 'hide' : '' ;
-*/
-
 $editDetails 	= "?m={$gModule}&amp;p=file-details-edit&amp;file={$uniquename}";
 $download 		= "?m={$gModule}&amp;p=download&amp;file={$uniquename}";
 

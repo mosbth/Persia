@@ -43,10 +43,6 @@ if(!is_dir($archivePath)) {
 	mkdir($archivePath);
 }
 
-// Always check whats coming in...
-//$pc->IsNumericOrDie($articleId, 0);
-
-
 
 // -------------------------------------------------------------------------------------------
 //

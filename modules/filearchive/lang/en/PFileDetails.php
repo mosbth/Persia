@@ -17,7 +17,7 @@ $lang = Array(
 		"Here are the details about this fil. You can edit these details. " . 
 		"There is also a public download page for this file.",
 	'FILE_DETAILS_CAPTION' => "File details for: %s",
-	'FILE_DOWNLOAD_PAGE' => "Download page",
+	'FILE_DOWNLOAD_PAGE' => "Public download page",
 
 
 	// the headers
