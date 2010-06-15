@@ -18,6 +18,7 @@ class CInterceptionFilter {
 	// Internal variables
 	//
 	protected $iUc;
+	protected $iPc;
 
 
 	// ------------------------------------------------------------------------------------
@@ -26,6 +27,9 @@ class CInterceptionFilter {
 	//
 	public function __construct() { 
 		$this->iUc = CUserController::GetInstance();
+
+		$this->iPc = new CPageController();
+		$this->iPc->LoadLanguage(__FILE__);	
 	}
 
 
@@ -46,7 +50,7 @@ class CInterceptionFilter {
 		global $gPage; // Always defined in frontcontroller
 		
 		if(!isset($gPage)) {
-			die('No direct access to pagecontroller is allowed.');
+			die($pc->lang['NO_DIRECT_ACCESS']);
 		}
 	}
 
@@ -65,18 +69,39 @@ class CInterceptionFilter {
 
 	// ------------------------------------------------------------------------------------
 	//
+	// Check if user belongs to the admin group or is a specific user.
+	//
+	public function UserIsCurrentUserOrMemberOfGroupAdminOr403($aUserId) {
+		
+		$pc = $this->iPc;
+		
+		$isAdmGroup 		= $this->iUc->IsAdministrator() ? true : false;
+		$isCurrentUser	= ($this->iUc->GetAccountId() == $aUserId) ? true: false;
+
+		if(!($isAdmGroup || $isCurrentUser)) {
+			$pc->RedirectToModuleAndPage('', 'p403', '', $pc->lang['CURRENT_USER_OR_ADMIN']);
+		}
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
 	// Check if user belongs to the admin group, or die.
+	// IS THIS USED NOW WHEN CUserController is implemented? 
+	// MAY BE OSBSOLETE, should redirect to 403?
 	//
 	public function UserIsMemberOfGroupAdminOrDie() {
 		
 		if(!$this->iUc->IsAdministrator()) 
-			die('You do not have the authourity to access this page');
+			die($pc->lang['NO_AUTHORITY']);
 	}
 
 
 	// ------------------------------------------------------------------------------------
 	//
 	// Check if user belongs to the admin group or is a specific user.
+	// IS THIS USED NOW WHEN CUserController is implemented? 
+	// MAY BE OSBSOLETE
 	//
 	public function IsUserMemberOfGroupAdminOrIsCurrentUser($aUserId) {
 		
@@ -92,7 +117,7 @@ class CInterceptionFilter {
 	// Custom defined filter.
 	// This method enables a custom filter by setting the $aLabel in the session.
 	//
-	// $aLabel: The label to set in the SESSION.
+	// $aLabel: The label to set in the SESSION. Identifies the filter.
 	// $aAction: check | set | unset
 	//
 	public function CustomFilterIsSetOrDie($aLabel, $aAction='check') {
@@ -110,7 +135,7 @@ class CInterceptionFilter {
 			case 'check':
 			default: {
 				isset($_SESSION[$aLabel]) 
-					or die('User defined filter not enabled. No access to this page.');
+					or die($pc->lang['USER_DEFINED_FILTER_NOT_ENABLED']);
 			} break;
 
 		}

@@ -9,6 +9,183 @@
  
 /* -------------------------------------------------------------------------------------
 /* Navigation items, standard setup */
+
+ul.nav-standard {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+ul.nav-standard:after
+{
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+ul.nav-standard li {
+	float: left;
+	margin: 0 0.5em 0 0.5em;
+}
+
+/* http://www.positioniseverything.net/easyclearing.html
+<!--[if IE]>
+<style type="text/css">
+  .clearfix {
+    zoom: 1;    
+    display: block;
+    }  
+</style>
+<![endif]-->
+*/
+
+
+/* -------------------------------------------------------------------------------------
+/* Navigation items, nav-standard and enhanced as nav-menu-tab, a tabbing like menu bar */
+
+/*text-align: left; /* set to left, right or center */
+/*margin: 1em 0 1em 0; /* set margins as desired */
+/*	padding: 3px 10px 3px 10px; /* THIRD number must change with respect to padding-top (X) below */
+
+ul.nav-menu-tab {
+	border-bottom: 0.1em solid #95959F;
+	padding: 0.3em 0em 0.5em 0.2em;
+}
+
+ul.nav-menu-tab li {
+	display: inline;
+	margin: 0;
+	padding-left: 0.2em;
+}
+
+ul.nav-menu-tab li a { 
+	background: url(../../img/css/button-background.png) #fff repeat-x;
+	background-position: bottom left;
+	border: 0.1em solid #95959F;
+	text-decoration: none;
+	text-align: center;
+	padding: 0.3em 1.1em 0.5em 1.0em;
+}
+
+ul.nav-menu-tab li a:hover {
+	background-position: center left;
+	text-decoration: underline;
+	border: 0.1em solid #77777F;
+}
+
+ul.nav-menu-tab li a:active {
+	background-position: top left;
+	text-decoration: underline;
+	border: 0.1em solid #4A4A4F;
+	padding: 0.3em 1.0em 0.5em 1.1em;
+}
+
+ul.nav-menu-tab li.current a {
+	background-position: top left;
+	border-bottom: 0.1em solid transparent;
+}
+
+ul.nav-menu-tab li.current a:hover {
+	background-position: center left;
+	text-decoration: underline;
+}
+
+
+
+
+
+
+
+ul#tabnav { /* general settings */
+text-align: left; /* set to left, right or center */
+margin: 1em 0 1em 0; /* set margins as desired */
+font: bold 11px verdana, arial, sans-serif; /* set font as desired */
+border-bottom: 1px solid #6c6; /* set border COLOR as desired */
+list-style-type: none;
+padding: 3px 10px 3px 10px; /* THIRD number must change with respect to padding-top (X) below */
+}
+
+ul#tabnav li { /* do not change */
+display: inline;
+}
+
+body#tab1 li.tab1, body#tab2 li.tab2, body#tab3 li.tab3, body#tab4 li.tab4 { /* settings for selected tab */
+border-bottom: 1px solid #fff; /* set border color to page background color */
+background-color: #fff; /* set background color to match above border color */
+}
+
+body#tab1 li.tab1 a, body#tab2 li.tab2 a, body#tab3 li.tab3 a, body#tab4 li.tab4 a { /* settings for selected tab link */
+background-color: #fff; /* set selected tab background color as desired */
+color: #000; /* set selected tab link color as desired */
+position: relative;
+top: 1px;
+padding-top: 4px; /* must change with respect to padding (X) above and below */
+}
+
+ul#tabnav li a { /* settings for all tab links */
+padding: 3px 4px; /* set padding (tab size) as desired; FIRST number must change with respect to padding-top (X) above */
+border: 1px solid #6c6; /* set border COLOR as desired; usually matches border color specified in #tabnav */
+background-color: #cfc; /* set unselected tab background color as desired */
+color: #666; /* set unselected tab link color as desired */
+margin-right: 0px; /* set additional spacing between tabs as desired */
+text-decoration: none;
+border-bottom: none;
+}
+
+ul#tabnav a:hover { /* settings for hover effect */
+background: #fff; /* set desired hover color */
+}
+
+
+
+/* -------------------------------------------------------------------------------------
+/* Navigation items, nav-standard but looking as a button */
+
+ul.nav-button li {
+	margin: 0 0.15em 0 0.15em;
+}
+
+ul.nav-button li a {
+	height: 2em;
+	line-height: 2em;
+	float: left;
+	display: inline;
+}
+
+ul.nav-button li a {
+	background: url(../../img/css/button-background.png) #fff repeat-x;
+	background-position: bottom left;
+	height: 2em;
+	line-height: 2em;
+	float: left;
+	width: 9em;
+	display: block;
+	border: 0.1em solid #dcdce9;
+	text-decoration: none;
+	text-align: center;
+	padding: 0em 0.1em 0.1em 0em;
+}
+
+ul.nav-button li a:hover {
+	text-decoration: underline;
+	border: 0.1em solid #95959F;
+}
+
+ul.nav-button li a:active {
+	background-position: top left;
+	text-decoration: underline;
+	border: 0.1em solid #4A4A4F;
+	padding: 0.1em 0em 0em 0.1em;
+}
+
+
+
+
+/* -------------------------------------------------------------------------------------
+/* Navigation items, standard setup */
+/*
 div.nav-standard {
 	clear: both;
 }
@@ -23,12 +200,13 @@ div.nav-standard li {
 	float: left;
 	margin: 0 0.5em 0 0.5em;
 }
-
+*/
 
 
 /* -------------------------------------------------------------------------------------
 /* Navigation items, nav-standard but looking as a button */
 
+/*
 div.nav-button li {
 	margin: 0 0.15em 0 0.15em;
 }
@@ -66,6 +244,7 @@ div.nav-button li a:active {
 	padding: 0.1em 0em 0em 0.1em;
 }
 
+*/
 
 
 

@@ -174,6 +174,7 @@ class CPageController {
 		if(!(is_numeric($aVar) && $inRangeH && $inRangeL)) {
 			die(sprintf("The variable value '$s' is not numeric or it is out of range.", $aVar));
 		}
+		return $aVar;
 	}
 
 

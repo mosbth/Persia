@@ -36,12 +36,22 @@ $pc->LoadLanguage(__FILE__);
 
 // -------------------------------------------------------------------------------------------
 //
-// Prepare the menu-bar
+// Prepare the tab-menu
 // 
-global $gModule;
+global $gModule, $gPage;
 
-$editDetails 	= "?m={$gModule}&amp;p=account-settings";
-$download 		= "?m={$gModule}&amp;p=account-update";
+$link = "?m={$gModule}&amp;p=";
+
+$items = Array(
+	'account-settings' => $pc->lang['UCP_MENU_ACCOUNT'],
+	'ucp-filearchive' => $pc->lang['UCP_MENU_FILEARCHIVE'],
+);
+
+$htmlItems = "";
+foreach($items as $key => $val) {
+	$current = ($gPage == $key) ? " class='current'" : "";
+	$htmlItems .= "<li{$current}><a href='{$link}{$key}'>{$val}</a>";
+}
 
 $htmlMenuBar = <<< EOD
 <div class='section'>
@@ -50,15 +60,11 @@ $htmlMenuBar = <<< EOD
 </div> <!-- section -->
 
 <div class='section'>
-	<div class='nav-standard nav-button'>
-	<ul>
-	<li><a href='{$editDetails}'>{$pc->lang['UCP_MENU_ACCOUNT']}</a> 
-	<li><a href='{$download}'>{$pc->lang['UCP_MENU_FILEARCHIVE']}</a>
+	<ul class='nav-standard nav-menu-tab'>
+		{$htmlItems}
 	</ul>
-	<div class='clear'>&nbsp;</div>
-	</div>
-	<hr>
 </div> <!-- section -->
+
 EOD;
 
 

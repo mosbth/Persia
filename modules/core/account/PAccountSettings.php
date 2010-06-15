@@ -14,9 +14,16 @@
 //
 // Get pagecontroller helpers. Useful methods to use in most pagecontrollers
 //
-$uc = CUserController::GetInstance();
 $pc = new CPageController();
 $pc->LoadLanguage(__FILE__);
+
+
+// -------------------------------------------------------------------------------------------
+//
+// User controller, get info about the current user
+//
+$uc 		= CUserController::GetInstance();
+$userId	= $uc->GetAccountId();
 
 
 // -------------------------------------------------------------------------------------------
@@ -27,17 +34,14 @@ $intFilter = new CInterceptionFilter();
 
 $intFilter->FrontControllerIsVisitedOrDie();
 $intFilter->UserIsSignedInOrRecirectToSignIn();
-$intFilter->UserIsMemberOfGroupAdminOrDie();
+$intFilter->UserIsCurrentUserOrMemberOfGroupAdminOr403($userId);
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
-//
-$userId	= $uc->GetAccountId();
-
 // Always check whats coming in...
-$pc->IsNumericOrDie($userId, 1);
+//
 
 
 // -------------------------------------------------------------------------------------------
@@ -226,10 +230,12 @@ EOD;
 
 $htmlLeft 	= "";
 $htmlRight	= <<<EOD
+<!--
 <h3 class='columnMenu'>About Privacy</h3>
 <p>
 Later...
 </p>
+-->
 
 EOD;
 

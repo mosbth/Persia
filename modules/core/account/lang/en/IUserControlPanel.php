@@ -11,7 +11,7 @@
 $lang = Array(
 
 	'UCP_TITLE' => "User control panel",
-	'UCP_DESCRIPTION' => "Review and change settings for this account and the available applications.",
+	'UCP_DESCRIPTION' => "Review and change settings for the account and the available applications.",
 
 
 	'UCP_MENU_ACCOUNT' => "Account",
