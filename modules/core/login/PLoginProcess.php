@@ -12,7 +12,7 @@
 //
 // History:
 // 2010-05-09: Added support for LDAP
-// 2010-05-01: Added support for silent login where anothe pagecontroller can initiate a login.
+// 2010-05-01: Added support for silent login where another pagecontroller can initiate a login.
 //
 
 
@@ -191,7 +191,7 @@ EOD;
 
 // -------------------------------------------------------------------------------------------
 //
-// User is authenticatedand exists in the local database.
+// User is authenticated and exists in the local database.
 // Prepare to populate session by getting details about this account 
 // from the user profile in the database.
 //
@@ -205,15 +205,15 @@ $results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 // Get account details 	
 $row = $results[0]->fetch_object();
 $account 				= $row->account;
-$name						= $row->name;
-$email					= $row->email;
-$avatar 				= $row->avatar;
-$gravatar 			= $row->gravatar;
 $gravatarmicro	= $row->gravatarmicro;
-$gravatarsmall	= $row->gravatarsmall;
-$groupakronym		= $row->groupakronym;
-$groupdesc			= $row->groupdesc;
 $results[0]->close(); 
+
+// Get group memberships details 	
+$groups = Array();
+while($row = $results[1]->fetch_object()) {    
+	$groups[$row->groupid] = $row->groupname;
+}
+$results[1]->close(); 
 
 $mysqli->close();
 
@@ -230,16 +230,15 @@ $mysqli->close();
 // Destroy current session
 require_once(TP_SOURCEPATH . 'FDestroySession.php');
 
-// Start a named session
+// Start a named session (do not share sessions on same host)
 session_name(preg_replace('/[:\.\/-_]/', '', WS_SITELINK));
 session_start();
 session_regenerate_id(); 	// To avoid problems 
 
 // Populate the session with the user (object)
-$_SESSION['idUser'] 						= $accountId;
-$_SESSION['gravatarUserMicro'] 	= empty($gravatarmicro) ? '' : $gravatarmicro;		
-$_SESSION['accountUser'] 				= $account;		
-$_SESSION['groupMemberUser'] 		= $groupakronym;		
+$uc = new CUserController();
+$uc->Populate($accountId, $account, $groups, (empty($gravatarmicro) ? '' : $gravatarmicro));
+$uc->StoreInSession();
 
 
 // -------------------------------------------------------------------------------------------

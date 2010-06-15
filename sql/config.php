@@ -34,6 +34,9 @@ $DB_Tables_And_Procedures = Array(
 	//
 	// Module Core: Accounts, users, groups, profile
 	//
+	'CSizeGroupName' 						=> 8,
+	'CSizeGroupDescription'			=> 80,
+
 	'User'					 						=> DB_PREFIX . 'User',
 	'Group'					 						=> DB_PREFIX . 'Group',
 	'GroupMember'								=> DB_PREFIX . 'GroupMember',
@@ -51,6 +54,10 @@ $DB_Tables_And_Procedures = Array(
 	'PGetOrCreateAccountId' 		=> DB_PREFIX . 'PGetOrCreateAccountId',
 	'TInsertUser' 							=> DB_PREFIX . 'TInsertUser',
 	'FGetAvatar' 								=> DB_PREFIX . 'FGetAvatar',
+
+	// For Group and Groupmembers
+	'PCreateGroup' 							=> DB_PREFIX . 'PCreateGroup',
+	'PGroupMemberAdd' 					=> DB_PREFIX . 'PGroupMemberAdd',
 	'FCheckUserIsAdmin' 				=> DB_PREFIX . 'FCheckUserIsAdmin',
 
 	// For supporting gravatar from gratavar.com

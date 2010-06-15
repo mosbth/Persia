@@ -14,6 +14,7 @@
 //
 // Get pagecontroller helpers. Useful methods to use in most pagecontrollers
 //
+$uc = CUserController::GetInstance();
 $pc = new CPageController();
 $pc->LoadLanguage(__FILE__);
 
@@ -26,18 +27,17 @@ $intFilter = new CInterceptionFilter();
 
 $intFilter->FrontControllerIsVisitedOrDie();
 $intFilter->UserIsSignedInOrRecirectToSignIn();
-//$intFilter->UserIsMemberOfGroupAdminOrDie();
+$intFilter->UserIsMemberOfGroupAdminOrDie();
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 //
-//$topicId	= $pc->GETisSetOrSetDefault('id', 0);
-$userId		= $_SESSION['idUser'];
+$userId	= $uc->GetAccountId();
 
 // Always check whats coming in...
-//$pc->IsNumericOrDie($topicId, 0);
+$pc->IsNumericOrDie($userId, 1);
 
 
 // -------------------------------------------------------------------------------------------
@@ -59,15 +59,44 @@ $results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 $row = $results[0]->fetch_object();
 $account 				= $row->account;
 $name						= $row->name;
-$email					= $row->email;
+$mail						= $row->email;
 $avatar 				= $row->avatar;
 $gravatar 			= $row->gravatar;
 $gravatarsmall	= $row->gravatarsmall;
-$groupakronym		= $row->groupakronym;
-$groupdesc			= $row->groupdesc;
 $results[0]->close(); 
 
+// Get group memberships details 	
+$htmlGroups = <<<EOD
+<table class='standard'>
+<caption></caption>
+<thead>
+<tr>
+<th>{$pc->lang['GROUP_TH_NAME']}</th>
+<th>{$pc->lang['GROUP_TH_DESCRIPTION']}</th>
+</tr>
+</thead>
+<tbody>
+EOD;
+$i=0;
+while($row = $results[1]->fetch_object()) {    
+	$htmlGroups .= "<tr class='r".($i++%2+1)."'><td>{$row->groupname}</td><td>{$row->groupdescription}</td></tr>";
+}
+$htmlGroups .= <<<EOD
+</tbody>
+<tfoot></tfoot>
+</table>
+EOD;
+$results[1]->close(); 
+
 $mysqli->close();
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Include the menu-bar for the User Control Panel.
+//
+$htmlMenuBar = "";
+include(dirname(__FILE__) . '/IUserControlPanel.php');
 
 
 // -------------------------------------------------------------------------------------------
@@ -87,153 +116,110 @@ $messages = $helpers->GetHTMLForSessionMessages(
 	Array('mailFailed', 'changePwdFailed'));
 
 $htmlMain = <<< EOD
-<h1>{$pc->lang['MANAGE_ACCOUNT']}</h1>
+{$htmlMenuBar}
+<div class='section'>
+	<p>{$pc->lang['SETTINGS_DESCRIPTION']}</p>
+</div> <!-- section -->
 
-<h2 id='basic'>{$pc->lang['BASIC_ACCOUNT_INFO']}</h2>
-<form action='{$action}' method='POST'>
-<input type='hidden' name='redirect' 				value='{$redirect}#basic'>
-<input type='hidden' name='redirect-fail' 	value='{$redirect}#basic'>
-<input type='hidden' name='accountid' 			value='{$userId}'>
-<fieldset class='accountsettings'>
-<table width='99%'>
-<tr>
-<td colspan='2'>
-<p>{$pc->lang['DESCRIPTION_ACCOUNT']}</p>
-</td>
-</tr>
-<tr>
-<td><label for="account">{$pc->lang['ACCOUNT_NAME_LABEL']}</label></td>
-<td style='text-align: right;'><input class='account-dimmed' type='text' name='account' readonly value='{$account}'></td>
-</tr>
-<tr>
-<td><label for="password1">{$pc->lang['ACCOUNT_PASSWORD_LABEL']}</label></td>
-<td style='text-align: right;'><input class='password' type='password' name='password1'></td>
-</tr>
-<tr>
-<td><label for="password2">{$pc->lang['ACCOUNT_PASSWORD_AGAIN_LABEL']}</label></td>
-<td style='text-align: right;'><input class='password' type='password' name='password2'></td>
-</tr>
-<tr>
-<td colspan='2' style='text-align: right;'>
-<button type='submit' name='submit' value='change-password'>{$pc->lang['CHANGE_PASSWORD']}</button>
-</td>
-</tr>
-<tr><td colspan='2'>{$messages['changePwdSuccess']}{$messages['changePwdFailed']}</td></tr>
-</table>
-</fieldset>
-</form>
-
-<h2 id='email'>{$pc->lang['EMAIL_SETTINGS']}</h2>
-<form action='{$action}' method='POST'>
-<input type='hidden' name='redirect' 					value='{$redirect}#email'>
-<input type='hidden' name='redirect-failure' 	value='{$redirect}#email'>
-<input type='hidden' name='accountid' 				value='{$userId}'>
-<fieldset class='accountsettings'>
-<table width='99%'>
-<tr>
-<td colspan='2'>
-<p>{$pc->lang['DESCRIPTION_EMAIL']}</p>
-</td>
-</tr>
-<tr>
-<td><label for="email">{$pc->lang['EMAIL_LABEL']}</label></td>
-<td style='text-align: right;'>
-<input class='email' type='email' name='email' value='{$email}' placeholder="{$pc->lang['INSERT_EMAIL_HERE']}" autocomplete
-required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*\.(\w{2}|(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum))$" title="{$pc->lang['EMAIL_FORMAT_REQUIRED']}">
-</td>
-</tr>
-<tr>
-<td colspan='2' style='text-align: right;'>
-<button type='submit' name='submit' value='change-email'>{$pc->lang['UPDATE_EMAIL']}</button>
-</td>
-</tr>
-<tr><td colspan='2'>{$messages['mailSuccess']}{$messages['mailFailed']}</td></tr>
-</table>
-</fieldset>
-</form>
+<div id='s-pwd' class='section'>
+	<form action='{$action}' method='post'>
+		<input type='hidden' name='redirect' 					value='{$redirect}'>
+		<input type='hidden' name='redirect-failure' 	value='{$redirect}'>
+		<input type='hidden' name='accountid' 				value='{$userId}'>
+		<fieldset class='standard account-settings'>
+	 		<legend>{$pc->lang['BASIC_ACCOUNT_INFO']}</legend>
+		 	<div class='form-wrapper'>
+				<p>{$pc->lang['DESCRIPTION_ACCOUNT']}</p>
+				<label for="account">{$pc->lang['ACCOUNT_NAME_LABEL']}</label>
+				<input class='account' type='text' name='account' readonly='readonly' value='{$account}'>
+				<label for="password1">{$pc->lang['ACCOUNT_PASSWORD_LABEL']}</label>
+				<input class='password' type='password' name='password1'>
+				<label for="password2">{$pc->lang['ACCOUNT_PASSWORD_AGAIN_LABEL']}</label>
+				<input class='password' type='password' name='password2'>
+				<button type='submit' name='submit' value='change-password'>{$pc->lang['CHANGE_PASSWORD']}</button>
+				<div class='form-status'>{$messages['changePwdSuccess']}{$messages['changePwdFailed']}</div> 
+		 </div> <!-- wrapper -->
+		</fieldset>
+	</form>
+</div> <!-- section -->
 
 
-<h2 id='avatar'>{$pc->lang['AVATAR_SETTINGS']}</h2>
-<form action='{$action}' method='POST'>
-<input type='hidden' name='redirect' 					value='{$redirect}#avatar'>
-<input type='hidden' name='redirect-failure' 	value='{$redirect}#avatar'>
-<input type='hidden' name='accountid' 				value='{$userId}'>
-<fieldset class='accountsettings'>
-<table width='99%'>
-<tr>
-<td><label for="avatar">{$pc->lang['AVATAR_LABEL']}</label></td>
-<td style='text-align: right;'>
-<input class='avatar' type='url' list='avatars' name='avatar' value='{$avatar}' placeholder="{$pc->lang['INSERT_LINK_TO_AVATAR_HERE']}" autocomplete>
+<div id='s-mail' class='section'>
+	<form action='{$action}' method='post'>
+		<input type='hidden' name='redirect' 					value='{$redirect}#s-mail'>
+		<input type='hidden' name='redirect-failure' 	value='{$redirect}#s-mail'>
+		<input type='hidden' name='accountid' 				value='{$userId}'>
+		<fieldset class='standard account-settings'>
+	 		<legend>{$pc->lang['MAIL_SETTINGS']}</legend>
+		 	<div class='form-wrapper'>
+				<p>{$pc->lang['DESCRIPTION_MAIL']}</p>
+				<label for='mail'>{$pc->lang['MAIL_LABEL']}</label>
+				<input id='mail' class='mail' type='email' name='mail' value='{$mail}' placeholder="{$pc->lang['INSERT_MAIL_HERE']}" autocomplete
+					required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*\.(\w{2}|(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum))$" title="{$pc->lang['MAIL_FORMAT_REQUIRED']}">
+				<button type='submit' name='submit' value='change-mail'>{$pc->lang['UPDATE_MAIL']}</button>
+				<div class='form-status'>{$messages['mailSuccess']}{$messages['mailFailed']}</div> 
+		 </div> <!-- wrapper -->
+		</fieldset>
+	</form>
+</div> <!-- section -->
 
-<!-- datalist only supported in Opera
-<datalist id='avatars'>
-<option>{$imageLink}man_60x60.png</option>
-<option>{$imageLink}woman_60x60.png</option>
-</datalist>
--->
 
-</td>
-</tr>
-<tr>
-<td>
-<img src='{$row->avatar}' alt=':)'>
-</td>
-<td style='text-align: right;'>
-<button type='submit' name='submit' value='change-avatar'>{$pc->lang['UPDATE_AVATAR']}</button>
-</td>
-</tr>
-</table>
-</fieldset>
-</form>
+<div id='s-avatar' class='section'>
+	<form action='{$action}' method='post'>
+		<input type='hidden' name='redirect' 					value='{$redirect}#s-avatar'>
+		<input type='hidden' name='redirect-failure' 	value='{$redirect}#s-avatar'>
+		<input type='hidden' name='accountid' 				value='{$userId}'>
+		<fieldset class='standard account-settings'>
+	 		<legend>{$pc->lang['AVATAR_SETTINGS']}</legend>
+		 	<div class='form-wrapper'>
+				<p>{$pc->lang['AVATAR_INFO']}</p>
+				<label for='avatar'>{$pc->lang['AVATAR_LABEL']}</label>
+				<input id ='avatar' class='avatar' type='url' list='avatars' name='avatar' value='{$avatar}' placeholder="{$pc->lang['INSERT_LINK_TO_AVATAR_HERE']}" autocomplete>
+					<!--
+					<datalist id='avatars'>
+					<option>{$imageLink}man_60x60.png</option>
+					<option>{$imageLink}woman_60x60.png</option>
+					<option>{$imageLink}egg_60x60.png</option>
+					</datalist>
+					-->
+				<button type='submit' name='submit' value='change-avatar'>{$pc->lang['UPDATE_AVATAR']}</button>
+				<div class='form-status'><img src='{$avatar}' alt=''></div> 
+		 </div> <!-- wrapper -->
+		</fieldset>
+	</form>
+</div> <!-- section -->
 
-<h2 id='gravatar'>{$pc->lang['GRAVATAR_SETTINGS']}</h2>
-<form action='{$action}' method='POST'>
-<input type='hidden' name='redirect' 					value='{$redirect}#gravatar'>
-<input type='hidden' name='redirect-failure' 	value='{$redirect}#gravatar'>
-<input type='hidden' name='accountid' 				value='{$userId}'>
-<fieldset class='accountsettings'>
-<table width='99%'>
-<tr>
-<td colspan='2'>
-<p>
-{$pc->lang['GRAVATAR_INFO']}
-</p>
-</td>
-</tr>
-<td><label for="gravatar">{$pc->lang['GRAVATAR_LABEL']}</label></td>
-<td style='text-align: right;'>
-<input class='gravatar' type='email' name='gravatar' value='{$gravatar}' placeholder="{$pc->lang['INSERT_EMAIL_FOR_GRAVATAR_HERE']}" autocomplete>
-</td>
-</tr>
-<tr>
-<td>
-<img src='{$row->gravatarsmall}' alt=''>
-</td>
-<td style='text-align: right;'>
-<button type='submit' name='submit' value='change-gravatar'>{$pc->lang['UPDATE_GRAVATAR']}</button>
-</td>
-</tr>
-</table>
-</fieldset>
-</form>
 
-<!--
-<h2>{$pc->lang['GROUP_SETTINGS']}</h2>
-<fieldset class='accountsettings'>
-<table width='99%'>
-<tr>
-<td>{$pc->lang['GROUPMEMBER_OF_LABEL']}</td>
-<td style='text-align: right;'><input class='groups' type='text' name='groups' value='{$groupakronym}'></td>
-</tr>
-<tr>
-<td colspan='2' style='text-align: right;'>
-<button type='submit' name='submit' value='change-groups'>{$pc->lang['UPDATE_GROUPS']}</button>
-</td>
-</tr>
-</table>
-</fieldset>
--->
+<div id='s-gravatar' class='section'>
+	<form action='{$action}' method='post'>
+		<input type='hidden' name='redirect' 					value='{$redirect}#s-gravatar'>
+		<input type='hidden' name='redirect-failure' 	value='{$redirect}#s-gravatar'>
+		<input type='hidden' name='accountid' 				value='{$userId}'>
+		<fieldset class='standard account-settings'>
+	 		<legend>{$pc->lang['GRAVATAR_SETTINGS']}</legend>
+		 	<div class='form-wrapper'>
+				<p>{$pc->lang['GRAVATAR_INFO']}</p>
+				<label for='gravatar'>{$pc->lang['GRAVATAR_LABEL']}</label>
+				<input id='gravatar' class='gravatar' name='gravatar' type='email' value='{$gravatar}' placeholder="{$pc->lang['INSERT_EMAIL_FOR_GRAVATAR_HERE']}" autocomplete>
+				<button type='submit' name='submit' value='change-gravatar'>{$pc->lang['UPDATE_GRAVATAR']}</button>
+				<div class='form-status'><img src='{$gravatarsmall}' alt=''></div> 
+		 </div> <!-- wrapper -->
+		</fieldset>
+	</form>
+</div> <!-- section -->
 
+
+<div id='a-groups' class='section'>
+	<form>
+		<fieldset class='standard account-settings'>
+			<legend>{$pc->lang['GROUP_SETTINGS']}</legend>
+			<div class='form-wrapper'>
+				<p>{$pc->lang['GROUPMEMBER_OF_LABEL']}</p>
+				{$htmlGroups}
+			</div> <!-- wrapper -->
+		</fieldset>
+	</form>
+</div> <!-- section -->
 
 EOD;
 

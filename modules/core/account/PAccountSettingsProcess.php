@@ -13,6 +13,7 @@
 //
 // Get pagecontroller helpers. Useful methods to use in most pagecontrollers
 //
+$uc = CUserController::GetInstance();
 $pc = new CPageController();
 $pc->LoadLanguage(__FILE__);
 
@@ -36,7 +37,9 @@ $submitAction	= $pc->POSTisSetOrSetDefault('submit');
 $accountId		= $pc->POSTisSetOrSetDefault('accountid');
 $redirect			= $pc->POSTisSetOrSetDefault('redirect');
 $redirectFail	= $pc->POSTisSetOrSetDefault('redirect-fail');
-$userId				= $_SESSION['idUser'];
+
+$userId	= $uc->GetAccountId();
+$pc->IsNumericOrDie($userId, 1);
 
 
 // -------------------------------------------------------------------------------------------
@@ -91,21 +94,21 @@ else if($submitAction == 'change-password') {
 
 // -------------------------------------------------------------------------------------------
 //
-// Change email
+// Change mail
 // 
-else if($submitAction == 'change-email') {
+else if($submitAction == 'change-mail') {
 
-	$email	= $pc->POSTisSetOrSetDefault('email');
+	$mailAddress	= $pc->POSTisSetOrSetDefault('mail');
 
 	// Execute the database query to make the update
 	$db = new CDatabaseController();
 	$mysqli = $db->Connect();
 
 	// Prepare query
-	$email1 = $mysqli->real_escape_string($email);
+	$mailAddress1 = $mysqli->real_escape_string($mailAddress);
 
 	$query = <<<EOD
-CALL {$db->_['PChangeAccountEmail']}('{$userId}', '{$email1}', @rowcount);
+CALL {$db->_['PChangeAccountEmail']}('{$userId}', '{$mailAddress1}', @rowcount);
 SELECT @rowcount AS rowcount;
 EOD;
 
@@ -118,12 +121,12 @@ EOD;
 	
 		// Send a mail to the new mailadress
 		$mail = new CMail();
-		$r = $mail->SendMail($email, $pc->lang['MAIL_NEW_MAILADRESS_CONFIRMATION_SUBJECT'], $pc->lang['MAIL_NEW_MAILADRESS_CONFIRMATION_BODY']);
+		$r = $mail->SendMail($mailAddress, $pc->lang['MAIL_NEW_MAILADRESS_CONFIRMATION_SUBJECT'], $pc->lang['MAIL_NEW_MAILADRESS_CONFIRMATION_BODY']);
 
 		if($r) {
-			$pc->SetSessionMessage('mailSuccess', sprintf($pc->lang['SUCCESSFULLY_SENT_MAIL'], $email));
+			$pc->SetSessionMessage('mailSuccess', sprintf($pc->lang['SUCCESSFULLY_SENT_MAIL'], $mailAddress));
 		}else {
-			$pc->SetSessionMessage('mailFailed', sprintf($pc->lang['FAILED_SENDING_MAIL'], $email));
+			$pc->SetSessionMessage('mailFailed', sprintf($pc->lang['FAILED_SENDING_MAIL'], $mailAddress));
 		}
 	
 	}

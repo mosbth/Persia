@@ -30,18 +30,6 @@ $intFilter->FrontControllerIsVisitedOrDie();
 
 // -------------------------------------------------------------------------------------------
 //
-// Prepare the text
-//
-$htmlMain = <<< EOD
-<h1>{$pc->lang['DATABASE_INSTALLATION']}</h1>
-EOD;
-
-$htmlLeft 	= "";
-$htmlRight	= "";
-
-
-// -------------------------------------------------------------------------------------------
-//
 // Create a new database object, connect to the database, get the query and execute it.
 //
 $db 	= new CDatabaseController();
@@ -56,9 +44,13 @@ $queries = Array(
 	'SQLCoreAccount.php', 
 	'SQLCoreArticle.php', 
 	'SQLCoreFile.php', 
-	'SQLForumRomanum.php'
+	'SQLCoreCreateDefaultData.php', 
+	'SQLForumRomanum.php',
 );
 
+$status = Array();
+
+$htmlSQL = "";
 foreach($queries as $val) {
 
 	$query 	= $db->LoadSQL($val);
@@ -67,8 +59,10 @@ foreach($queries as $val) {
 	$title 			= sprintf($pc->lang['SQL_QUERY'], $val);
 	$statements	= sprintf($pc->lang['STATEMENTS_SUCCEEDED'], $no);
 	$errorcode	= sprintf($pc->lang['ERROR_CODE'], $mysqli->errno, $mysqli->error);
-	
-	$htmlMain .= <<< EOD
+
+	$status[$val] = Array('statements' => $no, 'error' => $mysqli->errno);	
+
+	$htmlSQL .= <<< EOD
 <h3>{$title}'</h3>
 <p>
 <div class="sourcecode height40em">
@@ -86,6 +80,28 @@ EOD;
 // Close the connection to the database
 //
 $mysqli->close();
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Prepare the text
+//
+$htmlStatus = "<ul>";
+foreach($status as $key => $val) {
+	$htmlStatus .= <<<EOD
+<li>{$key}: Statements succeded={$status[$key]['statements']}, error code={$status[$key]['error']}
+EOD;
+}
+$htmlStatus .= "</ul>";
+
+$htmlMain = <<< EOD
+<h1>{$pc->lang['DATABASE_INSTALLATION']}</h1>
+{$htmlStatus}
+{$htmlSQL}
+EOD;
+
+$htmlLeft 	= "";
+$htmlRight	= "";
 
 
 // -------------------------------------------------------------------------------------------

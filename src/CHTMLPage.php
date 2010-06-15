@@ -1,9 +1,9 @@
 <?php
 // ===========================================================================================
 //
-// Class CHTMLPage
+// File: CHTMLPage.php
 //
-// Create and print a HTML page.
+// Description: Create and print a HTML page.
 //
 //
 // Author: Mikael Roos, mos@bth.se
@@ -128,28 +128,28 @@ EOD;
 	
 		$m = "m={$gModule}&amp;";
 		$pc = $this->iPc;
-		$gravatar = $pc->SESSIONIsSetOrSetDefault('gravatarUserMicro');
+		$uc = CUserController::GetInstance();
+		$gravatar = $uc->GetGravatar();
 		$gravatar = empty($gravatar) ? '' : "<a href='?{$m}p=account-settings'><img src='{$gravatar}' alt=''></a>";
 
 		$html = "";
 
 		// If user is logged in, show details about user and some links.
 		// If user is not logged in, show link to login-page
-		if(isset($_SESSION['accountUser'])) {
-    	$admHtml = "";
+		if($uc->IsAuthenticated()) {
 
-      if(isset($_SESSION['groupMemberUser']) && $_SESSION['groupMemberUser'] == 'adm') {
+    	$admHtml = "";
+      if($uc->IsAdministrator()) {
       	$admHtml = "<a href='?{$m}p=admin'>{$pc->lang['ADMIN']}</a> ";
       }
-        
+       
+      $accountname = $uc->GetAccountName();
 			$html = <<<EOD
 <div id='loginbar'>
 	<p>
 	{$gravatar}
-	<a href='?{$m}p=account-settings'>{$_SESSION['accountUser']}</a>  	
-	<!--
+	<a href='?{$m}p=account-settings'>{$accountname}</a>  	
 	{$admHtml} 
-	-->
 	<a href='?{$m}p=logoutp'>{$pc->lang['LOGOUT']}</a>
 	</p>
 </div>

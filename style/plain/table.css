@@ -16,6 +16,31 @@ table.full-width {
 	width: 99%;
 }
 
+table.standard caption {
+	caption-side: bottom; 
+	padding-bottom: 0.5em;
+	font-size: 1.0em;
+	text-align: left;
+	font-style: italic;
+}
+
+table.standard tr { }
+table.standard tr.r1 {
+	background: #eee;
+}
+table.standard tr.r2 {
+	background: #ddd;
+}
+table.standard tr:hover {
+	background: #ccc;
+}
+
+table.standard td {
+	word-wrap: break-word; /* CSS3 */	
+	-ms-word-wrap: break-word; /* IE8 */	
+}
+
+
 /*
 colgroup {}
 col{}
@@ -40,8 +65,6 @@ table.filedetails-show col.header {
 table.filedetails-show td {
 	padding: 0.5em;
 	font-size: 1.3em;
-	word-wrap: break-word; /* CSS3 */	
-	-ms-word-wrap: break-word; /* IE8 */	
 }
 
 table.filedetails-show caption {

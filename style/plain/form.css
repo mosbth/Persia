@@ -18,7 +18,7 @@ fieldset.loginform,
 fieldset.editor,
 fieldset.accountsettings,
 fieldset.standard {
-	padding: 1.5em 0.5em 1em 0.5em;
+	paddisng: 0.2em 0.5em 1em 0.5em;
 	border: 2px #ccc solid;
 }
 
@@ -34,11 +34,14 @@ fieldset.standard div.form-status {}
 /* legend */
 fieldset.standard legend {
 	border:3px solid #ccc; 
-	padding: 0.2em 2em 0.2em 0.2em;
+	padding: 0.2em 0.4em 0.2em 0.2em;
 	font-family: inherit;
 	font-size: 1.2em;
 	text-transform: uppercase; /* capitalize uppercase */
 	font-weight: bold; 
+}
+fieldset.standard legend:first-letter {
+	font-size: 1.3em;
 }
 
 /* label */
@@ -106,6 +109,44 @@ fieldset.standard button.delete {
 /* -------------------------------------------------------------------------------------
 /* filedetails, custom settings */
 
+fieldset.account-settings {}
+
+fieldset.account-settings div.form-wrapper {
+	margin: auto;
+	width: 100%;
+}
+
+fieldset.account-settings div.form-status {
+	float: left;
+	margin-top: 1em;
+}
+
+fieldset.account-settings label {
+	clear: both;
+	float: left;
+}
+
+fieldset.account-settings input {
+	float: right;
+}
+
+fieldset.account-settings button {
+	clear: both;
+	margin-top: 1em;
+	float: right;
+}
+
+fieldset.account-settings p {
+	margin-bottom: 2em; 
+}
+
+fieldset.account-settings input.avatar { width: 28em; }
+fieldset.account-settings input[readonly] { color: #999; }
+
+
+/* -------------------------------------------------------------------------------------
+/* filedetails, custom settings */
+
 fieldset.filedetails {}
 
 fieldset.filedetails div.form-wrapper {
@@ -140,9 +181,7 @@ fieldset.filedetails input {
 /* Custom settings for individual fields */
 
 /* Custom Account profile settings */
-fieldset.accountsettings input.avatar { width: 28em; }
 fieldset.accountsettings input.captcha { width: 300px; }
-fieldset.accountsettings input.account-dimmed { color: #999; }
 
 /* Custom Editor settings */
 fieldset.editor input.title { width: 400px; }

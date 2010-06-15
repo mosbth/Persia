@@ -67,10 +67,11 @@ CREATE TABLE {$db->_['User']} (
 CREATE TABLE {$db->_['Group']} (
 
   -- Primary key(s)
-  idGroup CHAR(3) NOT NULL PRIMARY KEY,
-
+	idGroup INT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
+	
   -- Attributes
-  nameGroup CHAR(40) NOT NULL
+	nameGroup CHAR({$db->_['CSizeGroupName']}) NOT NULL UNIQUE,
+  descriptionGroup CHAR({$db->_['CSizeGroupDescription']}) NOT NULL
 );
 
 
@@ -80,18 +81,16 @@ CREATE TABLE {$db->_['Group']} (
 --
 CREATE TABLE {$db->_['GroupMember']} (
 
-  -- Primary key(s)
-  --
-  -- The PK is the combination of the two foreign keys, see below.
-  --
-  
   -- Foreign keys
   GroupMember_idUser INT UNSIGNED NOT NULL,
-  GroupMember_idGroup CHAR(3) NOT NULL,
-	
   FOREIGN KEY (GroupMember_idUser) REFERENCES {$db->_['User']}(idUser),
+
+  GroupMember_idGroup INT UNSIGNED NOT NULL,	
   FOREIGN KEY (GroupMember_idGroup) REFERENCES {$db->_['Group']}(idGroup),
 
+  -- Primary key(s)
+  -- The PK is the combination of the two foreign keys.
+  --  
   PRIMARY KEY (GroupMember_idUser, GroupMember_idGroup)
   
   -- Attributes
@@ -108,9 +107,10 @@ CREATE TABLE {$db->_['Statistics']} (
 
   -- Primary key(s)
   -- Foreign keys
-  Statistics_idUser INT UNSIGNED NOT NULL,
-	
+  Statistics_idUser INT UNSIGNED NOT NULL,	
   FOREIGN KEY (Statistics_idUser) REFERENCES {$db->_['User']}(idUser),
+
+	-- PK
   PRIMARY KEY (Statistics_idUser),
   
   -- Attributes
@@ -152,7 +152,7 @@ BEGIN
 	IF aEmail IS NULL OR ASCII(aEmail) = 0 THEN
 		SET link = '';
 	ELSE
-		SELECT CONCAT('http://www.gravatar.com/avatar/', MD5(LOWER(aEmail)), '.jpg?s=', aSize)
+		SELECT CONCAT('http://www.gravatar.com/avatar/', MD5(LOWER(aEmail)), '.jpg?d=identicon&amp;s=', aSize)
 			INTO link;
 	END IF;
 		
@@ -218,6 +218,7 @@ CREATE PROCEDURE {$db->_['PGetAccountDetails']}
 )
 BEGIN
 	
+	-- All details on the account
 	SELECT 
 		U.accountUser AS account,
 		U.nameUser AS name,
@@ -225,17 +226,23 @@ BEGIN
 		U.avatarUser AS avatar,
 		U.gravatarUser AS gravatar,
 		{$db->_['FGetGravatarLinkFromEmail']}(U.gravatarUser, 60) AS gravatarsmall,
-		{$db->_['FGetGravatarLinkFromEmail']}(U.gravatarUser, 15) AS gravatarmicro,
-		G.idGroup AS groupakronym,
-		G.nameGroup AS groupdesc
+		{$db->_['FGetGravatarLinkFromEmail']}(U.gravatarUser, 15) AS gravatarmicro
+	FROM {$db->_['User']} AS U
+	WHERE
+		U.idUser = aUserId;
+	
+	-- All groupmemberships
+	SELECT 
+		G.idGroup AS groupid,
+		G.nameGroup AS groupname,
+		G.descriptionGroup AS groupdescription		
 	FROM {$db->_['User']} AS U
 		INNER JOIN {$db->_['GroupMember']} AS Gm
 			ON U.idUser = Gm.GroupMember_idUser
 		INNER JOIN {$db->_['Group']} AS G
 			ON G.idGroup = Gm.GroupMember_idGroup
 	WHERE
-		U.idUser = aUserId
-	;
+		U.idUser = aUserId;		
 	
 END;
 
@@ -587,11 +594,7 @@ BEGIN
 		--
 		-- Insert default group memberships
 		--
-		INSERT INTO {$db->_['GroupMember']} 
-			(GroupMember_idUser, GroupMember_idGroup) 
-		VALUES 
-			(aUserId, 'usr')
-		;
+		CALL {$db->_['PGroupMemberAdd']}(aUserId, 2); -- Member of group Users
 	
 		SET aStatus = 0; -- SUCCESS
 	
@@ -698,6 +701,65 @@ BEGIN
 END;
 
 
+-- =============================================================================================
+--
+-- SQL for maintaining Group and Groupmember
+--
+-- =============================================================================================
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to insert new groups.
+--
+-- Sets aStatus to show success/failed.
+-- aStatus=0: Success, new group added.
+-- aStatus=1: Failed, no group added (duplicate key).
+--
+DROP PROCEDURE IF EXISTS {$db->_['PCreateGroup']};
+CREATE PROCEDURE {$db->_['PCreateGroup']}
+(
+	IN aGroupName CHAR({$db->_['CSizeGroupName']}),
+	IN aGroupDescription CHAR({$db->_['CSizeGroupDescription']}),
+	OUT aStatus INT
+)
+BEGIN
+	
+	-- Insert the group, ignore if name already exists
+	INSERT IGNORE INTO {$db->_['Group']} 
+		(nameGroup, descriptionGroup) 
+		VALUES 
+		(aGroupName, aGroupDescription);
+
+	-- Set status value to "return"
+	CASE ROW_COUNT()
+		WHEN 0 THEN SET aStatus = 1; -- Failed
+		WHEN 1 THEN SET aStatus = 0; -- Success
+	END CASE;
+	
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to insert new member of a group.
+--
+DROP PROCEDURE IF EXISTS {$db->_['PGroupMemberAdd']};
+CREATE PROCEDURE {$db->_['PGroupMemberAdd']}
+(
+	IN aUserId INT UNSIGNED,
+	IN aGroupId INT UNSIGNED
+)
+BEGIN
+
+	--
+	INSERT INTO {$db->_['GroupMember']} 
+		(GroupMember_idUser, GroupMember_idGroup) 
+		VALUES 
+		(aUserId, aGroupId);
+	
+END;
+
+
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 --  Create UDF that checks if user is member of group adm.
@@ -723,54 +785,6 @@ BEGIN
 		
 	RETURN (isAdmin OR 0);		
 END;
-
-
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---
--- Add default groups
---
-INSERT INTO {$db->_['Group']} (idGroup, nameGroup) VALUES ('adm', 'Administrators of the site');
-INSERT INTO {$db->_['Group']} (idGroup, nameGroup) VALUES ('usr', 'Regular users of the site');
-
-EOD;
-
-$hashingalgoritm = DB_PASSWORDHASHING;
-$account 	= 'mikael';
-$password	= 'hemligt';
-$mail			= "mos@bth.se";
-$avatar 	= "{$imageLink}man_60x60.png";
-
-$query .= <<<EOD
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---
--- Add default user(s) 
---
-CALL {$db->_['PCreateAccount']}(@aUserId, '{$account}', '{$password}', '{$hashingalgoritm}', @aStatus);
-CALL {$db->_['PChangeAccountEmail']}(@aUserId, '{$mail}', @ignore);
-CALL {$db->_['PChangeAccountAvatar']}(@aUserId, '{$avatar}');
-
-EOD;
-
-$account 	= 'doe';
-$password	= 'doe';
-$mail			= "doe@bth.se";
-$avatar 	= "{$imageLink}woman_60x60.png";
-
-$query .= <<<EOD
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---
--- Add default user(s) 
---
-CALL {$db->_['PCreateAccount']}(@aUserId, '{$account}', '{$password}', '{$hashingalgoritm}', @aStatus);
-CALL {$db->_['PChangeAccountEmail']}(@aUserId, '{$mail}', @ignore);
-CALL {$db->_['PChangeAccountAvatar']}(@aUserId, '{$avatar}');
-
-
---
--- Add first user as adm groupmember
---
-INSERT INTO {$db->_['GroupMember']} (GroupMember_idUser, GroupMember_idGroup) 
-	VALUES (1, 'adm');
 
 
 EOD;

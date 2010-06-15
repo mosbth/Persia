@@ -17,12 +17,16 @@ class CInterceptionFilter {
 	//
 	// Internal variables
 	//
+	protected $iUc;
+
 
 	// ------------------------------------------------------------------------------------
 	//
 	// Constructor
 	//
-	public function __construct() { ;	}
+	public function __construct() { 
+		$this->iUc = CUserController::GetInstance();
+	}
 
 
 	// ------------------------------------------------------------------------------------
@@ -37,7 +41,7 @@ class CInterceptionFilter {
 	// Check if index.php (frontcontroller) is visited, disallow direct access to 
 	// pagecontrollers
 	//
-	public static function FrontControllerIsVisitedOrDie() {
+	public function FrontControllerIsVisitedOrDie() {
 		
 		global $gPage; // Always defined in frontcontroller
 		
@@ -51,9 +55,9 @@ class CInterceptionFilter {
 	//
 	// Check if user has signed in or redirect user to sign in page
 	//
-	public static function UserIsSignedInOrRecirectToSignIn() {
+	public function UserIsSignedInOrRecirectToSignIn() {
 		
-		if(!isset($_SESSION['accountUser'])) { 
+		if(!$this->iUc->IsAuthenticated()) { 
 			require(TP_PAGESPATH . 'login/PLogin.php');
 		}
 	}
@@ -63,9 +67,9 @@ class CInterceptionFilter {
 	//
 	// Check if user belongs to the admin group, or die.
 	//
-	public static function UserIsMemberOfGroupAdminOrDie() {
+	public function UserIsMemberOfGroupAdminOrDie() {
 		
-		if(isset($_SESSION['groupMemberUser']) && $_SESSION['groupMemberUser'] != 'adm') 
+		if(!$this->iUc->IsAdministrator()) 
 			die('You do not have the authourity to access this page');
 	}
 
@@ -74,10 +78,10 @@ class CInterceptionFilter {
 	//
 	// Check if user belongs to the admin group or is a specific user.
 	//
-	public static function IsUserMemberOfGroupAdminOrIsCurrentUser($aUserId) {
+	public function IsUserMemberOfGroupAdminOrIsCurrentUser($aUserId) {
 		
-		$isAdmGroup 		= (isset($_SESSION['groupMemberUser']) && $_SESSION['groupMemberUser'] == 'adm') ? TRUE : FALSE;
-		$isCurrentUser	= (isset($_SESSION['idUser']) && $_SESSION['idUser'] == $aUserId) ? TRUE : FALSE;
+		$isAdmGroup 		= $this->iUc->IsAdministrator() ? true : false;
+		$isCurrentUser	= ($this->iUc->GetAccountId() == $aUserId) ? true: false;
 
 		return $isAdmGroup || $isCurrentUser;
 	}
@@ -91,7 +95,7 @@ class CInterceptionFilter {
 	// $aLabel: The label to set in the SESSION.
 	// $aAction: check | set | unset
 	//
-	public static function CustomFilterIsSetOrDie($aLabel, $aAction='check') {
+	public function CustomFilterIsSetOrDie($aLabel, $aAction='check') {
 
 		switch($aAction) {
 
