@@ -51,18 +51,62 @@ Its always a war between Greco and Persia on what funktionality should be in the
 Persia and in the lighter variant Greco.
  
  
-5. Persia, The license
- 
-Free software. No warranty.
- 
- 
-6. Persia, The attitude
+5. Persia, The attitude
  
 One must have attitude. Or a philosophy. Perhaps like this?
  
   http://catb.org/esr/faqs/hacker-howto.html
 
 That works for now.
+
+
+6. Persia, The license
+ 
+Copyright by Mikael Roos (mos@bth.se), 2010.
+Persia is currently released as GPL3. Its considered, for the future, to be released under 
+dual-licensing with the MIT_license.
+
+The 3:rd party software and libraries are copyrighted and licensed by their respective owners 
+as shown in the file CREDITS. 
+
+Background on licensing: 
+ Dual and multi-licensing (http://en.wikipedia.org/wiki/Multi-licensing)
+ Copyleft licensing (http://en.wikipedia.org/wiki/Copyleft)
+ Permissive free software licensing (http://en.wikipedia.org/wiki/Permissive_free_software_licenses)
+ Wikipedia on GNU licensing (http://en.wikipedia.org/wiki/GNU_General_Public_License)
+ MIT-license (http://en.wikipedia.org/wiki/MIT_License)
+ Various licenses and comments about them (http://www.gnu.org/licenses/license-list.html)
+ GNU licenses (http://www.gnu.org/licenses/)
+ Free Software Foundation (http://www.fsf.org/)
+ Open source initiative on licensing (http://www.opensource.org/licenses/category)
+ Creative Commons on licensing (http://creativecommons.org/about/licenses)
+ Hacker, programmer subculture (http://en.wikipedia.org/wiki/Hacker_%28programmer_subculture%29)
+
+The file LICENSE includes the license text.
+
+Each file should have the following statement attached to it:
+
+// ===========================================================================================
+//
+//		Persia (http://phpersia.org), software to build webbapplications.
+//    Copyright (C) 2010  Mikael Roos (mos@bth.se)
+//
+//    This file is part of Persia.
+//
+//    Persia is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Persia is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Persia. If not, see <http://www.gnu.org/licenses/>.
+//
+
 
 7. Credits
 

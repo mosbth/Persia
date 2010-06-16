@@ -111,6 +111,8 @@ if(false) {
 //
 else if($submit == 'login-local') {
 
+	// ===========================================================================================
+	//
 	// File: ILoginDatabaseProcess.php
 	//
 	// Description: Submit-action to authenticate user in the local database. 
@@ -121,7 +123,6 @@ else if($submit == 'login-local') {
 	// Preconditions:
 	//
 	// Variables must be defined by pagecontroller:
-	// $pc
 	// $db
 	// $mysqli
 	// $account 
@@ -129,15 +130,15 @@ else if($submit == 'login-local') {
 	// $password
 	// $redirectFail
 	//
-	// Include from pagecontroller using:
-	// include(dirname(__FILE__) . '/IAccountChangePasswordProcess.php');
+	// Require from pagecontroller using:
+	// require(TP_MODULESPATH . '/core/login/ILoginDatabaseProcess.php');
 	//
 	// Messages that may be set in session reflecting the outcome of the action:
 	// loginFailed
 	// loginAccount
 	//
 	$accountId='';
-	include(dirname(__FILE__) . '/ILoginDatabaseProcess.php');
+	require(TP_MODULESPATH . '/core/login/ILoginDatabaseProcess.php');
 }
 
 
@@ -147,6 +148,7 @@ else if($submit == 'login-local') {
 //
 else if($submit == 'login-ldap') {
 
+	// ===========================================================================================
 	//
 	// File: ILoginLDAPProcess.php
 	//
@@ -158,20 +160,19 @@ else if($submit == 'login-ldap') {
 	// Preconditions:
 	//
 	// Variables must be defined by pagecontroller:
-	// $pc
 	// $account 
 	// $password
 	// $mail (OUT, sets the mailadress if it exists)
 	// $redirectFail
 	//
-	// Include from pagecontroller using:
-	// include(dirname(__FILE__) . '/ILoginLDAPProcess.php');
+	// Require from pagecontroller using:
+	// require(TP_MODULESPATH . '/core/login/ILoginLDAPProcess.php');
 	//
 	// Messages that may be set in session reflecting the outcome of the action:
 	// loginFailed
 	// loginAccount
 	//
-	include(dirname(__FILE__) . '/ILoginLDAPProcess.php');
+	require(TP_MODULESPATH . '/core/login/ILoginLDAPProcess.php');
 	
 	//
 	// The account is authenticated in the LDAP.

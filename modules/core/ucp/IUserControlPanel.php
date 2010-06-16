@@ -72,7 +72,7 @@ foreach($navigationPath as $key => $val) {
 }
 $htmlPath = substr($htmlPath, 0, -5);
 
-$htmlMenuBar = <<< EOD
+$htmlUcp = <<< EOD
 <div class='section'>
 	<ul class='nav-standard nav-path'>
 		{$htmlPath}

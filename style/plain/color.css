@@ -16,6 +16,11 @@
 .primary-4 { background-color: #DE5454 } /* lightdark */
 .primary-5 { background-color: #DE9090 } /* light */
 
+/* border around buttons, navigation-items */
+.border-1 {border-color: #95959F} /* lightest, standard */
+.border-2 {border-color: #77777F} /* darker, when hover */
+.border-3 {border-color: #4A4A4F} /* darkest, when pressed */
+
 
 /* -------------------------------------------------------------------------------------
 /* Pagestructure */

@@ -1,6 +1,24 @@
 <?php
 // ===========================================================================================
 //
+//		Persia (http://phpersia.org), software to build webbapplications.
+//    Copyright (C) 2010  Mikael Roos (mos@bth.se)
+//
+//    This file is part of Persia.
+//
+//    Persia is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Persia is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Persia. If not, see <http://www.gnu.org/licenses/>.
+//
 // File: PAccountSettings.php
 //
 // Description: Show the users profile information in a form and make it possible to edit 
@@ -8,32 +26,36 @@
 //
 // Author: Mikael Roos, mos@bth.se
 //
+// Known issues:
+// Update to include and show off "all" features.
+//
+// History: 
+// 2010-06-16: New structure for instantiating controllers. Included license message.
+//
 
 
 // -------------------------------------------------------------------------------------------
 //
-// Get pagecontroller helpers. Useful methods to use in most pagecontrollers
+// Get common controllers, uncomment if not used in current pagecontroller.
 //
-$pc = CPageController::GetInstance();
-$pc->LoadLanguage(__FILE__);
+// $pc, Page Controller helpers. Useful methods to use in most pagecontrollers
+// $uc, User Controller. Keeps information/permission on user currently signed in.
+// $if, Interception Filter. Useful to check constraints before entering a pagecontroller.
+// $db, Database Controller. Manages all database access.
+//
+$pc = CPageController::GetInstanceAndLoadLanguage(__FILE__);
+$uc = CUserController::GetInstance();
+$if = CInterceptionFilter::GetInstance();
+$db = CDatabaseController::GetInstance();
 
 
 // -------------------------------------------------------------------------------------------
 //
-// User controller, get info about the current user
+// Perform checks before continuing, what's to be fullfilled to enter this controller?
 //
-$uc 		= CUserController::GetInstance();
-$userId	= $uc->GetAccountId();
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Interception Filter, controlling access, authorithy and other checks.
-//
-$intFilter = CInterceptionFilter::GetInstance();
-$intFilter->FrontControllerIsVisitedOrDie();
-$intFilter->UserIsSignedInOrRedirectToSignIn();
-$intFilter->UserIsCurrentUserOrMemberOfGroupAdminOr403($userId);
+$if->FrontControllerIsVisitedOrDie();
+$if->UserIsSignedInOrRedirectToSignIn();
+$if->UserIsCurrentUserOrMemberOfGroupAdminOr403($uc->GetAccountId());
 
 
 // -------------------------------------------------------------------------------------------
@@ -41,14 +63,13 @@ $intFilter->UserIsCurrentUserOrMemberOfGroupAdminOr403($userId);
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 // Always check whats coming in...
 // 
+$userId = $uc->GetAccountId();
 
 
 // -------------------------------------------------------------------------------------------
 //
-// Create a new database object, connect to the database, get the query and execute it.
-// Relates to files in directory TP_SQLPATH.
+// Connect to the database, create the query and execute it, take care of the results.
 //
-$db = CDatabaseController::GetInstance();
 $mysqli = $db->Connect();
 
 $query = <<< EOD
@@ -96,10 +117,10 @@ $mysqli->close();
 
 // -------------------------------------------------------------------------------------------
 //
-// Include the menu-bar for the User Control Panel.
+// UCP. Include the menu-bar for the User Control Panel.
 //
-$htmlMenuBar = "";
-include(dirname(__FILE__) . '/IUserControlPanel.php');
+$htmlUcp = "";
+require(dirname(__FILE__) . '/IUserControlPanel.php');
 
 
 // -------------------------------------------------------------------------------------------
@@ -119,7 +140,7 @@ $messages = $helpers->GetHTMLForSessionMessages(
 	Array('mailFailed', 'changePwdFailed'));
 
 $htmlMain = <<< EOD
-{$htmlMenuBar}
+{$htmlUcp}
 <div class='section'>
 	<p>{$pc->lang['SETTINGS_DESCRIPTION']}</p>
 </div> <!-- section -->
@@ -129,7 +150,7 @@ $htmlMain = <<< EOD
 		<input type='hidden' name='redirect' 					value='{$redirect}'>
 		<input type='hidden' name='redirect-failure' 	value='{$redirect}'>
 		<input type='hidden' name='accountid' 				value='{$userId}'>
-		<fieldset class='standard account-settings'>
+		<fieldset class='standard type-1 account-settings'>
 	 		<legend>{$pc->lang['BASIC_ACCOUNT_INFO']}</legend>
 		 	<div class='form-wrapper'>
 				<p>{$pc->lang['DESCRIPTION_ACCOUNT']}</p>
@@ -152,7 +173,7 @@ $htmlMain = <<< EOD
 		<input type='hidden' name='redirect' 					value='{$redirect}#s-mail'>
 		<input type='hidden' name='redirect-failure' 	value='{$redirect}#s-mail'>
 		<input type='hidden' name='accountid' 				value='{$userId}'>
-		<fieldset class='standard account-settings'>
+		<fieldset class='standard type-1 account-settings'>
 	 		<legend>{$pc->lang['MAIL_SETTINGS']}</legend>
 		 	<div class='form-wrapper'>
 				<p>{$pc->lang['DESCRIPTION_MAIL']}</p>
@@ -172,7 +193,7 @@ $htmlMain = <<< EOD
 		<input type='hidden' name='redirect' 					value='{$redirect}#s-avatar'>
 		<input type='hidden' name='redirect-failure' 	value='{$redirect}#s-avatar'>
 		<input type='hidden' name='accountid' 				value='{$userId}'>
-		<fieldset class='standard account-settings'>
+		<fieldset class='standard type-1 account-settings'>
 	 		<legend>{$pc->lang['AVATAR_SETTINGS']}</legend>
 		 	<div class='form-wrapper'>
 				<p>{$pc->lang['AVATAR_INFO']}</p>
@@ -198,7 +219,7 @@ $htmlMain = <<< EOD
 		<input type='hidden' name='redirect' 					value='{$redirect}#s-gravatar'>
 		<input type='hidden' name='redirect-failure' 	value='{$redirect}#s-gravatar'>
 		<input type='hidden' name='accountid' 				value='{$userId}'>
-		<fieldset class='standard account-settings'>
+		<fieldset class='standard type-1 account-settings'>
 	 		<legend>{$pc->lang['GRAVATAR_SETTINGS']}</legend>
 		 	<div class='form-wrapper'>
 				<p>{$pc->lang['GRAVATAR_INFO']}</p>
@@ -214,7 +235,7 @@ $htmlMain = <<< EOD
 
 <div id='a-groups' class='section'>
 	<form>
-		<fieldset class='standard account-settings'>
+		<fieldset class='standard type-1 account-settings'>
 			<legend>{$pc->lang['GROUP_SETTINGS']}</legend>
 			<div class='form-wrapper'>
 				<p>{$pc->lang['GROUPMEMBER_OF_LABEL']}</p>
@@ -243,9 +264,8 @@ EOD;
 //
 // Create and print out the resulting page
 //
-$page = new CHTMLPage();
-
-$page->PrintPage(sprintf($pc->lang['SETTINGS_FOR'], $account), $htmlLeft, $htmlMain, $htmlRight);
+CHTMLPage::GetInstance()->PrintPage(sprintf($pc->lang['SETTINGS_FOR'], $uc->GetAccountName()), $htmlLeft, $htmlMain, $htmlRight);
 exit;
+
 
 ?>

@@ -15,6 +15,8 @@
 @import url(form.css);					/* forms styles */
 @import url(table.css);					/* table styles */
 @import url(article.css); 			/* for displaying articles */
+@import url(code.css); 					/* for displaying sourcecode */
+@import url(blockquote.css);		/* for displaying blockquotes */
 @import url(heightwidth.css); 	/* various (general) height and width definitions */
  
 
@@ -171,9 +173,6 @@ div.successMessage {
 	font-style: italic;
 	padding: 1.5em;
 }
-
-/* To display code. */
-fieldset.code {}
 
 
 /* -------------------------------------------------------------------------------------

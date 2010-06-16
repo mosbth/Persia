@@ -11,14 +11,13 @@
 // Preconditions:
 //
 // Variables must be defined by pagecontroller:
-// $pc
 // $account 
 // $password
 // $mail (OUT, sets the mailadress if it exists)
 // $redirectFail
 //
-// Include from pagecontroller using:
-// include(dirname(__FILE__) . '/ILoginLDAPProcess.php');
+// Require from pagecontroller using:
+// require(TP_MODULESPATH . '/core/login/ILoginLDAPProcess.php');
 //
 // Messages that may be set in session reflecting the outcome of the action:
 // loginFailed
@@ -30,7 +29,7 @@
 //
 // General settings for this file.
 //
-$pc->LoadLanguage(__FILE__);
+$pc = CPageController::GetInstanceAndLoadLanguage(__FILE__);
 
 
 // -------------------------------------------------------------------------------------------

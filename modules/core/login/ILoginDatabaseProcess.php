@@ -11,7 +11,6 @@
 // Preconditions:
 //
 // Variables must be defined by pagecontroller:
-// $pc
 // $db
 // $mysqli
 // $account 
@@ -19,8 +18,8 @@
 // $password
 // $redirectFail
 //
-// Include from pagecontroller using:
-// include(dirname(__FILE__) . '/ILoginDatabaseProcess.php');
+// Require from pagecontroller using:
+// require(TP_MODULESPATH . '/core/login/ILoginDatabaseProcess.php');
 //
 // Messages that may be set in session reflecting the outcome of the action:
 // loginFailed
@@ -32,7 +31,7 @@
 //
 // General settings for this file.
 //
-$pc->LoadLanguage(__FILE__);
+$pc = CPageController::GetInstanceAndLoadLanguage(__FILE__);
 
 
 // -------------------------------------------------------------------------------------------

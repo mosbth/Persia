@@ -15,6 +15,7 @@ class CHTMLPage {
 	//
 	// Internal variables
 	//
+	protected static $iInstance = NULL;
 	protected $iPc;
 
 
@@ -34,6 +35,19 @@ class CHTMLPage {
 	// Destructor
 	//
 	public function __destruct() { ; }
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Singleton, get the instance or create a new one.
+	//
+	public static function GetInstance() {
+		
+		if(self::$iInstance == NULL) {
+			self::$iInstance = new CHTMLPage();			
+		}
+		return self::$iInstance;
+	}
 
 
 	// ------------------------------------------------------------------------------------

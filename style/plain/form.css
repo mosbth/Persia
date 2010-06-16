@@ -102,43 +102,53 @@ fieldset.standard button.delete {
 	text-indent: 15px; 
 }
 
+fieldset.standard p {
+	margin-bottom: 2em; 
+}
+
 /* To hide a element */
 .hide {display: none;}
 
 
 /* -------------------------------------------------------------------------------------
-/* filedetails, custom settings */
+/* type-1 layout of form. Fullsize and buttons to the right. */
 
-fieldset.account-settings {}
+fieldset.type-1 {}
 
-fieldset.account-settings div.form-wrapper {
+fieldset.type-1 div.form-wrapper {
 	margin: auto;
 	width: 100%;
 }
 
-fieldset.account-settings div.form-status {
+fieldset.type-1 div.form-status {
 	float: left;
 	margin-top: 1em;
 }
 
-fieldset.account-settings label {
+fieldset.type-1 label {
 	clear: both;
 	float: left;
 }
 
-fieldset.account-settings input {
+fieldset.type-1 input {
 	float: right;
 }
 
-fieldset.account-settings button {
+fieldset.type-1 button {
 	clear: both;
 	margin-top: 1em;
 	float: right;
 }
 
-fieldset.account-settings p {
-	margin-bottom: 2em; 
-}
+
+/* -------------------------------------------------------------------------------------
+/* fileupload-standard, custom settings */
+
+fieldset.fileupload-standard input[type='file'] { width: 28em; }
+
+
+/* -------------------------------------------------------------------------------------
+/* account-settings, custom settings */
 
 fieldset.account-settings input.avatar { width: 28em; }
 fieldset.account-settings input[readonly] { color: #999; }

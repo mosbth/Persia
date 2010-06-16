@@ -45,6 +45,18 @@ class CPageController {
 
 	// ------------------------------------------------------------------------------------
 	//
+	// For usability, get instance and load languagefile.
+	//
+	public static function GetInstanceAndLoadLanguage($aFilename) {
+		
+		self::GetInstance();
+		self::$iInstance->LoadLanguage($aFilename);
+		return self::$iInstance;
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
 	// Destructor
 	//
 	public function __destruct() {
