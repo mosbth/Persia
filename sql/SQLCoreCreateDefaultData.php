@@ -12,7 +12,7 @@
 $db = CDatabaseController::GetInstance();
 
 // Get pagecontroller helpers to enable language support.
-$pc = new CPageController();
+$pc = CPageController::GetInstance();
 $pc->LoadLanguage(__FILE__);
 
 // Create the query

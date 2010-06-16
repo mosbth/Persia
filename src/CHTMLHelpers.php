@@ -38,6 +38,23 @@ class CHTMLHelpers {
 	//
 	// Create a positive (Ok/Success) feedback message for the user.
 	//
+	public static function GetHTMLForNavigationPath($aList) {
+/*
+<ul class='nav-standard nav-path'>
+	<li><a href='{$link}ucp'>User control panel</a>
+	<li>&gt; <a href='{$link}ucp'>ucp</a>
+	<li>&gt; <a href='{$link}ucp'>ucp</a>
+</ul>
+*/
+
+		return "<span class='userFeedbackPositive'>{$aMessage}</span>";
+	}
+	
+	
+	// ------------------------------------------------------------------------------------
+	//
+	// Create a positive (Ok/Success) feedback message for the user.
+	//
 	public static function GetHTMLUserFeedbackPositive($aMessage) {
 		return "<span class='userFeedbackPositive'>{$aMessage}</span>";
 	}

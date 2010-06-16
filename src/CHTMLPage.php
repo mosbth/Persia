@@ -24,7 +24,7 @@ class CHTMLPage {
 	//
 	public function __construct() { 
 	
-		$this->iPc = new CPageController();
+		$this->iPc = CPageController::GetInstance();
 		$this->iPc->LoadLanguage(__FILE__);
 	}
 
@@ -130,7 +130,7 @@ EOD;
 		$pc = $this->iPc;
 		$uc = CUserController::GetInstance();
 		$gravatar = $uc->GetGravatar();
-		$gravatar = empty($gravatar) ? '' : "<a href='?{$m}p=account-settings'><img src='{$gravatar}' alt=''></a>";
+		$gravatar = empty($gravatar) ? '' : "<a href='?{$m}p=ucp'><img src='{$gravatar}' alt=''></a>";
 
 		$html = "";
 
@@ -140,7 +140,7 @@ EOD;
 
     	$admHtml = "";
       if($uc->IsAdministrator()) {
-      	$admHtml = "<a href='?{$m}p=admin'>{$pc->lang['ADMIN']}</a> ";
+      	$admHtml = "<a href='?{$m}p=acp'>{$pc->lang['ADMIN']}</a> ";
       }
        
       $accountname = $uc->GetAccountName();
@@ -148,7 +148,7 @@ EOD;
 <div id='loginbar'>
 	<p>
 	{$gravatar}
-	<a href='?{$m}p=account-settings'>{$accountname}</a>  	
+	<a href='?{$m}p=ucp'>{$accountname}</a>  	
 	{$admHtml} 
 	<a href='?{$m}p=logoutp'>{$pc->lang['LOGOUT']}</a>
 	</p>

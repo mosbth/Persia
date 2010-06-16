@@ -13,32 +13,35 @@
 //
 // Get pagecontroller helpers. Useful methods to use in most pagecontrollers
 //
-$pc = new CPageController();
+$pc = CPageController::GetInstance();
 $pc->LoadLanguage(__FILE__);
+
+
+// -------------------------------------------------------------------------------------------
+//
+// User controller, get info about the current user
+//
+$uc 		= CUserController::GetInstance();
+$userId	= $uc->GetAccountId();
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Interception Filter, controlling access, authorithy and other checks.
 //
-$intFilter = new CInterceptionFilter();
-
+$intFilter = CInterceptionFilter::GetInstance();
 $intFilter->FrontControllerIsVisitedOrDie();
-//$intFilter->UserIsSignedInOrRecirectToSignIn();
-//$intFilter->UserIsMemberOfGroupAdminOrDie();
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
+// Always check whats coming in...
 //
 $submitAction	= $pc->POSTisSetOrSetDefault('submit');
 $redirect			= $pc->POSTisSetOrSetDefault('redirect');
 $redirectFail	= $pc->POSTisSetOrSetDefault('redirect-fail');
 $silentLogin	= $pc->POSTisSetOrSetDefault('silent-login');
-
-// Always check whats coming in...
-//$pc->IsNumericOrDie($topicId, 0);
 
 
 // -------------------------------------------------------------------------------------------
@@ -101,7 +104,7 @@ else if($submitAction == 'account-create') {
 	//
 	// Execute the database query to make the update
 	//
-	$db = new CDatabaseController();
+	$db = CDatabaseController::GetInstance();
 	$mysqli = $db->Connect();
 
 	// Prepare query

@@ -28,7 +28,7 @@ class CDatabaseController {
 	//
 	// Constructor
 	//
-	public function __construct() {
+	protected function __construct() {
 		
 		//
 		// Store a pointer to the latest instance of the class. 
@@ -38,7 +38,7 @@ class CDatabaseController {
 
 		$this->iMysqli = FALSE;		
 		
-		$this->iPc = new CPageController();
+		$this->iPc = CPageController::GetInstance();
 		$this->iPc->LoadLanguage(__FILE__);	
 
 		//

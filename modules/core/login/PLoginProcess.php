@@ -20,22 +20,30 @@
 //
 // Get pagecontroller helpers. Useful methods to use in most pagecontrollers
 //
-$pc = new CPageController();
+$pc = CPageController::GetInstance();
 $pc->LoadLanguage(__FILE__);
+
+
+// -------------------------------------------------------------------------------------------
+//
+// User controller, get info about the current user
+//
+$uc = CUserController::GetInstance();
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Interception Filter, controlling access, authorithy and other checks.
 //
-$intFilter = new CInterceptionFilter();
+$intFilter = CInterceptionFilter::GetInstance();
 $intFilter->FrontControllerIsVisitedOrDie();
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
-//
+// Always check whats coming in...
+// 
 $submit				= $pc->POSTisSetOrSetDefault('submit');
 $account			= $pc->POSTisSetOrSetDefault('account');
 $password 		= $pc->POSTisSetOrSetDefault('password');
@@ -81,7 +89,7 @@ if(empty($account) || empty($password)) {
 //
 // Get database connection
 //
-$db = new CDatabaseController();
+$db = CDatabaseController::GetInstance();
 $mysqli = $db->Connect();
 
 

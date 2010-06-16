@@ -14,7 +14,7 @@
 //
 // Get pagecontroller helpers. Useful methods to use in most pagecontrollers
 //
-$pc = new CPageController();
+$pc = CPageController::GetInstance();
 $pc->LoadLanguage(__FILE__);
 
 
@@ -30,10 +30,9 @@ $userId	= $uc->GetAccountId();
 //
 // Interception Filter, controlling access, authorithy and other checks.
 //
-$intFilter = new CInterceptionFilter();
-
+$intFilter = CInterceptionFilter::GetInstance();
 $intFilter->FrontControllerIsVisitedOrDie();
-$intFilter->UserIsSignedInOrRecirectToSignIn();
+$intFilter->UserIsSignedInOrRedirectToSignIn();
 $intFilter->UserIsCurrentUserOrMemberOfGroupAdminOr403($userId);
 
 
@@ -41,14 +40,14 @@ $intFilter->UserIsCurrentUserOrMemberOfGroupAdminOr403($userId);
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 // Always check whats coming in...
-//
+// 
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Get content of file archive from database
 //
-$db 		= new CDatabaseController();
+$db = CDatabaseController::GetInstance();
 $mysqli = $db->Connect();
 
 // Create the query

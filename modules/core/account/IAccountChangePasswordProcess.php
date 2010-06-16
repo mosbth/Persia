@@ -55,7 +55,7 @@ else if($password1 != $password2) {
 }
 
 // Execute the database query to make the update
-$db = new CDatabaseController();
+$db = CDatabaseController::GetInstance();
 $mysqli = $db->Connect();
 
 // Prepare query

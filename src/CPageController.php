@@ -14,6 +14,7 @@ class CPageController {
 	//
 	// Internal variables
 	//
+	protected static $iInstance = NULL;
 	public $lang = Array();
 	
 
@@ -21,10 +22,24 @@ class CPageController {
 	//
 	// Constructor
 	//
-	public function __construct() {
+	protected function __construct() {
+		$_SESSION['history3'] = CPageController::SESSIONisSetOrSetDefault('history2');
 		$_SESSION['history2'] = CPageController::SESSIONisSetOrSetDefault('history1');
 		$_SESSION['history1'] = CPageController::CurrentURL();
 		//print_r($_SESSION);
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Singleton, get the instance or create a new one.
+	//
+	public static function GetInstance() {
+		
+		if(self::$iInstance == NULL) {
+			self::$iInstance = new CPageController();
+		}
+		return self::$iInstance;
 	}
 
 

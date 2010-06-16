@@ -60,12 +60,16 @@ switch($gPage) {
 	case 'account-forgot-pwd3p':	if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword3Process.php'); break;
 	case 'account-forgot-pwd4':		if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword4.php'); break;
 
+	// User Control Panel (UCP), default
+	case 'ucp':			require_once(TP_PAGESPATH . 'ucp/PUserControlPanel.php'); break;
+
 	// User Control Panel (UCP), Maintain account profile
-	case 'account-settings':			require_once(TP_PAGESPATH . 'account/PAccountSettings.php'); break;
-	case 'account-update':				require_once(TP_PAGESPATH . 'account/PAccountSettingsProcess.php'); break;
+	case 'ucp-account-settings':			require_once(TP_PAGESPATH . 'ucp/PAccountSettings.php'); break;
+	case 'ucp-account-update':				require_once(TP_PAGESPATH . 'ucp/PAccountSettingsProcess.php'); break;
 
 	// User Control Panel (UCP), Filearchive
-	case 'ucp-filearchive':		require_once(TP_PAGESPATH . 'account/PFileArchive.php'); break;
+	case 'ucp-filearchive':		require_once(TP_PAGESPATH . 'ucp/PFileArchive.php'); break;
+	case 'ucp-fileupload':		require_once(TP_PAGESPATH . 'ucp/PFileUpload.php'); break;
 
 	//
 	// Administration

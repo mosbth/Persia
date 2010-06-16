@@ -13,19 +13,31 @@
 //
 // Get pagecontroller helpers. Useful methods to use in most pagecontrollers
 //
-$pc = new CPageController();
+$pc = CPageController::GetInstance();
 //$pc->LoadLanguage(__FILE__);
+
+
+// -------------------------------------------------------------------------------------------
+//
+// User controller, get info about the current user
+//
+$uc 		= CUserController::GetInstance();
+$userId	= $uc->GetAccountId();
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Interception Filter, controlling access, authorithy and other checks.
 //
-$intFilter = new CInterceptionFilter();
-
+$intFilter = CInterceptionFilter::GetInstance();
 $intFilter->FrontControllerIsVisitedOrDie();
-//$intFilter->UserIsSignedInOrRecirectToSignIn();
-//$intFilter->UserIsMemberOfGroupAdminOrDie();
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Take care of _GET/_POST variables. Store them in a variable (if they are set).
+// Always check whats coming in...
+// 
 
 
 // -------------------------------------------------------------------------------------------

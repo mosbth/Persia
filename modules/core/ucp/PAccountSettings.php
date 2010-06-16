@@ -14,7 +14,7 @@
 //
 // Get pagecontroller helpers. Useful methods to use in most pagecontrollers
 //
-$pc = new CPageController();
+$pc = CPageController::GetInstance();
 $pc->LoadLanguage(__FILE__);
 
 
@@ -30,10 +30,9 @@ $userId	= $uc->GetAccountId();
 //
 // Interception Filter, controlling access, authorithy and other checks.
 //
-$intFilter = new CInterceptionFilter();
-
+$intFilter = CInterceptionFilter::GetInstance();
 $intFilter->FrontControllerIsVisitedOrDie();
-$intFilter->UserIsSignedInOrRecirectToSignIn();
+$intFilter->UserIsSignedInOrRedirectToSignIn();
 $intFilter->UserIsCurrentUserOrMemberOfGroupAdminOr403($userId);
 
 
@@ -41,7 +40,7 @@ $intFilter->UserIsCurrentUserOrMemberOfGroupAdminOr403($userId);
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 // Always check whats coming in...
-//
+// 
 
 
 // -------------------------------------------------------------------------------------------
@@ -49,7 +48,7 @@ $intFilter->UserIsCurrentUserOrMemberOfGroupAdminOr403($userId);
 // Create a new database object, connect to the database, get the query and execute it.
 // Relates to files in directory TP_SQLPATH.
 //
-$db 	= new CDatabaseController();
+$db = CDatabaseController::GetInstance();
 $mysqli = $db->Connect();
 
 $query = <<< EOD
@@ -109,8 +108,8 @@ include(dirname(__FILE__) . '/IUserControlPanel.php');
 //
 global $gModule;
 
-$action 	= "?m={$gModule}&amp;p=account-update";
-$redirect = "?m={$gModule}&amp;p=account-settings";
+$action 	= "?m={$gModule}&amp;p=ucp-account-update";
+$redirect = "?m={$gModule}&amp;p=ucp-account-settings";
 $imageLink = WS_IMAGES;
 
 // Get and format messages from session if they are set

@@ -17,7 +17,7 @@
 //
 // Enable language support for error messages
 //
-$pc = new CPageController();
+$pc = CPageController::GetInstance();
 $pc->LoadLanguage(__FILE__);
 
 

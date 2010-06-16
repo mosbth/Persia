@@ -17,6 +17,7 @@ class CInterceptionFilter {
 	//
 	// Internal variables
 	//
+	protected static $iInstance = NULL;
 	protected $iUc;
 	protected $iPc;
 
@@ -28,7 +29,7 @@ class CInterceptionFilter {
 	public function __construct() { 
 		$this->iUc = CUserController::GetInstance();
 
-		$this->iPc = new CPageController();
+		$this->iPc = CPageController::GetInstance();
 		$this->iPc->LoadLanguage(__FILE__);	
 	}
 
@@ -38,6 +39,19 @@ class CInterceptionFilter {
 	// Destructor
 	//
 	public function __destruct() { ; }
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Singleton, get the instance or create a new one.
+	//
+	public static function GetInstance() {
+		
+		if(self::$iInstance == NULL) {
+			self::$iInstance = new CInterceptionFilter();			
+		}
+		return self::$iInstance;
+	}
 
 
 	// ------------------------------------------------------------------------------------
@@ -59,10 +73,10 @@ class CInterceptionFilter {
 	//
 	// Check if user has signed in or redirect user to sign in page
 	//
-	public function UserIsSignedInOrRecirectToSignIn() {
+	public function UserIsSignedInOrRedirectToSignIn() {
 		
 		if(!$this->iUc->IsAuthenticated()) { 
-			require(TP_PAGESPATH . 'login/PLogin.php');
+			$this->iPc->RedirectToModuleAndPage('', 'login', '');
 		}
 	}
 

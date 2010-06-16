@@ -42,29 +42,50 @@ global $gModule, $gPage;
 
 $link = "?m={$gModule}&amp;p=";
 
-$items = Array(
-	'account-settings' => $pc->lang['UCP_MENU_ACCOUNT'],
-	'ucp-filearchive' => $pc->lang['UCP_MENU_FILEARCHIVE'],
+// Where are we in the navigation tree?
+$navigationPath =  Array(
+	$pc->lang['USER_CONTROL_PANEL'] => "{$link}ucp",
 );
 
+// Items to display on the tab-menu
+$items = Array(
+	'ucp-account-settings' => $pc->lang['UCP_MENU_ACCOUNT'],
+	'ucp-filearchive' => $pc->lang['UCP_MENU_FILEARCHIVE'],
+	'ucp-fileupload' => $pc->lang['UCP_MENU_FILEUPLOAD'],
+);
+
+// Generate item list and update navigationpath with current
 $htmlItems = "";
 foreach($items as $key => $val) {
-	$current = ($gPage == $key) ? " class='current'" : "";
+	$current = '';
+	if($gPage == $key) {
+		$current = " class='current'";
+		$navigationPath[$val] = "{$link}{$key}";
+	}
 	$htmlItems .= "<li{$current}><a href='{$link}{$key}'>{$val}</a>";
 }
 
+// Generate item list and update navigationpath with current
+$htmlPath = "";
+foreach($navigationPath as $key => $val) {
+	$htmlPath .= "<li><a href='{$val}'>{$key}</a> &gt;";
+}
+$htmlPath = substr($htmlPath, 0, -5);
+
 $htmlMenuBar = <<< EOD
 <div class='section'>
+	<ul class='nav-standard nav-path'>
+		{$htmlPath}
+	</ul>
 	<h1>{$pc->lang['UCP_TITLE']}</h1>
 	<p>{$pc->lang['UCP_DESCRIPTION']}</p>
 </div> <!-- section -->
-
+ 
 <div class='section'>
 	<ul class='nav-standard nav-menu-tab'>
 		{$htmlItems}
 	</ul>
 </div> <!-- section -->
-
 EOD;
 
 
