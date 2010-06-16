@@ -1,0 +1,28 @@
+/* =====================================================================================
+ *
+ * 
+ * Definitions related to displaying source code. 
+ * 
+ * 
+ */
+ 
+
+/* -------------------------------------------------------------------------------------
+/* Code the standard way */
+
+code.standard-box {
+	display: block;
+	margin: 1em 0 1em 1em;
+	padding: 1em 0.5em 1em 0.5em;
+	border: 0.1em solid #95959F;
+	border-left: 0.5em solid #77777F;
+	background-color: #white;
+}
+
+
+/* -------------------------------------------------------------------------------------
+/* OBSOLETE, to be removed */
+
+/* To display code. */
+fieldset.code {}
+
