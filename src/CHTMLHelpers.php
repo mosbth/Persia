@@ -129,6 +129,7 @@ class CHTMLHelpers {
 	// @return string
 	//
 	public static function FormatDateDiff($start, $end=null) {
+
 		if(!($start instanceof DateTime)) {
 			$start = new DateTime($start);
 		}

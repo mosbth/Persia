@@ -19,17 +19,15 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Persia. If not, see <http://www.gnu.org/licenses/>.
 //
-// File: PFileUploadProcess.php
+// File: PFileDetailsProcess.php
 //
-// Description: Upload and store files in the users file archive.
-//
-// Author: Mikael Roos, mos@bth.se
+// Description: Save details/metadata about a file.
 //
 // Known issues:
-// Update to include and show off "all" features.
+// -
 //
 // History: 
-// 2010-06-16: Created.
+// 2010-06-18: Created.
 //
 
 
@@ -62,17 +60,11 @@ $if->UserIsSignedInOrRedirectToSignIn();
 // Always check whats coming in...
 //
 $userId		= $uc->GetAccountId();
-$userName	= $uc->GetAccountName();
+//$userName	= $uc->GetAccountName();
 
 $submitAction	= $pc->POSTisSetOrSetDefault('do-submit');
-//$redirect			= $pc->POSTisSetOrSetDefault('redirect');
-//$redirectFail	= $pc->POSTisSetOrSetDefault('redirect-fail');
-
-// All files are stored in the users own directory
-$archivePath 	= $pc->AddTrailingSeparatorIfNeeded(FILE_ARCHIVE_PATH) . $userName . DIRECTORY_SEPARATOR;
-if(!is_dir($archivePath)) {
-	mkdir($archivePath);
-}
+$redirect			= $pc->POSTisSetOrSetDefault('redirect');
+$redirectFail	= $pc->POSTisSetOrSetDefault('redirect-fail');
 
 
 // -------------------------------------------------------------------------------------------
@@ -87,71 +79,93 @@ if(false) {
 
 // -------------------------------------------------------------------------------------------
 //
-// Upload single file and return html success/failure message. Ajax-like.
+// Save details/metadata on a file.
 // 
-else if($submitAction == 'upload-return-html') {
+else if($submitAction == 'save-file-details') {
 
-	// http://www.php.net/manual/en/features.file-upload.errors.php
-	$errorMessages = Array (
-		UPLOAD_ERR_INI_SIZE 	=> $pc->lang['UPLOAD_ERR_INI_SIZE'],
-		UPLOAD_ERR_FORM_SIZE 	=> $pc->lang['UPLOAD_ERR_FORM_SIZE'],
-		UPLOAD_ERR_PARTIAL 		=> $pc->lang['UPLOAD_ERR_PARTIAL'],
-		UPLOAD_ERR_NO_FILE 		=> $pc->lang['UPLOAD_ERR_NO_FILE'],
-		UPLOAD_ERR_NO_TMP_DIR => $pc->lang['UPLOAD_ERR_NO_TMP_DIR'],
-		UPLOAD_ERR_CANT_WRITE => $pc->lang['UPLOAD_ERR_CANT_WRITE'],
-		UPLOAD_ERR_EXTENSION 	=> $pc->lang['UPLOAD_ERR_EXTENSION'],		
-	);
-	
-	// Check that uploaded filesize is within limit
-	if ($_FILES['file']['size'] > FILE_MAX_SIZE) {
-		exit(CHTMLHelpers::GetHTMLUserFeedbackNegative(sprintf($pc->lang['FILE_UPLOAD_FAILED_MAXSIZE'], FILE_MAX_SIZE)));
+	// Get the input
+	$fileid		= $pc->POSTisSetOrSetDefault('fileid');
+	$name 		= $pc->POSTisSetOrSetDefault('name');
+	$mimetype = $pc->POSTisSetOrSetDefault('mimetype');
+
+	// Check boundaries for whats coming in
+	// is name within size?
+	if(!(is_numeric($fileid) && $fileid > 0)) {
+		$pc->SetSessionMessage('failed', $pc->lang['FILEID_INVALID']);
+		$pc->RedirectTo($redirectFail);
 	}
 
-	// Create a unique filename
-	do {
-		$file = uniqid();
-		$path = $archivePath . $file;
-	} while(file_exists($path));
+	// is name within size?
+	if(mb_strlen($name) > $db->_['CSizeFileName']) {
+		$pc->SetSessionMessage('failed', sprintf($pc->lang['FILENAME_TO_LONG'], $db->_['CSizeFileName']));
+		$pc->RedirectTo($redirectFail);
+	}
 
-	// Move the uploaded file
-	if (!move_uploaded_file($_FILES['file']['tmp_name'], $archivePath . $file)) {
-		exit(CHTMLHelpers::GetHTMLUserFeedbackNegative(sprintf($pc->lang['FILE_UPLOAD_FAILED'], $_FILES['file']['error'], $errorMessages[$_FILES['file']['error']])));
+	// is mimetype within size?
+	if(mb_strlen($mimetype) > $db->_['CSizeMimetype']) {
+		$pc->SetSessionMessage('failed', sprintf($pc->lang['MIMETYPE_TO_LONG'], $db->_['CSizeMimetype']));
+		$pc->RedirectTo($redirectFail);
 	}
 	
-	// Store metadata of the file in the database
+	// Save metadata of the file in the database
 	$mysqli = $db->Connect();
+
+	// Create the query
 	$query 	= <<< EOD
-CALL {$db->_['PInsertFile']}('{$userId}', '{$_FILES['file']['name']}', '{$path}', '{$file}', {$_FILES['file']['size']}, '{$_FILES['file']['type']}', @fileId, @status);
-SELECT @fileId AS fileid, @status AS status;
+CALL {$db->_['PFileDetailsUpdate']}({$fileid}, '{$userId}', '{$name}', '{$mimetype}', @success);
+SELECT @success AS success;
 EOD;
+
+	// Perform the query and manage results
 	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
-
-	// Check if the unique key was accepted, else, create a new one and try again
+	
 	$row = $results[1]->fetch_object();
-	$status = $row->status;
-	$fileid = $row->fileid;
-	$results[1]->close();
-
-	// Did the unique key update correctly?	
-	if($row->status) {
-		// Create query to set new unique name
-		do {
-			$newid = uniqid();
-			$query 	= <<< EOD
-CALL {$db->_['PFileUpdateUniqueName']}('{$fileid}', '{$newid}', @status);
-SELECT @status AS status;
-EOD;
-
-			$row 		= $results[1]->fetch_object();
-			$status = $row->status;
-			$results[1]->close();
-		} while ($status != 0);
+	if($row->success) {
+		$pc->SetSessionMessage('failed', $db->_['FFileCheckPermissionMessages'][$row->success]);
+		$pc->RedirectTo($redirectFail);
 	}
 
+	$results[1]->close();
 	$mysqli->close();
+	
+	$pc->SetSessionMessage('success', $pc->lang['FILE_DETAILS_UPDATED']);
+	$pc->RedirectTo($redirect);
+}
 
-	// Echo out the result
-	exit(CHTMLHelpers::GetHTMLUserFeedbackPositive(sprintf($pc->lang['FILE_UPLOAD_SUCCESS'], $_FILES['file']['name'], $_FILES['file']['size'], $_FILES['file']['type'])));
+
+// -------------------------------------------------------------------------------------------
+//
+// Set a file to be deleted/not deleted.
+// 
+else if($submitAction == 'delete-file' || $submitAction == 'restore-file') {
+
+	// Get the input
+	$fileid		= $pc->POSTisSetOrSetDefault('fileid');
+	$deleteOrRestore = ($submitAction == 'delete-file') ? 1 : (($submitAction == 'restore-file') ? 2 : 0);
+	
+	// Save metadata of the file in the database
+	$mysqli = $db->Connect();
+
+	// Create the query
+	$query 	= <<< EOD
+CALL {$db->_['PFileDetailsDeleted']}({$fileid}, '{$userId}', '{$deleteOrRestore}', @success);
+SELECT @success AS success;
+EOD;
+
+	// Perform the query and manage results
+	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
+	
+	$row = $results[1]->fetch_object();
+	if($row->success) {
+		$pc->SetSessionMessage('failed', $db->_['FFileCheckPermissionMessages'][$row->success]);
+		$pc->RedirectTo($redirectFail);
+	}
+
+	$results[1]->close();
+	$mysqli->close();
+	
+	$pc->SetSessionMessage('success', $pc->lang['FILE_DETAILS_UPDATED']);
+	$pc->RedirectTo($redirect);
 }
 
 

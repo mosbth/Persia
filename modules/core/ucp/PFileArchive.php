@@ -80,22 +80,27 @@ EOD;
 $results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 
 global $gModule;
-$editDetails = "?m={$gModule}&amp;p=file-details&amp;file=";
+$editDetails 	= "?m={$gModule}&amp;p=ucp-filedetails&amp;file=";
+$download 		= "?m={$gModule}&amp;p=download&amp;file=";
 
 $htmlFileItems = '';
 $i=0;
 while($row = $results[0]->fetch_object()) {    
 	$htmlFileItems .= "<tr class='r".($i++%2+1)."'>";
+	$created 	= $row->created;
+	$modified = $row->modified;
 	$htmlFileItems .= <<<EOD
 <td><a href='{$editDetails}{$row->uniquename}' title='{$pc->lang['CLICK_TO_EDIT']}'>{$row->name}</a></td>
 <td>{$row->mimetype}</td>
-<td>{$row->size}</td>
-<td>{$row->created}</td>
-<td>{$row->modified}</td>
+<td class='number'>{$row->size}</td>
+<td class='date'>{$created}</td>
+<td class='date'>{$modified}</td>
+<td><a href='{$download}{$row->uniquename}'>{$pc->lang['FILE_DOWNLOAD']}</a></td>
 </tr>
 EOD;
 }
 
+$htmlFilearchiveIsEmpty = "";
 if(empty($htmlFileItems)) {
 	$htmlFilearchiveIsEmpty = "<p><em>{$pc->lang['ARCHIVE_IS_EMPTY']}</e,></p>";
 }
@@ -108,7 +113,7 @@ $mysqli->close();
 //
 // UCP. Include the menu-bar for the User Control Panel.
 //
-$htmlUcp = "";
+$htmlCp = "";
 require(dirname(__FILE__) . '/IUserControlPanel.php');
 
 
@@ -117,7 +122,7 @@ require(dirname(__FILE__) . '/IUserControlPanel.php');
 // Create HTML for page
 //
 $htmlMain = <<< EOD
-{$htmlUcp}
+{$htmlCp}
 <div class='section'>
 	<p>{$pc->lang['FILEARCHIVE_DESCRIPTION']}</p>
 </div> <!-- section -->
@@ -125,12 +130,14 @@ $htmlMain = <<< EOD
 <div class='section'>
 	<table class='standard full-width'>
 		<caption></caption>
+		<colgroup></colgroup>
 		<thead>
 			<th>{$pc->lang['FILE_NAME']}</th>
 			<th>{$pc->lang['FILE_TYPE']}</th>
 			<th>{$pc->lang['FILE_SIZE']}</th>
 			<th>{$pc->lang['FILE_CREATED']}</th>
 			<th>{$pc->lang['FILE_MODIFIED']}</th>
+			<th>{$pc->lang['FILE_DOWNLOAD']}</th>
 		</thead>
 		<tbody>{$htmlFileItems}</tbody>
 		<tfoot></tfoot>

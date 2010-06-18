@@ -19,6 +19,7 @@ $lang = Array(
 	'FILE_SIZE' => "Size",
 	'FILE_CREATED' => "Created",
 	'FILE_MODIFIED' => "Modified",
+	'FILE_DOWNLOAD' => "Download",
 
 	'CLICK_TO_EDIT' => "Click to view/edit details of the file",
 

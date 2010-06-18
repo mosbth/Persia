@@ -19,9 +19,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Persia. If not, see <http://www.gnu.org/licenses/>.
 //
-// File: PFileUploadProcess.php
+// File: PTemplateProcess.php
 //
-// Description: Upload and store files in the users file archive.
+// Description: Template showing off how the processing-pagecontrollers usually look like.
 //
 // Author: Mikael Roos, mos@bth.se
 //
@@ -68,12 +68,6 @@ $submitAction	= $pc->POSTisSetOrSetDefault('do-submit');
 //$redirect			= $pc->POSTisSetOrSetDefault('redirect');
 //$redirectFail	= $pc->POSTisSetOrSetDefault('redirect-fail');
 
-// All files are stored in the users own directory
-$archivePath 	= $pc->AddTrailingSeparatorIfNeeded(FILE_ARCHIVE_PATH) . $userName . DIRECTORY_SEPARATOR;
-if(!is_dir($archivePath)) {
-	mkdir($archivePath);
-}
-
 
 // -------------------------------------------------------------------------------------------
 //
@@ -91,6 +85,7 @@ if(false) {
 // 
 else if($submitAction == 'upload-return-html') {
 
+/*
 	// http://www.php.net/manual/en/features.file-upload.errors.php
 	$errorMessages = Array (
 		UPLOAD_ERR_INI_SIZE 	=> $pc->lang['UPLOAD_ERR_INI_SIZE'],
@@ -152,6 +147,7 @@ EOD;
 
 	// Echo out the result
 	exit(CHTMLHelpers::GetHTMLUserFeedbackPositive(sprintf($pc->lang['FILE_UPLOAD_SUCCESS'], $_FILES['file']['name'], $_FILES['file']['size'], $_FILES['file']['type'])));
+*/
 }
 
 

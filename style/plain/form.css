@@ -8,25 +8,17 @@
  
 
 /* -------------------------------------------------------------------------------------
-/* General settings */
-/* Login form*/
-/* Editor settings */
-/* Account profile settings */
+/* General settings for fieldset/forms */
 
-/* fieldset */
-fieldset.loginform,
-fieldset.editor,
-fieldset.accountsettings,
 fieldset.standard {
-	paddisng: 0.2em 0.5em 1em 0.5em;
 	border: 2px #ccc solid;
 }
 
-/* Wrapper around whole form */
+/* Wrapper around form items */
 fieldset.standard div.form-wrapper {}
 
 /* Wrapper around button bar */
-fieldset.standard div.buttonbar {}
+/*fieldset.standard div.buttonbar {}  IS REALLY NEEDED? */
 
 /* Status output from form being submitted */
 fieldset.standard div.form-status {}
@@ -40,9 +32,7 @@ fieldset.standard legend {
 	text-transform: uppercase; /* capitalize uppercase */
 	font-weight: bold; 
 }
-fieldset.standard legend:first-letter {
-	font-size: 1.3em;
-}
+fieldset.standard legend:first-letter { font-size: 1.3em; }
 
 /* label */
 fieldset.standard label {
@@ -53,9 +43,6 @@ fieldset.standard label {
 }
 
 /* input */
-fieldset.loginform input,
-fieldset.editor input, 
-fieldset.accountsettings input,
 fieldset.standard input {
 	width: 24em;
 	height: 2em;
@@ -63,11 +50,16 @@ fieldset.standard input {
 }
 
 /* textarea */
-fieldset.editor textarea,
 fieldset.standard textarea {
 	font-family: inherit;
 	font-size: inherit;
 	padding: 0.5em
+}
+
+/* buttonbar, container for several buttons  */
+fieldset.standard div.buttonbar {
+	float: right;
+	margin-top: 1em;
 }
 
 /* button */
@@ -75,17 +67,6 @@ fieldset.standard button {
 	clear: left;
 	height: 2em;
 	font-size: 1.2em;
-	text-transform: uppercase; /* capitalize uppercase */
-	font-weight: bold; 
-}
-
-/* Custom button settings */
-fieldset.loginform button,
-fieldset.editor button,
-fieldset.accountsettings button {
-	min-width: 12em;
-	height: 2em;
-	font-size: 1.3em;
 	text-transform: uppercase; /* capitalize uppercase */
 	font-weight: bold; 
 }
@@ -102,9 +83,14 @@ fieldset.standard button.delete {
 	text-indent: 15px; 
 }
 
-fieldset.standard p {
-	margin-bottom: 2em; 
+/* status message */
+fieldset.standard div.form-status {
+	float: left;
+	margin-top: 1em;
 }
+
+fieldset.standard p { margin-bottom: 2em; }
+fieldset.standard input[readonly] { color: #999; }
 
 /* To hide a element */
 .hide {display: none;}
@@ -118,11 +104,6 @@ fieldset.type-1 {}
 fieldset.type-1 div.form-wrapper {
 	margin: auto;
 	width: 100%;
-}
-
-fieldset.type-1 div.form-status {
-	float: left;
-	margin-top: 1em;
 }
 
 fieldset.type-1 label {
@@ -142,6 +123,29 @@ fieldset.type-1 button {
 
 
 /* -------------------------------------------------------------------------------------
+/* type-2, centered, input has full width, label above */
+
+fieldset.type-2 {}
+
+fieldset.type-2 div.form-wrapper {
+	margin: auto;
+	width: 90%;
+}
+
+fieldset.type-2 label {
+	float: right;
+	display: block;
+	width: 100%;
+	margin-top: 0.5em;
+}
+
+fieldset.type-2 input {
+	float: right;
+	width: 100%;
+}
+
+
+/* -------------------------------------------------------------------------------------
 /* fileupload-standard, custom settings */
 
 fieldset.fileupload-standard input[type='file'] { width: 28em; }
@@ -151,39 +155,46 @@ fieldset.fileupload-standard input[type='file'] { width: 28em; }
 /* account-settings, custom settings */
 
 fieldset.account-settings input.avatar { width: 28em; }
-fieldset.account-settings input[readonly] { color: #999; }
+
+
 
 
 /* -------------------------------------------------------------------------------------
-/* filedetails, custom settings */
+/* EDIT THESE TO COMPLY WITH NEW FORMAT OF FORMS /
+/* Login form*/
+/* Editor settings */
+/* Account profile settings */
 
-fieldset.filedetails {}
-
-fieldset.filedetails div.form-wrapper {
-	margin: auto;
-	width: 90%;
+/* fieldset */
+fieldset.loginform,
+fieldset.editor {
+	paddisng: 0.2em 0.5em 1em 0.5em;
+	border: 2px #ccc solid;
 }
 
-fieldset.filedetails div.buttonbar {
-	float: right;
-	margin-top: 1em;
+/* input */
+fieldset.loginform input,
+fieldset.editor input {
+	width: 24em;
+	height: 2em;
+	font-size: 1.3em;
 }
 
-fieldset.filedetails div.form-status {
-	float: left;
-	margin-top: 1em;
+/* textarea */
+fieldset.editor textarea {
+	font-family: inherit;
+	font-size: inherit;
+	padding: 0.5em
 }
 
-fieldset.filedetails label {
-	float: right;
-	display: block;
-	width: 100%;
-	margin-top: 0.5em;
-}
-
-fieldset.filedetails input {
-	float: right;
-	width: 100%;
+/* Custom button settings */
+fieldset.loginform button,
+fieldset.editor button {
+	min-width: 12em;
+	height: 2em;
+	font-size: 1.3em;
+	text-transform: uppercase; /* capitalize uppercase */
+	font-weight: bold; 
 }
 
 

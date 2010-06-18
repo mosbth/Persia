@@ -30,7 +30,7 @@
 // Consider removing dependency on jquery_form-plugin and even jquery.
 //
 // History: 
-// 2010-06-16: Moved to ucp and rewritten for first "official" use.
+// 2010-06-16: Created.
 //
 
 
@@ -118,7 +118,7 @@ EOD;
 //
 // UCP. Include the menu-bar for the User Control Panel.
 //
-$htmlUcp = "";
+$htmlCp = "";
 require(dirname(__FILE__) . '/IUserControlPanel.php');
 
 
@@ -128,12 +128,12 @@ require(dirname(__FILE__) . '/IUserControlPanel.php');
 //
 global $gModule;
 
-$action 			= "?m={$gModule}&amp;p=uploadp";
+$action 			= "?m={$gModule}&amp;p=ucp-fileuploadp";
 $maxFileSize 	= FILE_MAX_SIZE;
 $htmlLimitations = sprintf($pc->lang['FILEUPLOAD_LIMITATIONS'], round(FILE_MAX_SIZE/1000000, 2)); 
 
 $htmlMain = <<< EOD
-{$htmlUcp}
+{$htmlCp}
 <div class='section'>
 	<p>{$pc->lang['FILEUPLOAD_DESCRIPTION']}</p>
 </div> <!-- section -->
@@ -147,7 +147,7 @@ $htmlMain = <<< EOD
 				<p>{$htmlLimitations}</p>
 				<label for='file'>{$pc->lang['FILEUPLOAD_LABEL']}</label>
 				<input name='file' type='file'>
-				<button type='submit' name='do-fileupload' value='upload-return-html'>Upload</button>
+				<button type='submit' name='do-submit' value='upload-return-html'>Upload</button>
 				<div class='form-status'><span id='status1'></span></div> 
 			</div> <!-- wrapper -->
 		</fieldset>

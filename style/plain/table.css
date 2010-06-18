@@ -40,6 +40,10 @@ table.standard td {
 	-ms-word-wrap: break-word; /* IE8 */	
 }
 
+table.standard .number { text-align: right; }
+table.standard .date { text-align: center; }
+
+table.standard col.header { background: #ddd; }
 
 /*
 colgroup {}

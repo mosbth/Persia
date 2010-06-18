@@ -77,7 +77,7 @@ $if->UserIsCurrentUserOrMemberOfGroupAdminOr403($uc->GetAccountId());
 //
 // UCP. Include the menu-bar for the User Control Panel.
 //
-$htmlUcp = "";
+$htmlCp = "";
 require(dirname(__FILE__) . '/IUserControlPanel.php');
 
 
@@ -86,7 +86,7 @@ require(dirname(__FILE__) . '/IUserControlPanel.php');
 // Create HTML for page
 //
 $htmlMain = <<< EOD
-{$htmlUcp}
+{$htmlCp}
 
 EOD;
 

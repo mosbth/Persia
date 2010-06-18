@@ -61,6 +61,7 @@ ul.nav-path li a {
 
 /* -------------------------------------------------------------------------------------
 /* Navigation items, nav-standard and enhanced as nav-menu-tab, a tabbing like menu bar */
+/* 2 levels */
 
 ul.nav-menu-tab {
 	border-bottom: 0.1em solid #95959F;
@@ -105,6 +106,71 @@ ul.nav-menu-tab li.current a:hover {
 	text-decoration: underline;
 }
 
+ul.nav-menu-tab ul.level2 {
+	display: inline;
+	margin: 0;
+	padding: 0;
+	float: left;
+}
+
+ul.nav-menu-tab ul.level2 li a { 
+	background: url(../../img/css/button-background.png) #fff repeat-x;
+	background-position: bottom left;
+	border: 0.5em solid #95959F;
+	text-decoration: none;
+	text-align: center;
+	padding: 0.3em 1.1em 0.5em 1.0em;
+}
+
+
+
+/* -------------------------------------------------------------------------------------
+/* Navigation items, nav-standard and enhanced as nav-menu-tab, a tabbing like menu bar */
+/* 1 level only */
+/*
+ul.nav-menu-tab {
+	border-bottom: 0.1em solid #95959F;
+	padding: 0.3em 0em 0.5em 0.2em;
+}
+
+ul.nav-menu-tab li {
+	display: inline;
+	margin: 0;
+	padding-left: 0.2em;
+}
+
+ul.nav-menu-tab li a { 
+	background: url(../../img/css/button-background.png) #fff repeat-x;
+	background-position: bottom left;
+	border: 0.1em solid #95959F;
+	text-decoration: none;
+	text-align: center;
+	padding: 0.3em 1.1em 0.5em 1.0em;
+}
+
+ul.nav-menu-tab li a:hover {
+	background-position: center left;
+	text-decoration: underline;
+	border: 0.1em solid #77777F;
+}
+
+ul.nav-menu-tab li a:active {
+	background-position: top left;
+	text-decoration: underline;
+	border: 0.1em solid #4A4A4F;
+	padding: 0.3em 1.0em 0.5em 1.1em;
+}
+
+ul.nav-menu-tab li.current a {
+	background-position: top left;
+	border-bottom: 0.1em solid transparent;
+}
+
+ul.nav-menu-tab li.current a:hover {
+	background-position: center left;
+	text-decoration: underline;
+}
+*/
 
 /* -------------------------------------------------------------------------------------
 /* Navigation items, nav-standard but looking as a button */

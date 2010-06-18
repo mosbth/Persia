@@ -70,6 +70,13 @@ switch($gPage) {
 	// User Control Panel (UCP), Filearchive
 	case 'ucp-filearchive':		require_once(TP_PAGESPATH . 'ucp/PFileArchive.php'); break;
 	case 'ucp-fileupload':		require_once(TP_PAGESPATH . 'ucp/PFileUpload.php'); break;
+	case 'ucp-fileuploadp':		require_once(TP_PAGESPATH . 'ucp/PFileUploadProcess.php'); break;
+	case 'ucp-filedetails':		require_once(TP_PAGESPATH . 'ucp/PFileDetails.php'); break;
+	case 'ucp-filedetailsp':	require_once(TP_PAGESPATH . 'ucp/PFileDetailsProcess.php'); break;
+
+	// File download
+	case 'download':		require_once(TP_PAGESPATH . 'file/PFileDownload.php'); break;
+	case 'downloadp':		require_once(TP_PAGESPATH . 'file/PFileDownloadProcess.php'); break;
 
 	//
 	// Administration

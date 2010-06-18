@@ -119,7 +119,7 @@ $mysqli->close();
 //
 // UCP. Include the menu-bar for the User Control Panel.
 //
-$htmlUcp = "";
+$htmlCp = "";
 require(dirname(__FILE__) . '/IUserControlPanel.php');
 
 
@@ -140,7 +140,7 @@ $messages = $helpers->GetHTMLForSessionMessages(
 	Array('mailFailed', 'changePwdFailed'));
 
 $htmlMain = <<< EOD
-{$htmlUcp}
+{$htmlCp}
 <div class='section'>
 	<p>{$pc->lang['SETTINGS_DESCRIPTION']}</p>
 </div> <!-- section -->
