@@ -303,8 +303,10 @@ class CPageController {
 		$refToThisPage = "http";
 		$refToThisPage .= (@$_SERVER["HTTPS"] == "on") ? 's' : '';
 		$refToThisPage .= "://";
-		$serverPort = ($_SERVER["SERVER_PORT"] == "80") ? '' : ":{$_SERVER['SERVER_PORT']}";
-		$refToThisPage .= $serverPort . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
+		$serverPort = ($_SERVER["SERVER_PORT"] == "80") ? '' : 
+										($_SERVER["SERVER_PORT"] == 443 && (@$_SERVER["HTTPS"] == "on")) ? '' 
+											: ":{$_SERVER['SERVER_PORT']}";
+		$refToThisPage .= $_SERVER["SERVER_NAME"] . $serverPort . $_SERVER["REQUEST_URI"];
 		
 		return $refToThisPage;
 	}
