@@ -54,8 +54,20 @@ class CDatabaseController {
 		//$this->lang = array_merge($this->lang, $lang);
 		require_once(TP_SQLPATH . 'config.php');
 		
-		self::$iTablesAndProcedures = &$DB_Tables_And_Procedures;
-		$this->_ = &$DB_Tables_And_Procedures;
+		//self::$iTablesAndProcedures = &$DB_Tables_And_Procedures;
+		//$this->_ = &$DB_Tables_And_Procedures;
+		self::$iTablesAndProcedures = $DB_Tables_And_Procedures;
+		$this->_ = &self::$iTablesAndProcedures;
+
+		//
+		// Load config-files from module
+		//
+		global $gModulesAvailable;
+		$DB_Tables_And_Procedures = "";
+		if(isset($gModulesAvailable['dada'])) {
+			require_once($gModulesAvailable['dada'] . '/sql/config.php');
+			self::$iTablesAndProcedures = array_merge(self::$iTablesAndProcedures, $DB_Tables_And_Procedures);
+		}
 	}
 
 
@@ -181,7 +193,11 @@ class CDatabaseController {
 	public function LoadSQL($aFile) {
 		
 		$mysqli = $this->iMysqli;
-		require(TP_SQLPATH . $aFile);
+		if(substr($aFile, 0, 1) == '/') {
+			require($aFile);
+		} else {
+			require(TP_SQLPATH . $aFile);
+		}
 		return $query;
 	}
 	

@@ -139,12 +139,8 @@ $messages = $helpers->GetHTMLForSessionMessages(
 	Array('mailSuccess', 'changePwdSuccess'),
 	Array('mailFailed', 'changePwdFailed'));
 
-$htmlMain = <<< EOD
-{$htmlCp}
-<div class='section'>
-	<p>{$pc->lang['SETTINGS_DESCRIPTION']}</p>
-</div> <!-- section -->
-
+// User can change password, if enabled in config
+$htmlChangePassword = <<< EOD
 <div id='s-pwd' class='section'>
 	<form action='{$action}' method='post'>
 		<input type='hidden' name='redirect' 					value='{$redirect}'>
@@ -154,19 +150,102 @@ $htmlMain = <<< EOD
 	 		<legend>{$pc->lang['BASIC_ACCOUNT_INFO']}</legend>
 		 	<div class='form-wrapper'>
 				<p>{$pc->lang['DESCRIPTION_ACCOUNT']}</p>
+
 				<label for="account">{$pc->lang['ACCOUNT_NAME_LABEL']}</label>
 				<input class='account' type='text' name='account' readonly='readonly' value='{$account}'>
+
 				<label for="password1">{$pc->lang['ACCOUNT_PASSWORD_LABEL']}</label>
 				<input class='password' type='password' name='password1'>
+
 				<label for="password2">{$pc->lang['ACCOUNT_PASSWORD_AGAIN_LABEL']}</label>
 				<input class='password' type='password' name='password2'>
-				<button type='submit' name='submit' value='change-password'>{$pc->lang['CHANGE_PASSWORD']}</button>
+
+				<div class='buttonbar'>
+					<button type='submit' name='submit' value='change-password'>{$pc->lang['CHANGE_PASSWORD']}</button>
+				</div> <!-- buttonbar -->
+
 				<div class='form-status'>{$messages['changePwdSuccess']}{$messages['changePwdFailed']}</div> 
 		 </div> <!-- wrapper -->
 		</fieldset>
 	</form>
 </div> <!-- section -->
 
+EOD;
+if(!USER_CHANGE_PASSWORD) { $htmlChangePassword = ""; }
+
+
+// User can set avatar, if enabled in config
+$htmlAvatar = <<< EOD
+<div id='s-avatar' class='section'>
+	<form action='{$action}' method='post'>
+		<input type='hidden' name='redirect' 					value='{$redirect}#s-avatar'>
+		<input type='hidden' name='redirect-failure' 	value='{$redirect}#s-avatar'>
+		<input type='hidden' name='accountid' 				value='{$userId}'>
+		<fieldset class='standard type-1 account-settings'>
+	 		<legend>{$pc->lang['AVATAR_SETTINGS']}</legend>
+		 	<div class='form-wrapper'>
+				<p>{$pc->lang['AVATAR_INFO']}</p>
+
+				<label for='avatar'>{$pc->lang['AVATAR_LABEL']}</label>
+				<input id ='avatar' class='avatar' type='url' list='avatars' name='avatar' value='{$avatar}' placeholder="{$pc->lang['INSERT_LINK_TO_AVATAR_HERE']}" autocomplete>
+					<!--
+					<datalist id='avatars'>
+					<option>{$imageLink}man_60x60.png</option>
+					<option>{$imageLink}woman_60x60.png</option>
+					<option>{$imageLink}egg_60x60.png</option>
+					</datalist>
+					-->
+
+				<div class='buttonbar'>
+					<button type='submit' name='submit' value='change-avatar'>{$pc->lang['UPDATE_AVATAR']}</button>
+				</div> <!-- buttonbar -->
+
+				<div class='form-status'><img src='{$avatar}' alt=''></div> 
+		 </div> <!-- wrapper -->
+		</fieldset>
+	</form>
+</div> <!-- section -->
+
+EOD;
+if(!USER_AVATAR) { $htmlAvatar = ""; }
+
+
+// User can set gravatar, if enabled in config
+$htmlGravatar = <<< EOD
+<div id='s-gravatar' class='section'>
+	<form action='{$action}' method='post'>
+		<input type='hidden' name='redirect' 					value='{$redirect}#s-gravatar'>
+		<input type='hidden' name='redirect-failure' 	value='{$redirect}#s-gravatar'>
+		<input type='hidden' name='accountid' 				value='{$userId}'>
+		<fieldset class='standard type-1 account-settings'>
+	 		<legend>{$pc->lang['GRAVATAR_SETTINGS']}</legend>
+		 	<div class='form-wrapper'>
+				<p>{$pc->lang['GRAVATAR_INFO']}</p>
+
+				<label for='gravatar'>{$pc->lang['GRAVATAR_LABEL']}</label>
+				<input id='gravatar' class='gravatar' name='gravatar' type='email' value='{$gravatar}' placeholder="{$pc->lang['INSERT_EMAIL_FOR_GRAVATAR_HERE']}" autocomplete>
+
+				<div class='buttonbar'>
+					<button type='submit' name='submit' value='change-gravatar'>{$pc->lang['UPDATE_GRAVATAR']}</button>
+				</div> <!-- buttonbar -->
+
+				<div class='form-status'><img src='{$gravatarsmall}' alt=''></div> 
+		 </div> <!-- wrapper -->
+		</fieldset>
+	</form>
+</div> <!-- section -->
+
+EOD;
+if(!USER_GRAVATAR) { $htmlGravatar = ""; }
+
+
+$htmlMain = <<< EOD
+{$htmlCp}
+<div class='section'>
+	<p>{$pc->lang['SETTINGS_DESCRIPTION']}</p>
+</div> <!-- section -->
+
+{$htmlChangePassword}
 
 <div id='s-mail' class='section'>
 	<form action='{$action}' method='post'>
@@ -177,61 +256,24 @@ $htmlMain = <<< EOD
 	 		<legend>{$pc->lang['MAIL_SETTINGS']}</legend>
 		 	<div class='form-wrapper'>
 				<p>{$pc->lang['DESCRIPTION_MAIL']}</p>
+
 				<label for='mail'>{$pc->lang['MAIL_LABEL']}</label>
 				<input id='mail' class='mail' type='email' name='mail' value='{$mail}' placeholder="{$pc->lang['INSERT_MAIL_HERE']}" autocomplete
 					required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*\.(\w{2}|(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum))$" title="{$pc->lang['MAIL_FORMAT_REQUIRED']}">
-				<button type='submit' name='submit' value='change-mail'>{$pc->lang['UPDATE_MAIL']}</button>
+
+				<div class='buttonbar'>
+					<button type='submit' name='submit' value='change-mail'>{$pc->lang['UPDATE_MAIL']}</button>
+				</div> <!-- buttonbar -->
+
 				<div class='form-status'>{$messages['mailSuccess']}{$messages['mailFailed']}</div> 
 		 </div> <!-- wrapper -->
 		</fieldset>
 	</form>
 </div> <!-- section -->
 
+{$htmlAvatar}
 
-<div id='s-avatar' class='section'>
-	<form action='{$action}' method='post'>
-		<input type='hidden' name='redirect' 					value='{$redirect}#s-avatar'>
-		<input type='hidden' name='redirect-failure' 	value='{$redirect}#s-avatar'>
-		<input type='hidden' name='accountid' 				value='{$userId}'>
-		<fieldset class='standard type-1 account-settings'>
-	 		<legend>{$pc->lang['AVATAR_SETTINGS']}</legend>
-		 	<div class='form-wrapper'>
-				<p>{$pc->lang['AVATAR_INFO']}</p>
-				<label for='avatar'>{$pc->lang['AVATAR_LABEL']}</label>
-				<input id ='avatar' class='avatar' type='url' list='avatars' name='avatar' value='{$avatar}' placeholder="{$pc->lang['INSERT_LINK_TO_AVATAR_HERE']}" autocomplete>
-					<!--
-					<datalist id='avatars'>
-					<option>{$imageLink}man_60x60.png</option>
-					<option>{$imageLink}woman_60x60.png</option>
-					<option>{$imageLink}egg_60x60.png</option>
-					</datalist>
-					-->
-				<button type='submit' name='submit' value='change-avatar'>{$pc->lang['UPDATE_AVATAR']}</button>
-				<div class='form-status'><img src='{$avatar}' alt=''></div> 
-		 </div> <!-- wrapper -->
-		</fieldset>
-	</form>
-</div> <!-- section -->
-
-
-<div id='s-gravatar' class='section'>
-	<form action='{$action}' method='post'>
-		<input type='hidden' name='redirect' 					value='{$redirect}#s-gravatar'>
-		<input type='hidden' name='redirect-failure' 	value='{$redirect}#s-gravatar'>
-		<input type='hidden' name='accountid' 				value='{$userId}'>
-		<fieldset class='standard type-1 account-settings'>
-	 		<legend>{$pc->lang['GRAVATAR_SETTINGS']}</legend>
-		 	<div class='form-wrapper'>
-				<p>{$pc->lang['GRAVATAR_INFO']}</p>
-				<label for='gravatar'>{$pc->lang['GRAVATAR_LABEL']}</label>
-				<input id='gravatar' class='gravatar' name='gravatar' type='email' value='{$gravatar}' placeholder="{$pc->lang['INSERT_EMAIL_FOR_GRAVATAR_HERE']}" autocomplete>
-				<button type='submit' name='submit' value='change-gravatar'>{$pc->lang['UPDATE_GRAVATAR']}</button>
-				<div class='form-status'><img src='{$gravatarsmall}' alt=''></div> 
-		 </div> <!-- wrapper -->
-		</fieldset>
-	</form>
-</div> <!-- section -->
-
+{$htmlGravatar}
 
 <div id='a-groups' class='section'>
 	<form>

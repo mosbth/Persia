@@ -17,9 +17,7 @@
 //
 // Enable language support for error messages
 //
-$pc = CPageController::GetInstance();
-$pc->LoadLanguage(__FILE__);
-
+$pc = CPageController::GetInstanceAndLoadLanguage(__FILE__);
 
 $DB_Tables_And_Procedures = Array(
 

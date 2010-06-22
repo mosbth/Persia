@@ -58,6 +58,7 @@ fieldset.standard textarea {
 
 /* buttonbar, container for several buttons  */
 fieldset.standard div.buttonbar {
+	clear: both;
 	float: right;
 	margin-top: 1em;
 }
@@ -109,15 +110,10 @@ fieldset.type-1 div.form-wrapper {
 fieldset.type-1 label {
 	clear: both;
 	float: left;
+	padding-top: 0.8em;
 }
 
 fieldset.type-1 input {
-	float: right;
-}
-
-fieldset.type-1 button {
-	clear: both;
-	margin-top: 1em;
 	float: right;
 }
 

@@ -150,7 +150,8 @@ BEGIN
 
 	-- Take care of empty emailadresses
 	IF aEmail IS NULL OR ASCII(aEmail) = 0 THEN
-		SET link = '';
+		SELECT CONCAT('http://www.gravatar.com/avatar/?d=identicon&amp;s=', aSize)
+			INTO link;
 	ELSE
 		SELECT CONCAT('http://www.gravatar.com/avatar/', MD5(LOWER(aEmail)), '.jpg?d=identicon&amp;s=', aSize)
 			INTO link;

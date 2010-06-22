@@ -145,9 +145,14 @@ $htmlMain = <<< EOD
 			<legend>{$pc->lang['FILEUPLOAD_LEGEND']}</legend>
 		 	<div class='form-wrapper'>
 				<p>{$htmlLimitations}</p>
+
 				<label for='file'>{$pc->lang['FILEUPLOAD_LABEL']}</label>
 				<input name='file' type='file'>
-				<button type='submit' name='do-submit' value='upload-return-html'>Upload</button>
+
+				<div class='buttonbar'>
+					<button type='submit' name='do-submit' value='upload-return-html'>Upload</button>
+				</div> <!-- buttonbar -->
+
 				<div class='form-status'><span id='status1'></span></div> 
 			</div> <!-- wrapper -->
 		</fieldset>

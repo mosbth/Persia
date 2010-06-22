@@ -1,41 +1,66 @@
 <?php
 // ===========================================================================================
 //
+//		Persia (http://phpersia.org), software to build webbapplications.
+//    Copyright (C) 2010  Mikael Roos (mos@bth.se)
+//
+//    This file is part of Persia.
+//
+//    Persia is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Persia is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Persia. If not, see <http://www.gnu.org/licenses/>.
+//
 // File: PLogin.php
 //
 // Description: Show a login-form, ask for user name and password.
 //
 // Author: Mikael Roos, mos@bth.se
 //
+// Known issues:
+// -
+//
+// History: 
+// 2010-06-22: New structure.
+//
+
 
 // -------------------------------------------------------------------------------------------
 //
-// Get pagecontroller helpers. Useful methods to use in most pagecontrollers
+// Get common controllers, uncomment if not used in current pagecontroller.
 //
-$pc = CPageController::GetInstance();
-$pc->LoadLanguage(__FILE__);
-
-
-// -------------------------------------------------------------------------------------------
+// $pc, Page Controller helpers. Useful methods to use in most pagecontrollers
+// $uc, User Controller. Keeps information/permission on user currently signed in.
+// $if, Interception Filter. Useful to check constraints before entering a pagecontroller.
+// $db, Database Controller. Manages all database access.
 //
-// User controller, get info about the current user
-//
+$pc = CPageController::GetInstanceAndLoadLanguage(__FILE__);
 $uc = CUserController::GetInstance();
+$if = CInterceptionFilter::GetInstance();
+$db = CDatabaseController::GetInstance();
 
 
 // -------------------------------------------------------------------------------------------
 //
-// Interception Filter, controlling access, authorithy and other checks.
+// Perform checks before continuing, what's to be fullfilled to enter this controller?
 //
-$intFilter = CInterceptionFilter::GetInstance();
-$intFilter->FrontControllerIsVisitedOrDie();
+$if->FrontControllerIsVisitedOrDie();
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 // Always check whats coming in...
-// 
+//
+// Remember accountname if login failed
 $account	= strip_tags($pc->GetAndClearSessionMessage('loginAccount'));
 
 
@@ -62,14 +87,12 @@ $messages = $helpers->GetHTMLForSessionMessages(
 	Array(), 
 	Array('loginFailed'));
 
+// Only display local login button if enabled.
+$loginButton = "<button type='submit' name='submit' value='login-local'>{$pc->lang['LOGIN']}</button>";
+$loginButton = LOCAL_LOGIN ? $loginButton : '';
+
 // Only display LDAP login button if LDAP is enabled.
-$ldapButton = <<<EOD
-<tr>
-<td colspan='2' style='text-align: right;'>
-<button type='submit' name='submit' value='login-ldap'>Login (LDAP)</button>
-</td>
-</tr>
-EOD;
+$ldapButton = "<button type='submit' name='submit' value='login-ldap'>{$pc->lang['LOGIN_LDAP']}</button>";
 $ldapButton = defined('LDAP_AUTH_SERVER') ? $ldapButton : '';
 
 // Only display if enabled
@@ -83,51 +106,48 @@ $forgotPassword = FORGOT_PASSWORD ? $forgotPassword : '';
 
 // Create main HTML
 $htmlMain = <<<EOD
-<h1>{$pc->lang['LOGIN']}</h1>
+<div class='section'>
+	<h1>{$pc->lang['LOGIN']}</h1>
+	<p>{$pc->lang['LOGIN_INTRO_TEXT']}</p> 
+</div> <!-- section -->
 
-<p>{$pc->lang['LOGIN_INTRO_TEXT']}</p> <!-- {$pc->lang['LOGIN_USING_ACCOUNT_OR_EMAIL']} -->
+<div class='section'>
+	<form action='{$action}' method='post'>
+		<input type='hidden' name='redirect' 			value='{$redirect}'>
+		<input type='hidden' name='redirect-fail' value='{$redirectFail}'>
+		
+		<fieldset class='standard type-1'>
+	 		<!--<legend></legend>-->
+		 	<div class='form-wrapper'>
 
-<form action='{$action}' method='POST'>
-<input type='hidden' name='redirect' 			value='{$redirect}'>
-<input type='hidden' name='redirect-fail' value='{$redirectFail}'>
+				<p></p>
+				
+				<label for="account">{$pc->lang['USER']}</label>
+				<input class='account' type='text' name='account' value='{$account}' autofocus>
+				
+				<label for="password">{$pc->lang['PASSWORD']}</label>
+				<input class='password' type='password' name='password'>
+				
+				<div class='buttonbar'>
+					{$loginButton}
+					{$ldapButton}
+				</div> <!-- buttonbar -->
 
-<fieldset class='loginform'>
-<table width='99%'>
-<tr>
-<td><label for="account">{$pc->lang['USER']}</label></td>
-<td style='text-align: right;'><input class='account' type='text' name='account' value='{$account}'></td>
-</tr>
-<tr>
-<td><label for="account">{$pc->lang['PASSWORD']}</label></td>
-<td style='text-align: right;'><input class='password' type='password' name='password'></td>
-</tr>
-
-<tr>
-<td colspan='2' style='text-align: right;'>
-<button type='submit' name='submit' value='login-local'>{$pc->lang['LOGIN']}</button>
-</td>
-</tr>
-
-{$ldapButton}
-
-<tr><td colspan='2'>{$messages['loginFailed']}</td></tr>
-
-</table>
-</fieldset>
-</form>
-
+				<div class='form-status'>{$messages['loginFailed']}</div> 
+		 </div> <!-- wrapper -->
+		</fieldset>
+	</form>
 <p>{$createNewUser}{$forgotPassword}</p>
+</div> <!-- section -->
 
 EOD;
 
 $htmlLeft 	= "";
 $htmlRight	= <<<EOD
-<section>
-<h3 class='columnMenu'>Various ways to sign in</h3>
-<p>
-Now supporting both local database and LDAP.
-</p>
-</section>
+<div class='section'>
+	<h3 class='columnMenu'>{$pc->lang['LOGIN_SIDEBAR_TITLE']}</h3>
+	<p>{$pc->lang['LOGIN_SIDEBAR_INFO']}</p>
+</div> <!-- section -->
 
 EOD;
 
@@ -136,9 +156,8 @@ EOD;
 //
 // Create and print out the resulting page
 //
-$page = new CHTMLPage();
-
-$page->printPage($pc->lang['LOGIN'], $htmlLeft, $htmlMain, $htmlRight);
+CHTMLPage::GetInstance()->printPage($pc->lang['LOGIN'], $htmlLeft, $htmlMain, $htmlRight);
 exit;
+
 
 ?>

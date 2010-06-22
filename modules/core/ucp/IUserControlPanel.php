@@ -48,18 +48,20 @@ $cp = Array(
 	),
 	'items-level1' => Array(
 		'ucp-account-settings' => $pc->lang['UCP_MENU_ACCOUNT'],
-		'ucp-filearchive' => $pc->lang['UCP_MENU_FILEARCHIVE'],
-		'ucp-fileupload' => $pc->lang['UCP_MENU_FILEUPLOAD'],	
 	),
 	'items-level2' => Array(
 		'ucp-filearchive' => Array(
 			'ucp-filearchive' => $pc->lang['UCP_MENU_FILEARCHIVE'],
 			'ucp-filedetails' => $pc->lang['UCP_MENU_FILEDETAILS'],
-			//'ucp-fileupload' => $pc->lang['UCP_MENU_FILEUPLOAD'],	
 		),
 	),
 );
 
+// Is file upload enabled?
+if(defined('FILE_ARCHIVE_PATH')) {
+	$cp['items-level1']['ucp-filearchive'] = $pc->lang['UCP_MENU_FILEARCHIVE'];
+	$cp['items-level1']['ucp-fileupload']  = $pc->lang['UCP_MENU_FILEUPLOAD'];	
+}
 
 // Walkthrough level2 items if defined
 $htmlItems2 = '';

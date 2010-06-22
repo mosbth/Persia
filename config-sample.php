@@ -120,8 +120,14 @@ define('WS_MAILSIGNATURE',
 // Display the following actions if they are enabled.
 // Set true to enable, false to disable.
 // 
+define('LOCAL_LOGIN', true);
 define('CREATE_NEW_ACCOUNT', true);
 define('FORGOT_PASSWORD', true);
+
+// User Control Panel
+define('USER_CHANGE_PASSWORD', true);
+define('USER_AVATAR', true);
+define('USER_GRAVATAR', true);
 
 
 // -------------------------------------------------------------------------------------------
