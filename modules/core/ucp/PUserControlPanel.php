@@ -1,15 +1,6 @@
 <?php
 // ===========================================================================================
 //
-// File: PUserControlPanel.php
-//
-// Description: First page for User Control Panel (ucp). Display menu.
-//
-//
-// Author: Mikael Roos, mos@bth.se
-//
-// ===========================================================================================
-//
 //		Persia (http://phpersia.org), software to build webbapplications.
 //    Copyright (C) 2010  Mikael Roos (mos@bth.se)
 //
@@ -35,7 +26,7 @@
 // Author: Mikael Roos, mos@bth.se
 //
 // Known issues:
-// Update to include and show off "all" features.
+// -
 //
 // History: 
 // 2010-06-16: New structure for instantiating controllers. Included license message.

@@ -538,6 +538,7 @@ BEGIN
 	BEGIN
 		CALL {$db->_['PCreateAccount']}(aUserId, aUserAccount, aUserAccount, 'PLAIN', status);
 		CALL {$db->_['PChangeAccountEmail']}(aUserId, aMail, status);
+		CALL {$db->_['PChangeAccountGravatar']}(aUserId, aMail);
 	END;
 	END IF;
 

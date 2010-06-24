@@ -188,17 +188,29 @@ EOD;
 
 	// ------------------------------------------------------------------------------------
 	//
-	// Prepare the header-div of the page
+	// Prepare the navigation bar and display the item that is currently "selected".
 	//
 	public function PrepareNavigationBar() {
 	
-		global $gPage;
+		global $gModule, $gPage;
 		$menu = unserialize(MENU_NAVBAR);
 		
+		$urlNav = Array();
 		$nav = "<ul>";
 		foreach($menu as $key => $value) {
-			$selected = (strcmp($gPage, substr($value, 3)) == 0) ? " class='sel'" : "";
-			$nav .= "<li{$selected}><a href='{$value}'>{$key}</a></li>";
+			$sel = '';
+			parse_str(parse_url(htmlspecialchars_decode($value), PHP_URL_QUERY), $urlNav);
+			if(!isset($urlNav['m'])) {
+				$urlNav['m'] = $gModule;	
+			}
+			if($urlNav['m'] == $gModule) {
+				if($urlNav['p'] == $gPage) {
+					$sel = " class='sel'";
+				} else {
+					// Support two levels of navigation menu
+				}
+			}
+			$nav .= "<li{$sel}><a href='{$value}'>{$key}</a></li>";
 		}
 		$nav .= '</ul>';
 	
@@ -214,17 +226,11 @@ EOD;
 	public function PreparePageBody($aBodyLeft, $aBodyMain, $aBodyRight) {
 
 		// General error/success message from session
-		$htmlErrorMessage 	= CPageController::GetSessionMessage('errorMessage');
-		$htmlSuccessMessage = CPageController::GetSessionMessage('successMessage');
-
-		$img = WS_IMAGES;
-		if(!empty($htmlErrorMessage)) {
-			$htmlErrorMessage = "<div class='errorMessage'><img alt='' src='{$img}/psst_60x60.png'>{$htmlErrorMessage}</div>";
-		}
-
-		if(!empty($htmlSuccessMessage)) {
-			$htmlSuccessMessage = "<div class='successMessage'><img alt='' src='{$img}/silk/accept.png'>{$htmlSuccessMessage}</div>";
-		}
+		$htmlMessage 	= CHTMLHelpers::GetHTMLUserFeedback('positive', CPageController::GetAndClearSessionMessage('userFeedbackPositive'));
+		$htmlMessage .= CHTMLHelpers::GetHTMLUserFeedback('negative', CPageController::GetAndClearSessionMessage('userFeedbackNegative'));
+		$htmlMessage .= CHTMLHelpers::GetHTMLUserFeedback('info', CPageController::GetAndClearSessionMessage('userFeedbackInfo'));
+		$htmlMessage .= CHTMLHelpers::GetHTMLUserFeedback('warning', CPageController::GetAndClearSessionMessage('userFeedbackWarning'));
+		$htmlMessage .= CHTMLHelpers::GetHTMLUserFeedback('notice', CPageController::GetAndClearSessionMessage('userFeedbackNotice'));
 
 		// Stylesheet must support this
 		// 1, 2 or 3-column layout? 
@@ -244,8 +250,7 @@ EOD;
 
 		$html = <<<EOD
 <div id='body'> 											
-	{$htmlErrorMessage}
-	{$htmlSuccessMessage}
+	<div class='userFeedback'>{$htmlMessage}</div>
 	<div id='container_{$cols}'>
 		<div id='content_{$cols}'>
 			{$bodyLeft}
@@ -319,46 +324,6 @@ pageTracker._trackPageview();
 EOD;
 		}
 
-		return $html;   
-	}
-	
-
-	// ------------------------------------------------------------------------------------
-	//
-	// Create a errormessage if its set in the SESSION
-	//
-	public function GetErrorMessage() {
-		$html = "";
-		if(isset($_SESSION['errorMessage'])) {    
-			$img = WS_IMAGES;
-			$html = <<<EOD
-<div class='errorMessage'>
-<img alt='' src='{$img}/psst_60x60.png'>
-{$_SESSION['errorMessage']}
-</div>
-EOD;
-			unset($_SESSION['errorMessage']);
-		}
-		return $html;   
-	}
-	
-
-	// ------------------------------------------------------------------------------------
-	//
-	// Create a successmessage if its set in the SESSION
-	//
-	public function GetSuccessMessage() {
-		$html = "";
-		if(isset($_SESSION['successMessage'])) {    
-			$img = WS_IMAGES;
-			$html = <<<EOD
-<div class='successMessage'>
-<img alt='' src='{$img}/silk/accept.png'>
-{$_SESSION['successMessage']}
-</div>
-EOD;
-			unset($_SESSION['successMessage']);
-		}
 		return $html;   
 	}
 	

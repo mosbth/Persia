@@ -64,6 +64,27 @@ div.userFeedbackNegative {
 
 
 /* -------------------------------------------------------------------------------------
+/* Font braille, usally for the glider emblem */
+/* http://en.wikipedia.org/wiki/Hacker_Emblem */
+/*
+@font-face {
+	font-family: 'Braille';
+	src: url('http://kernest.com/embed/braille'), url('http://kernest.com/embed/braille#braille')  format('svg');
+}
+
+span.braille {
+	margin: 0;
+	padding: 0;
+	font-family: Braille;
+	letter-spacing: 0;
+	word-spacing: 0;
+	line-height: 0;
+	content: "U+282C";
+}
+*/
+
+
+/* -------------------------------------------------------------------------------------
 /* For the menu column, header */
 h3.columnMenu {
 	text-transform: uppercase;

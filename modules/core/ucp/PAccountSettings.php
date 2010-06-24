@@ -90,26 +90,11 @@ $gravatarsmall	= $row->gravatarsmall;
 $results[0]->close(); 
 
 // Get group memberships details 	
-$htmlGroups = <<<EOD
-<table class='standard'>
-<caption></caption>
-<thead>
-<tr>
-<th>{$pc->lang['GROUP_TH_NAME']}</th>
-<th>{$pc->lang['GROUP_TH_DESCRIPTION']}</th>
-</tr>
-</thead>
-<tbody>
-EOD;
+$htmlGroups = '';
 $i=0;
 while($row = $results[1]->fetch_object()) {    
 	$htmlGroups .= "<tr class='r".($i++%2+1)."'><td>{$row->groupname}</td><td>{$row->groupdescription}</td></tr>";
 }
-$htmlGroups .= <<<EOD
-</tbody>
-<tfoot></tfoot>
-</table>
-EOD;
 $results[1]->close(); 
 
 $mysqli->close();
@@ -281,7 +266,20 @@ $htmlMain = <<< EOD
 			<legend>{$pc->lang['GROUP_SETTINGS']}</legend>
 			<div class='form-wrapper'>
 				<p>{$pc->lang['GROUPMEMBER_OF_LABEL']}</p>
-				{$htmlGroups}
+
+				<table class='standard'>
+					<caption></caption>
+					<colgroup></colgroup>
+					<thead>
+						<tr>
+							<th>{$pc->lang['GROUP_TH_NAME']}</th>
+							<th>{$pc->lang['GROUP_TH_DESCRIPTION']}</th>
+						</tr>
+					</thead>
+					<tbody>{$htmlGroups}</tbody>
+					<tfoot></tfoot>
+				</table>
+				
 			</div> <!-- wrapper -->
 		</fieldset>
 	</form>

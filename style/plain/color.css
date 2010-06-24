@@ -21,6 +21,11 @@
 .border-2 {border-color: #77777F} /* darker, when hover */
 .border-3 {border-color: #4A4A4F} /* darkest, when pressed */
 
+/* paragraphs */
+.para-1 {color: #black} /* standard text */
+.para-2 {color: #white} /* inverted text */
+.para-3 {color: #999999} 	/* lighter text, in the background */
+
 
 /* -------------------------------------------------------------------------------------
 /* Pagestructure */
@@ -163,18 +168,37 @@ fieldset.code {
 	color: #111111;
 }
 
+
 /* -------------------------------------------------------------------------------------
  * User notices, feedback and messages
  */
+span.userFeedbackNotice,
+div.userFeedbackNotice { 
+	color: #999;
+	font-style: italic; 
+}
+
 span.userFeedbackPositive,
 div.userFeedbackPositive {
-	background: url('../../img/silk/tick.png') no-repeat;
+	background: url(../../img/silk/tick.png) no-repeat;
+}
+
+
+span.userFeedbackInfo,
+div.userFeedbackInfo {
+	background: url(../../img/silk/information.png) no-repeat;
+}
+
+span.userFeedbackWarning,
+div.userFeedbackWarning {
+	background: url(../../img/silk/exclamation.png) no-repeat; 
 }
 
 span.userFeedbackNegative,
 div.userFeedbackNegative {
-	background: url('../../img/silk/exclamation.png') no-repeat;
+	background: url(../../img/silk/exclamation.png) no-repeat;
 }
+
 
 /* -------------------------------------------------------------------------------------
  *

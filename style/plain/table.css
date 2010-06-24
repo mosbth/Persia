@@ -24,15 +24,23 @@ table.standard caption {
 	font-style: italic;
 }
 
+table.standard th {
+	border-top: 0.2em solid #999999;
+	border-bottom: 0.2em solid #999999;
+	background: #bbbbbb;
+	height: 2em;
+}
+
 table.standard tr { }
 table.standard tr.r1 {
-	background: #eee;
+	background: #f0f0f0;
 }
 table.standard tr.r2 {
-	background: #ddd;
+	background: #e0e0e0;
 }
+
 table.standard tr:hover {
-	background: #ccc;
+	background: #cccccc;
 }
 
 table.standard td {
@@ -42,6 +50,7 @@ table.standard td {
 
 table.standard .number { text-align: right; }
 table.standard .date { text-align: center; }
+table.standard .center { text-align: center; }
 
 table.standard col.header { background: #ddd; }
 
@@ -59,23 +68,24 @@ caption {}
 /* -------------------------------------------------------------------------------------
 /* Show/download file details */
 
-table.filedetails-show {}
+table.filedetails-show {
+}
 
 table.filedetails-show col.header {
-	background: #eee;
-	width: 12em;
 }
 
 table.filedetails-show td {
 	padding: 0.5em;
-	font-size: 1.3em;
+	font-size: 1.0em;
+	min-width: 10em;
 }
 
 table.filedetails-show caption {
-	caption-side: top; 
+	caption-side: bottom; 
 	padding-bottom: 0.5em;
 	text-align: left;
 	font-style: italic;
+	color: #999999;
 }
 
 

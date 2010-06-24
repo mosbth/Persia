@@ -66,9 +66,10 @@ $account	= strip_tags($pc->GetAndClearSessionMessage('loginAccount'));
 
 // -------------------------------------------------------------------------------------------
 //
-// Always redirect to latest visited page on success.
+// If came here by accessing protected page, then redirect to protected page again.
+// Else redirect to home.
 //
-$redirectTo = $pc->SESSIONisSetOrSetDefault('history2');
+$redirectTo = $pc->GetAndClearSessionMessage('redirectOnSignin', $pc->UrlToModuleAndPage('','home'));
 
 
 // -------------------------------------------------------------------------------------------

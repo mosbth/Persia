@@ -23,6 +23,7 @@ global $gPage;
 
 switch($gPage) {
 
+	// -------------------------------------------------------------------------------------------
 	//
 	// The home-page
 	//
@@ -31,12 +32,16 @@ switch($gPage) {
 	case 'template':	require_once(TP_PAGESPATH . 'home/PTemplate.php'); break;
 	case 'empty':			require_once(TP_PAGESPATH . 'home/PEmpty.php'); break;
 	
+	
+	// -------------------------------------------------------------------------------------------
 	//
 	// Install database
 	//
 	case 'install':		require_once(TP_PAGESPATH . 'install/PInstall.php'); break;
 	case 'installp':	require_once(TP_PAGESPATH . 'install/PInstallProcess.php'); break;
 	
+	
+	// -------------------------------------------------------------------------------------------
 	//
 	// Login, logout
 	//
@@ -44,8 +49,10 @@ switch($gPage) {
 	case 'loginp':	require_once(TP_PAGESPATH . 'login/PLoginProcess.php'); break;
 	case 'logoutp':	require_once(TP_PAGESPATH . 'login/PLogoutProcess.php'); break;
 
+
+	// -------------------------------------------------------------------------------------------
 	//
-	// User, profile and settings
+	// Create new account and reset password
 	//
 	
 	// Create new account
@@ -61,7 +68,11 @@ switch($gPage) {
 	case 'account-forgot-pwd3p':	if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword3Process.php'); break;
 	case 'account-forgot-pwd4':		if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword4.php'); break;
 
+
+	// -------------------------------------------------------------------------------------------
+	//
 	// User Control Panel (UCP), default
+	//
 	case 'ucp':			require_once(TP_PAGESPATH . 'ucp/PUserControlPanel.php'); break;
 
 	// User Control Panel (UCP), Maintain account profile
@@ -77,18 +88,29 @@ switch($gPage) {
 
 	// File download
 	case 'download':		require_once(TP_PAGESPATH . 'file/PFileDownload.php'); break;
-	case 'downloadp':		require_once(TP_PAGESPATH . 'file/PFileDownloadProcess.php'); break;
+	case 'download-now':		require_once(TP_PAGESPATH . 'file/PFileDownloadProcess.php'); break;
 
-	//
-	// Administration
-	//
-	//case 'admin':		require_once(TP_PAGESPATH . 'admin_users/PUsersList.php'); break;
 
+	// -------------------------------------------------------------------------------------------
+	//
+	// Admin Control Panel (UCP), default
+	//
+	case 'acp':			require_once(TP_PAGESPATH . 'acp/PAdminControlPanel.php'); break;
+
+	// Groups
+	case 'acp-groups':				require_once(TP_PAGESPATH . 'acp/PGroupList.php'); break;
+	case 'acp-groupdetails':	require_once(TP_PAGESPATH . 'acp/PGroupDetails.php'); break;
+	case 'acp-groupdetailsp':	require_once(TP_PAGESPATH . 'acp/PGroupDetailsProcess.php'); break;
+
+
+	// -------------------------------------------------------------------------------------------
 	//
 	// Directory listning
 	//
 	case 'ls':	require_once(TP_PAGESPATH . 'viewfiles/PListDirectory.php'); break;
+
 	
+	// -------------------------------------------------------------------------------------------
 	//
 	// Article (Forum Romanum 0.1 (0.01))
 	//
@@ -107,23 +129,8 @@ switch($gPage) {
 	case 'article-wymeditor':	require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEdit_WYMeditor.php'); break;
 	case 'article-markitup':	require_once(TP_PAGESPATH . 'forum/jseditors/PArticleEdit_markItUp.php'); break;
 
-	//
-	// Style Your Web, app_syw
-	// Example for working with stylesheets
-	//
-	/*
-	case 'install':		require_once(TP_PAGESPATH . 'app_syw/install/PInstall.php'); break;
-	case 'installp':	require_once(TP_PAGESPATH . 'app_syw/install/PInstallProcess.php'); break;
-	case 'home':		require_once(TP_PAGESPATH . 'app_syw/PIndex.php'); break;
-	case 'style':		require_once(TP_PAGESPATH . 'app_syw/PShowStyle.php'); break;
-	case 'minwidth':	require_once(TP_PAGESPATH . 'app_syw/PMinWidth.php'); break;
-	case 'centered':	require_once(TP_PAGESPATH . 'app_syw/PCentered.php'); break;
-	case '2cols':		require_once(TP_PAGESPATH . 'app_syw/P2Columns.php'); break;
-	case '3cols':		require_once(TP_PAGESPATH . 'app_syw/P3Columns.php'); break;
-	case '123cols':		require_once(TP_PAGESPATH . 'app_syw/P123Columns.php'); break;
-	case 'liquid':		require_once(TP_PAGESPATH . 'app_syw/P123Liquid.php'); break;
-	*/
 
+	// -------------------------------------------------------------------------------------------
 	//
 	// Rate My Professor, app_rmp
 	// Show, add, edit, delete professors
@@ -143,6 +150,7 @@ switch($gPage) {
 	*/
 	
 	/*
+	// -------------------------------------------------------------------------------------------
 	//
 	// Blog
 	//
@@ -152,12 +160,16 @@ switch($gPage) {
 	case 'post':		require_once(TP_PAGESPATH . 'blog/PPost.php'); break;
 	case 'poste':		require_once(TP_PAGESPATH . 'blog/PPostEdit.php'); break;
 	*/
+
 	
+	// -------------------------------------------------------------------------------------------
 	//
 	// Trying to access a forbidden page, or having no permissions.
 	//
 	case 'p403':	require_once(TP_MODULESPATH . '/core/home/P403.php'); break;
 
+
+	// -------------------------------------------------------------------------------------------
 	//
 	// Default case, trying to access some unknown page, should present some error message
 	// or show the home-page

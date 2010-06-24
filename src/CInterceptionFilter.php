@@ -76,6 +76,8 @@ class CInterceptionFilter {
 	public function UserIsSignedInOrRedirectToSignIn() {
 		
 		if(!$this->iUc->IsAuthenticated()) { 
+			$this->iPc->SetSessionMessage('redirectOnSignin', $this->iPc->CurrentURL());
+			$this->iPc->SetSessionMessage('infoMessage', $pc->lang['PAGE_NEEDS_SIGIN']);
 			$this->iPc->RedirectToModuleAndPage('', 'login', '');
 		}
 	}

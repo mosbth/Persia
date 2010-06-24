@@ -37,8 +37,8 @@ class CHTMLHelpers {
 	// ------------------------------------------------------------------------------------
 	//
 	// Create a positive (Ok/Success) feedback message for the user.
-	//
-	public static function GetHTMLForNavigationPath($aList) {
+	// WHAT IS THIS?
+//	public static function GetHTMLForNavigationPath($aList) {
 /*
 <ul class='nav-standard nav-path'>
 	<li><a href='{$link}ucp'>User control panel</a>
@@ -47,13 +47,14 @@ class CHTMLHelpers {
 </ul>
 */
 
-		return "<span class='userFeedbackPositive'>{$aMessage}</span>";
+/*		return "<span class='userFeedbackPositive'>{$aMessage}</span>";
 	}
-	
+*/	
 	
 	// ------------------------------------------------------------------------------------
 	//
 	// Create a positive (Ok/Success) feedback message for the user.
+	// OBSOLETE REPLACED BY GetHTMLUserFeedback('positive', $aMessage)
 	//
 	public static function GetHTMLUserFeedbackPositive($aMessage) {
 		return "<span class='userFeedbackPositive'>{$aMessage}</span>";
@@ -63,9 +64,38 @@ class CHTMLHelpers {
 	// ------------------------------------------------------------------------------------
 	//
 	// Create a negative (Failed) feedback message for the user.
+	// OBSOLETE REPLACED BY GetHTMLUserFeedback('negative', $aMessage)
 	//
 	public static function GetHTMLUserFeedbackNegative($aMessage) {
 		return "<span class='userFeedbackNegative'>{$aMessage}</span>";
+	}
+	
+	
+	// ------------------------------------------------------------------------------------
+	//
+	// Create a feedback message for the user.
+	// Type can be any of:
+	//  positive, negative, info, warning, notice
+	// CSS for these are in blockquote.css
+	//
+	public static function GetHTMLUserFeedback($aType, $aMessage, $spanOrDiv='span') {
+		
+		$aClass = '';
+		switch($aType) {
+			case 'positive': 	{$aClass = 'userFeedbackPositive';} break;
+			case 'negative': 	{$aClass = 'userFeedbackNegative';} break;
+			case 'warning': 	{$aClass = 'userFeedbackWarning';} break;
+			case 'info': 			{$aClass = 'userFeedbackInfo';} break;
+			case 'notice':
+			case 'default': 	{$aClass = 'userFeedbackNotice';} break;
+		}
+	
+		$tag = '';
+		if(!empty($aMessage)) {
+			$tag = "<{$spanOrDiv} class='{$aClass}'>{$aMessage}</{$spanOrDiv}>";
+		}
+		
+		return $tag;
 	}
 	
 	
@@ -80,11 +110,11 @@ class CHTMLHelpers {
 		$messages = Array();
 		foreach($aSuccessList as $val) {
 			$m = CPageController::GetAndClearSessionMessage($val);
-			$messages[$val] = empty($m) ? '' : self::GetHTMLUserFeedbackPositive($m);
+			$messages[$val] = empty($m) ? '' : self::GetHTMLUserFeedback('positive', $m);
 		}
 		foreach($aFailedList as $val) {
 			$m = CPageController::GetAndClearSessionMessage($val);
-			$messages[$val] = empty($m) ? '' : self::GetHTMLUserFeedbackNegative($m);
+			$messages[$val] = empty($m) ? '' : self::GetHTMLUserFeedback('negative', $m);
 		}
 
 		return $messages;

@@ -53,7 +53,9 @@ $db = CDatabaseController::GetInstance();
 // Perform checks before continuing, what's to be fullfilled to enter this controller?
 //
 $if->FrontControllerIsVisitedOrDie();
-$if->UserIsSignedInOrRedirectToSignIn();
+//$if->UserIsSignedInOrRedirectToSignIn();
+//$if->UserIsCurrentUserOrMemberOfGroupAdminOr403($uc->GetAccountId());
+//$if->UserIsMemberOfGroupAdminOrDie();
 
 
 // -------------------------------------------------------------------------------------------

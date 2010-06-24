@@ -44,6 +44,7 @@ ul.nav-standard li {
 
 /* -------------------------------------------------------------------------------------
 /* Navigation path, used as top navigation menu to show the user where he is */
+/* (for example ucp, acp) */
 
 ul.nav-path {
 	font-size: 0.8em;
@@ -61,7 +62,7 @@ ul.nav-path li a {
 
 /* -------------------------------------------------------------------------------------
 /* Navigation items, nav-standard and enhanced as nav-menu-tab, a tabbing like menu bar */
-/* 2 levels */
+/* 2 levels (for example ucp, acp) */
 
 ul.nav-menu-tab {
 	border-bottom: 0.1em solid #95959F;

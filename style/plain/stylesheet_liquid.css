@@ -162,21 +162,6 @@ p.last {margin-bottom: 0;}
 
 /* -------------------------------------------------------------------------------------
  *
- * Other functional divs, not part of the main structure of the website
- *
- */
- 
-div.errorMessage,
-div.successMessage {
-	border: none; /*#333333 4px dashed; */
-	font-size: 1.5em;
-	font-style: italic;
-	padding: 1.5em;
-}
-
-
-/* -------------------------------------------------------------------------------------
- *
  * Fonts
  *
  */
@@ -211,6 +196,7 @@ section,
 div.section {
 	margin-bottom: 2em;
 }
+
 
 /* -------------------------------------------------------------------------------------
  *

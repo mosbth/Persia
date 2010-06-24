@@ -1,45 +1,68 @@
 <?php
 // ===========================================================================================
 //
+//		Persia (http://phpersia.org), software to build webbapplications.
+//    Copyright (C) 2010  Mikael Roos (mos@bth.se)
+//
+//    This file is part of Persia.
+//
+//    Persia is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Persia is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Persia. If not, see <http://www.gnu.org/licenses/>.
+//
 // File: PAccountSettingsProcess.php
 //
 // Description: Save changes in profile and account settings.
 //
 // Author: Mikael Roos, mos@bth.se
 //
+// Known issues:
+// -
+//
+// History: 
+// 2010-06-23: New structure for instantiating controllers. Included license message.
+//
 
 
 // -------------------------------------------------------------------------------------------
 //
-// Get pagecontroller helpers. Useful methods to use in most pagecontrollers
+// Get common controllers, uncomment if not used in current pagecontroller.
 //
-$pc = CPageController::GetInstance();
-$pc->LoadLanguage(__FILE__);
+// $pc, Page Controller helpers. Useful methods to use in most pagecontrollers
+// $uc, User Controller. Keeps information/permission on user currently signed in.
+// $if, Interception Filter. Useful to check constraints before entering a pagecontroller.
+// $db, Database Controller. Manages all database access.
+//
+$pc = CPageController::GetInstanceAndLoadLanguage(__FILE__);
+$uc = CUserController::GetInstance();
+$if = CInterceptionFilter::GetInstance();
+$db = CDatabaseController::GetInstance();
 
 
 // -------------------------------------------------------------------------------------------
 //
-// User controller, get info about the current user
+// Perform checks before continuing, what's to be fullfilled to enter this controller?
 //
-$uc 		= CUserController::GetInstance();
-$userId	= $uc->GetAccountId();
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Interception Filter, controlling access, authorithy and other checks.
-//
-$intFilter = CInterceptionFilter::GetInstance();
-$intFilter->FrontControllerIsVisitedOrDie();
-$intFilter->UserIsSignedInOrRedirectToSignIn();
-$intFilter->UserIsCurrentUserOrMemberOfGroupAdminOr403($userId);
+$if->FrontControllerIsVisitedOrDie();
+$if->UserIsSignedInOrRedirectToSignIn();
+$if->UserIsCurrentUserOrMemberOfGroupAdminOr403($uc->GetAccountId());
 
 
 // -------------------------------------------------------------------------------------------
 //
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 // Always check whats coming in...
-// 
+//
+$userId	= $uc->GetAccountId();
 $submitAction	= $pc->POSTisSetOrSetDefault('submit');
 $accountId		= $pc->POSTisSetOrSetDefault('accountid');
 $redirect			= $pc->POSTisSetOrSetDefault('redirect');
@@ -56,6 +79,7 @@ $redirectFail	= $pc->POSTisSetOrSetDefault('redirect-failure');
 // Do some insane checking to avoid misusage, errormessage if not correct.
 // 
 // Are we trying to change the same user profile as is signed in? Must be Yes.
+// Might change to allow admin to change profile (or maybe not)
 //
 if($userId != $accountId) {
 		$pc->SetSessionErrorMessage($pc->lang['MISMATCH_SESSION_AND_SETTINGS']);
@@ -102,25 +126,21 @@ else if($submitAction == 'change-password') {
 // 
 else if($submitAction == 'change-mail') {
 
+	// Get and prepare all variables
+	$mysqli 			= $db->Connect();
 	$mailAddress	= $pc->POSTisSetOrSetDefault('mail');
-
-	// Execute the database query to make the update
-	$db = CDatabaseController::GetInstance();
-	$mysqli = $db->Connect();
-
-	// Prepare query
 	$mailAddress1 = $mysqli->real_escape_string($mailAddress);
 
+	// Create and perform db query
 	$query = <<<EOD
 CALL {$db->_['PChangeAccountEmail']}('{$userId}', '{$mailAddress1}', @rowcount);
 SELECT @rowcount AS rowcount;
 EOD;
 
-	// Perform the query
 	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 
+	// Take care of results from db query
 	$row = $results[1]->fetch_object();
-
 	if($row->rowcount == 1) {
 	
 		// Send a mail to the new mailadress
@@ -147,15 +167,11 @@ EOD;
 // 
 else if($submitAction == 'change-avatar') {
 
-	$avatar	= $pc->POSTisSetOrSetDefault('avatar');
-
-	// Execute the database query to make the update
-	$db = CDatabaseController::GetInstance();
+	// Get and prepare all variables
 	$mysqli = $db->Connect();
+	$avatar = $mysqli->real_escape_string($pc->POSTisSetOrSetDefault('avatar'));
 
 	// Prepare query
-	$avatar = $mysqli->real_escape_string($avatar);
-
 	$query = "CALL {$db->_['PChangeAccountAvatar']}('{$userId}', '{$avatar}');";
 
 	// Perform the query, ignore the results
@@ -174,36 +190,28 @@ else if($submitAction == 'change-avatar') {
 // 
 else if($submitAction == 'change-gravatar') {
 
-	$gravatar	= $pc->POSTisSetOrSetDefault('gravatar');
-
-	// Execute the database query to make the update
-	$db = CDatabaseController::GetInstance();
+	// Get and prepare all variables
 	$mysqli = $db->Connect();
-
-	// Prepare query
-	$avatar = $mysqli->real_escape_string($gravatar);
-
-	$query = "CALL {$db->_['PChangeAccountGravatar']}('{$userId}', '{$gravatar}');";
+	$gravatar = $mysqli->real_escape_string($pc->POSTisSetOrSetDefault('gravatar'));
 
 	// Perform the query, ignore the results
+	$query = "CALL {$db->_['PChangeAccountGravatar']}('{$userId}', '{$gravatar}');";
 	$db->DoMultiQueryRetrieveAndStoreResultset($query);
 
 	// Get the updated gravatar and store in the session
 	$query = "CALL {$db->_['PGetAccountDetails']}({$accountId});";
-
-	// Perform the query
 	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 	
 	// Get account details 	
 	$row = $results[0]->fetch_object();
 	$gravatarmicro	= $row->gravatarmicro;
 	$results[0]->close(); 
-
 	$mysqli->close();
 	
 	// Update the gravatar in the session
-	$_SESSION['gravatarUserMicro'] 	= empty($gravatarmicro) ? '' : $gravatarmicro;
-
+	$uc->Update('gravatar', (empty($gravatarmicro) ? '' : $gravatarmicro));
+	$uc->StoreInSession();
+	
 	// Redirect to resultpage
 	$pc->RedirectTo($redirect);
 }

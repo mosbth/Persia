@@ -57,6 +57,7 @@ $db = CDatabaseController::GetInstance();
 $if->FrontControllerIsVisitedOrDie();
 //$if->UserIsSignedInOrRedirectToSignIn();
 //$if->UserIsCurrentUserOrMemberOfGroupAdminOr403($uc->GetAccountId());
+//$if->UserIsMemberOfGroupAdminOrDie();
 
 
 // -------------------------------------------------------------------------------------------
@@ -71,6 +72,7 @@ $if->FrontControllerIsVisitedOrDie();
 // Always check whats coming in...
 //strip_tags($item)
 //$pc->IsNumericOrDie($item, 0, 2);
+//$account = $mysqli->real_escape_string($account);
 
 // To show off the template and display the flexible 1-2-3 column layout used.
 $showLeft 	= $pc->GETisSetOrSetDefault('showLeft', '1');

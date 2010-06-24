@@ -95,7 +95,7 @@ while($row = $results[0]->fetch_object()) {
 <td class='number'>{$row->size}</td>
 <td class='date'>{$created}</td>
 <td class='date'>{$modified}</td>
-<td><a href='{$download}{$row->uniquename}'>{$pc->lang['FILE_DOWNLOAD']}</a></td>
+<td class='center'><a href='{$download}{$row->uniquename}'>{$pc->lang['FILE_DOWNLOAD']}</a></td>
 </tr>
 EOD;
 }

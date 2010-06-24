@@ -55,6 +55,17 @@ class CUserController {
 
 	// ------------------------------------------------------------------------------------
 	//
+	// Update parts of object
+	//
+	public function Update($aWhat, $aValue) { 
+		switch($aWhat) {
+			case 'gravatar': {$this->iGravatar = $aValue;} break;
+		}
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
 	// Store this object in the session
 	//
 	public function StoreInSession() { 

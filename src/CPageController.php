@@ -32,6 +32,13 @@ class CPageController {
 
 	// ------------------------------------------------------------------------------------
 	//
+	// Destructor
+	//
+	public function __destruct() { ; }
+
+
+	// ------------------------------------------------------------------------------------
+	//
 	// Singleton, get the instance or create a new one.
 	//
 	public static function GetInstance() {
@@ -52,15 +59,6 @@ class CPageController {
 		self::GetInstance();
 		self::$iInstance->LoadLanguage($aFilename);
 		return self::$iInstance;
-	}
-
-
-	// ------------------------------------------------------------------------------------
-	//
-	// Destructor
-	//
-	public function __destruct() {
-		;
 	}
 
 
@@ -135,12 +133,14 @@ class CPageController {
 	//
 	// Get and Clear message in session, set the message by using SetSessionMessage
 	//
-	public static function GetAndClearSessionMessage($aVar) {
+	public static function GetAndClearSessionMessage($aVar, $aDefaultValue="") {
 
 		$message = "";
 		if(isset($_SESSION[$aVar])) {    
 			$message = $_SESSION[$aVar];
 			unset($_SESSION[$aVar]);
+		} else {
+			$message = $aDefaultValue;
 		}
 		return $message;
 	}
@@ -271,13 +271,35 @@ class CPageController {
 	// Redirect to another local page using module, page and arguments (Array)
 	// Defaults to current module home-page.
 	//
+	public static function UrlToModuleAndPage($aModule='', $aPage='home') {
+
+		global $gModule;
+		
+		$m = (empty($aModule)) ? "m={$gModule}" : "m={$aModule}";
+		$p = "p={$aPage}";
+		$aUrl = WS_SITELINK . "?{$m}&{$p}";
+
+		// Enable sending $aArguments as an Array later on. When needed.
+		
+		// Set message in SESSION, if defined, When needed.
+
+		return $aUrl;
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Static function
+	// Redirect to another local page using module, page and arguments (Array)
+	// Defaults to current module home-page.
+	//
 	public static function RedirectToModuleAndPage($aModule='', $aPage='home', $aArguments='', $aMessage='') {
 
 		global $gModule;
 		
 		$m = (empty($aModule)) ? "m={$gModule}" : "m={$aModule}";
 		$p = "p={$aPage}";
-		$aUri = WS_SITELINK . "?{$m}&{$p}";
+		$aUrl = WS_SITELINK . "?{$m}&{$p}";
 
 		// Enable sending $aArguments as an Array later on. When needed.
 		
@@ -287,7 +309,7 @@ class CPageController {
 			self::SetSessionMessage($aPage, $aMessage);
 		}
 
-		header("Location: {$aUri}");
+		header("Location: {$aUrl}");
 		exit;
 	}
 

@@ -1,7 +1,7 @@
 /* =====================================================================================
  *
  * 
- * Definitions related to blockquotes. 
+ * Definitions related to blockquotes and other informational spans/blocks. 
  * 
  * 
  */
@@ -11,8 +11,43 @@
 /* Blockquote */
 
 blockquote.links {
-	margin: 1em 0 1em 2em;
+	margin: 1em 0 1em 0em;
 	padding: 0.2em 0.5em 0.5em 1em;
 	border-left: 0.1em dashed #95959F;
 }
+
+
+/* -------------------------------------------------------------------------------------
+ * User notices, feedback and messages
+ */
+div.userFeedback {
+}
+
+span.userFeedbackNotice,
+div.userFeedbackNotice { 
+	color: #999;
+	font-style: italic; 
+}
+
+span.userFeedbackPositive,
+div.userFeedbackPositive {
+	background: url(../../img/silk/tick.png) no-repeat;
+}
+
+
+span.userFeedbackInfo,
+div.userFeedbackInfo {
+	background: url(../../img/silk/information.png) no-repeat;
+}
+
+span.userFeedbackWarning,
+div.userFeedbackWarning {
+	background: url(../../img/silk/exclamation.png) no-repeat; 
+}
+
+span.userFeedbackNegative,
+div.userFeedbackNegative {
+	background: url(../../img/silk/exclamation.png) no-repeat;
+}
+
 
