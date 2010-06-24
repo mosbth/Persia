@@ -57,6 +57,10 @@ $DB_Tables_And_Procedures = Array(
 	'PCreateGroup' 							=> DB_PREFIX . 'PCreateGroup',
 	'PGroupMemberAdd' 					=> DB_PREFIX . 'PGroupMemberAdd',
 	'FCheckUserIsAdmin' 				=> DB_PREFIX . 'FCheckUserIsAdmin',
+	
+	// Admin routines
+	'PAdminGetGroups'	 					=> DB_PREFIX . 'PAdminGetGroups',
+
 
 	// For supporting gravatar from gratavar.com
 	'PChangeAccountGravatar' 		=> DB_PREFIX . 'PChangeAccountGravatar',

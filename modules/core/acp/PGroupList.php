@@ -71,7 +71,7 @@ $if->UserIsMemberOfGroupAdminOrDie();
 //
 $mysqli = $db->Connect();
 $query 	= <<< EOD
-CALL {$db->_['PAdmGetGroups']}();
+CALL {$db->_['PAdminGetGroups']}();
 EOD;
 
 // Perform the query
@@ -85,12 +85,12 @@ $editMembers 	= "?m={$gModule}&amp;p=acp-groupmembers&amp;id=";
 $htmlRows = '';
 $i=0;
 while($row = $results[0]->fetch_object()) {    
-	$noMembers = sprintf($pc->lang['GROUPS_NO_MEMBERS'], $row->noMembers);
+	$noMembers = sprintf($pc->lang['GROUPS_NO_MEMBERS'], $row->members);
 	$htmlRows .= "<tr class='r".($i++%2+1)."'>";
 	$htmlRows .= <<<EOD
-<td><a href='{$editDetails}{$row->uniquename}' title='{$pc->lang['GROUPS_EDIT_DETAILS']}'>{$row->name}</a></td>
+<td class='center'><a href='{$editDetails}{$row->id}' title='{$pc->lang['GROUPS_EDIT_DETAILS']}'>{$row->name}</a></td>
 <td>{$row->description}</td>
-<td class='center'><a href='{$editMembers}{$row->idGroup}' title='{$pc->lang['GROUPS_EDIT_MEMBERS']}'>{$noMembers}</a></td>
+<td class='center'><a href='{$editMembers}{$row->id}' title='{$pc->lang['GROUPS_EDIT_MEMBERS']}'>{$noMembers}</a></td>
 </tr>
 EOD;
 }
@@ -112,10 +112,12 @@ require(dirname(__FILE__) . '/IAdminControlPanel.php');
 //
 // Create HTML for page
 //
+$createGroup = "?m={$gModule}&amp;p=acp-groupcreate";
+
 $htmlMain = <<< EOD
 {$htmlCp}
 <div class='section'>
-	<p>{$pc->lang['FILEARCHIVE_DESCRIPTION']}</p>
+	<p>{$pc->lang['GROUPS_DESCRIPTION']}</p>
 </div> <!-- section -->
 
 <div class='section'>
@@ -130,7 +132,12 @@ $htmlMain = <<< EOD
 		<tbody>{$htmlRows}</tbody>
 		<tfoot></tfoot>
 	</table>
+
+	<ul class='nav-standard nav-links'>
+		<li><a href='{$createGroup}' title='{$pc->lang['GROUP_ADD_TITLE']}'>{$pc->lang['GROUP_ADD']}</a>
+	</ul>
 </div> <!-- section -->
+
 
 EOD;
 

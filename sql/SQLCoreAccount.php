@@ -100,6 +100,35 @@ CREATE TABLE {$db->_['GroupMember']} (
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
+-- SP to show details on all groups
+--
+DROP PROCEDURE IF EXISTS {$db->_['PAdminGetGroups']};
+CREATE PROCEDURE {$db->_['PAdminGetGroups']}
+()
+BEGIN
+	
+	-- All details on the groups, including number of members
+	SELECT 
+		G.idGroup AS id,
+		G.nameGroup AS name,
+		G.descriptionGroup AS description,
+		G1.members AS members
+	FROM {$db->_['Group']} AS G
+		LEFT OUTER JOIN 
+			(
+				SELECT 
+					GroupMember_idGroup, 
+					COUNT(GroupMember_idGroup) AS members 
+				FROM {$db->_['GroupMember']}
+				GROUP BY GroupMember_idGroup
+			) AS G1
+			ON G1.GroupMember_idGroup = G.idGroup;
+	
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
 -- Table for the Statistics
 --
 DROP TABLE IF EXISTS {$db->_['Statistics']};
