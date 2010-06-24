@@ -51,9 +51,10 @@ fieldset.standard input {
 
 /* textarea */
 fieldset.standard textarea {
-	font-family: inherit;
-	font-size: inherit;
-	padding: 0.5em
+	font-size: 1.3em;
+	min-width: 24em;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
 }
 
 /* buttonbar, container for several buttons  */
@@ -138,6 +139,11 @@ fieldset.type-2 label {
 fieldset.type-2 input {
 	float: right;
 	width: 100%;
+}
+
+fieldset.type-2 textarea {
+	float: right;
+	min-width: 100%;
 }
 
 

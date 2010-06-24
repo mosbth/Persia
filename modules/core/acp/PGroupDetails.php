@@ -21,7 +21,7 @@
 //
 // File: PGroupDetails.php
 //
-// Description: Show and edit data of a group.
+// Description: Show and edit details of a group.
 //
 // Author: Mikael Roos, mos@bth.se
 //
@@ -54,6 +54,7 @@ $db = CDatabaseController::GetInstance();
 //
 $if->FrontControllerIsVisitedOrDie();
 $if->UserIsSignedInOrRedirectToSignIn();
+$if->UserIsMemberOfGroupAdminOrDie();
 
 
 // -------------------------------------------------------------------------------------------
@@ -61,52 +62,36 @@ $if->UserIsSignedInOrRedirectToSignIn();
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 // Always check whats coming in...
 //
-$userId		= $uc->GetAccountId();
-$filename	= strip_tags($pc->GETisSetOrSetDefault('file'));
-$mode			= strip_tags($pc->GETisSetOrSetDefault('mode'));
+$id	= $pc->IsNumericOrDie(strip_tags($pc->GETisSetOrSetDefault('id')), 1);
 
 
 // -------------------------------------------------------------------------------------------
 //
-// Get file details/metadata from database
+// Get details from database
 //
 $mysqli = $db->Connect();
 $query 	= <<< EOD
-CALL {$db->_['PFileDetails']}('{$userId}', '{$filename}', @success);
-SELECT @success AS success;
+CALL {$db->_['PGroupDetails']}('{$id}');
 EOD;
 $results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 
 // Fetch and use the results
-$row = $results[2]->fetch_object();
-
-// If file is not valid then redirect to 403 with a message
-if($row->success) {
-	$pc->RedirectToModuleAndPage('', 'p403', '', $db->_['FFileCheckPermissionMessages'][$row->success]);
-}
-
 $row = $results[0]->fetch_object();
-$fileid 		= $row->fileid;
-$name 			= $row->name;
-$uniquename = $row->uniquename;
-$path 			= $row->path;
-$size 			= $row->size;
-$mimetype 	= $row->mimetype;
-$created 		= $row->created;
-$modified 	= $row->modified;
-$deleted 		= $row->deleted;
+$id 					= $row->id;
+$name 				= $row->name;
+$description 	= $row->description;
+$members 			= $row->members;
 
-$results[2]->close();
 $results[0]->close();
 $mysqli->close();
 
 
 // -------------------------------------------------------------------------------------------
 //
-// UCP. Include the menu-bar for the User Control Panel.
+// ACP. Include the menu-bar for the User Control Panel.
 //
 $htmlCp = "";
-require(dirname(__FILE__) . '/IUserControlPanel.php');
+require(dirname(__FILE__) . '/IAdminControlPanel.php');
 
 
 // -------------------------------------------------------------------------------------------
@@ -115,8 +100,8 @@ require(dirname(__FILE__) . '/IUserControlPanel.php');
 //
 global $gModule;
 
-$action 	= "?m={$gModule}&amp;p=ucp-filedetailsp";
-$redirect = "?m={$gModule}&amp;p=ucp-filedetails&amp;file={$filename}#fedit";
+$action 	= "?m={$gModule}&amp;p=acp-groupdetailsp";
+$redirect = "?m={$gModule}&amp;p=acp-groupdetails&amp;id={$id}";
 
 // Get and format messages from session if they are set
 $helpers = new CHTMLHelpers();
@@ -124,52 +109,28 @@ $messages = $helpers->GetHTMLForSessionMessages(
 	Array('success'), 
 	Array('failed'));
 
-$hideDeleteButton 	= empty($deleted) ? '' : 'hide' ;
-$hideRestoreButton 	= empty($deleted) ? 'hide' : '' ;
-
-$caption = sprintf($pc->lang['FILE_DETAILS_CAPTION'], $name);
-
 $htmlMain = <<<EOD
 {$htmlCp}
 
-<div id='fedit' class='section'>
+<div class='section'>
 	<form action='{$action}' method='post'>
-		<input type='hidden' name='redirect' 					value='{$redirect}'>
-		<input type='hidden' name='redirect-failure' 	value='{$redirect}'>
-		<input type='hidden' name='fileid' 						value='{$fileid}'>
+		<input type='hidden' name='redirect' 				value='{$redirect}'>
+		<input type='hidden' name='redirect-fail' 	value='{$redirect}'>
+		<input type='hidden' name='id' 							value='{$id}'>
 		
 		<fieldset class='standard type-2'>
-	 		<legend>{$caption}</legend>
+	 		<legend>{$pc->lang['GROUP_DETAILS_CAPTION']}</legend>
 		 	<div class='form-wrapper'>
 
-				<label for="filename">{$pc->lang['FILE_DETAILS_FILENAME']}</label>
-				<input name='name' type='text' value='{$name}' maxlength='{$db->_['CSizeFileName']}' autofocus>
+				<label for="name">{$pc->lang['GROUP_DETAILS_NAME']}</label>
+				<input name='name' type='text' value='{$name}' maxlength='{$db->_['CSizeGroupName']}' autofocus>
 
-				<label for='uniquename'>{$pc->lang['FILE_DETAILS_UNIQUENAME']}</label>
-				<input name='uniquename' type='text' value='{$uniquename}' disabled>
+				<label for='description'>{$pc->lang['GROUP_DETAILS_DESCRIPTION']}</label>
+				<textarea name='description' rows='2' maxlength='{$db->_['CSizeGroupDescription']}'>{$description}</textarea>
 
-				<label for='path'>{$pc->lang['FILE_DETAILS_PATH']}</label>
-				<input name='path' type='text' value='{$path}' disabled>
-				
-				<label for='size'>{$pc->lang['FILE_DETAILS_SIZE']}</label>
-				<input name='size' type='text' value='{$size}' disabled>
-				
-				<label for='mimetype'>{$pc->lang['FILE_DETAILS_MIMETYPE']}</label>
-				<input name='mimetype' type='text' value='{$mimetype}' maxlength='{$db->_['CSizeMimetype']}'>
-				
-				<label for='created'>{$pc->lang['FILE_DETAILS_CREATED']}</label>
-				<input name='created' type='datetime' value='{$created}' disabled>
-				
-				<label for='modified'>{$pc->lang['FILE_DETAILS_MODIFIED']}</label>
-				<input name='modified' type='datetime' value='{$modified}' disabled placeholder='{$pc->lang['FILE_TIME_FOR_MODIFIED']}'>
-				
-				<label for='deleted'>{$pc->lang['FILE_DETAILS_DELETED']}</label>
-				<input name='deleted' type='datetime' value='{$deleted}' disabled placeholder='{$pc->lang['FILE_TIME_FOR_DELETED']}'>
-				
 				<div class='buttonbar'>
-					<button type='submit' class='delete {$hideDeleteButton}' name='do-submit' value='delete-file'>{$pc->lang['DELETE_FILE']}</button>
-					<button type='submit' class='restore {$hideRestoreButton}' name='do-submit' value='restore-file'>{$pc->lang['RESTORE_FILE']}</button>
-					<button type='submit' class='save' name='do-submit' value='save-file-details'>{$pc->lang['FILE_DETAILS_SAVE']}</button>
+					<button type='submit' class='delete' name='do-submit' value='delete-group'>{$pc->lang['GROUP_DELETE']}</button>
+					<button type='submit' class='save' name='do-submit' value='save-group'>{$pc->lang['GROUP_SAVE']}</button>
 				</div> <!-- buttonbar -->
 
 				<div class='form-status'>{$messages['success']}{$messages['failed']}</div> 
@@ -196,7 +157,7 @@ EOD;
 //
 // Create and print out the resulting page
 //
-CHTMLPage::GetInstance()->PrintPage(sprintf($pc->lang['FILE_DETAILS_TITLE'], $name), $htmlLeft, $htmlMain, $htmlRight);
+CHTMLPage::GetInstance()->PrintPage(sprintf($pc->lang['GROUP_DETAILS_TITLE'], $name), $htmlLeft, $htmlMain, $htmlRight);
 exit;
 
 

@@ -11,28 +11,17 @@
 $lang = Array(
 
 	// 
-	'FILE_DETAILS_TITLE' => "View file details of: %s",
-	'FILE_DETAILS_DESCRIPTION' => 
-		"These are the details about this fil. You can edit these details. " . 
-		"There is also a public download page for this file.",
-	'FILE_DETAILS_CAPTION' => "File details",
+	'GROUP_DETAILS_TITLE' => "View group details of: %s",
+	'GROUP_DETAILS_DESCRIPTION' => "",
+	'GROUP_DETAILS_CAPTION' => "Group details",
 
 	// the form
-	'FILE_DETAILS_LEGEND' => "File details",
-	'FILE_DETAILS_FILENAME' => "Filename:",
-	'FILE_DETAILS_UNIQUENAME' => "Unique name:",
-	'FILE_DETAILS_PATH' => "Path on disk:",
-	'FILE_DETAILS_SIZE' => "Size:",
-	'FILE_DETAILS_MIMETYPE' => "Mimetype:",
-	'FILE_DETAILS_CREATED' => "Created:",
-	'FILE_DETAILS_MODIFIED' => "Modified:",
-	'FILE_DETAILS_DELETED' => "Deleted:",
-	'FILE_DETAILS_SAVE' => "Save",
-	'DELETE_FILE' => "Delete file",
-	'RESTORE_FILE' => "Restore file",
+	'GROUP_DETAILS_LEGEND' => "Group details",
+	'GROUP_DETAILS_NAME' => "Name:",
+	'GROUP_DETAILS_DESCRIPTION' => "Description",
+	'GROUP_SAVE' => "Save",
+	'GROUP_DELETE' => "Delete group",
 
-	'FILE_TIME_FOR_MODIFIED' => "Time when details was last saved",
-	'FILE_TIME_FOR_DELETED' => "Time when file was deleted",
 
 
 );

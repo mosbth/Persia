@@ -74,9 +74,9 @@ $cp = Array(
 		'acp-groups' => $pc->lang['ACP_MENU_GROUPS'],
 	),
 	'items-level2' => Array(
-		'ucp-filearchive' => Array(
-			'ucp-filearchive' => $pc->lang['ACP_MENU_FILEARCHIVE'],
-			'ucp-filedetails' => $pc->lang['ACP_MENU_FILEDETAILS'],
+		'acp-groups' => Array(
+			'acp-groups' => $pc->lang['ACP_MENU_GROUPS'],
+			'acp-groupdetails' => $pc->lang['ACP_MENU_GROUPDETAILS'],
 		),
 	),
 );

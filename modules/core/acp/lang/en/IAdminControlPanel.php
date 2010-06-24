@@ -17,7 +17,9 @@ $lang = Array(
 	// Tab menu items
 	'ACP_MENU_ACCOUNTS' => "Accounts",
 	'ACP_MENU_GROUPS' => "Groups",
-	
+	'ACP_MENU_GROUPDETAILS' => "Group details",
+
+
 	// File archive and uploads
 	'ACP_MENU_FILEARCHIVE' => "Filearchive",
 	'ACP_MENU_FILEDETAILS' => "Filedetails",

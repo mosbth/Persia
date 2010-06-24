@@ -70,8 +70,8 @@ CREATE TABLE {$db->_['Group']} (
 	idGroup INT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	
   -- Attributes
-	nameGroup CHAR({$db->_['CSizeGroupName']}) NOT NULL UNIQUE,
-  descriptionGroup CHAR({$db->_['CSizeGroupDescription']}) NOT NULL
+	nameGroup CHAR({$db->_['CSizeGroupName']}) NOT NULL,
+  descriptionGroup CHAR({$db->_['CSizeGroupDescription']}) NULL
 );
 
 
@@ -100,10 +100,10 @@ CREATE TABLE {$db->_['GroupMember']} (
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
--- SP to show details on all groups
+-- SP to show details on all groups, including number of members in each group
 --
-DROP PROCEDURE IF EXISTS {$db->_['PAdminGetGroups']};
-CREATE PROCEDURE {$db->_['PAdminGetGroups']}
+DROP PROCEDURE IF EXISTS {$db->_['PGroupsAndNoMembers']};
+CREATE PROCEDURE {$db->_['PGroupsAndNoMembers']}
 ()
 BEGIN
 	
@@ -123,6 +123,41 @@ BEGIN
 				GROUP BY GroupMember_idGroup
 			) AS G1
 			ON G1.GroupMember_idGroup = G.idGroup;
+	
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to show details on a group, including number of members
+--
+DROP PROCEDURE IF EXISTS {$db->_['PGroupDetails']};
+CREATE PROCEDURE {$db->_['PGroupDetails']}
+(
+	aGroupId INT UNSIGNED
+)
+BEGIN
+	
+	-- All details on the groups, including number of members
+	SELECT 
+		G.idGroup AS id,
+		G.nameGroup AS name,
+		G.descriptionGroup AS description,
+		G1.members AS members
+	FROM {$db->_['Group']} AS G
+		LEFT OUTER JOIN 
+			(
+				SELECT 
+					GroupMember_idGroup, 
+					COUNT(GroupMember_idGroup) AS members 
+				FROM {$db->_['GroupMember']}
+				WHERE
+					GroupMember_idGroup = aGroupId
+				GROUP BY GroupMember_idGroup
+			) AS G1
+			ON G1.GroupMember_idGroup = G.idGroup
+	WHERE
+		idGroup = aGroupId;
 	
 END;
 

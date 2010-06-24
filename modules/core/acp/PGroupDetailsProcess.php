@@ -21,7 +21,7 @@
 //
 // File: PGroupDetailsProcess.php
 //
-// Description: Save details about a group.
+// Description: Add/delete group and save details about a group.
 //
 // Known issues:
 // -
@@ -52,6 +52,7 @@ $db = CDatabaseController::GetInstance();
 //
 $if->FrontControllerIsVisitedOrDie();
 $if->UserIsSignedInOrRedirectToSignIn();
+$if->UserIsMemberOfGroupAdminOrDie();
 
 
 // -------------------------------------------------------------------------------------------
@@ -59,9 +60,6 @@ $if->UserIsSignedInOrRedirectToSignIn();
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 // Always check whats coming in...
 //
-$userId		= $uc->GetAccountId();
-//$userName	= $uc->GetAccountName();
-
 $submitAction	= $pc->POSTisSetOrSetDefault('do-submit');
 $redirect			= $pc->POSTisSetOrSetDefault('redirect');
 $redirectFail	= $pc->POSTisSetOrSetDefault('redirect-fail');
@@ -79,10 +77,11 @@ if(false) {
 
 // -------------------------------------------------------------------------------------------
 //
-// Save details/metadata on a file.
+// Save details of a group.
 // 
-else if($submitAction == 'save-file-details') {
+else if($submitAction == 'save-group') {
 
+/*
 	// Get the input
 	$fileid		= $pc->POSTisSetOrSetDefault('fileid');
 	$name 		= $pc->POSTisSetOrSetDefault('name');
@@ -128,6 +127,7 @@ EOD;
 	$results[1]->close();
 	$mysqli->close();
 	
+*/
 	$pc->SetSessionMessage('success', $pc->lang['FILE_DETAILS_UPDATED']);
 	$pc->RedirectTo($redirect);
 }
@@ -135,10 +135,11 @@ EOD;
 
 // -------------------------------------------------------------------------------------------
 //
-// Set a file to be deleted/not deleted.
+// Add a group
 // 
-else if($submitAction == 'delete-file' || $submitAction == 'restore-file') {
+else if($submitAction == 'add-group') {
 
+/*
 	// Get the input
 	$fileid		= $pc->POSTisSetOrSetDefault('fileid');
 	$deleteOrRestore = ($submitAction == 'delete-file') ? 1 : (($submitAction == 'restore-file') ? 2 : 0);
@@ -166,6 +167,45 @@ EOD;
 	
 	$pc->SetSessionMessage('success', $pc->lang['FILE_DETAILS_UPDATED']);
 	$pc->RedirectTo($redirect);
+*/
+}
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Delete a group
+// 
+else if($submitAction == 'delete-group') {
+
+/*
+	// Get the input
+	$fileid		= $pc->POSTisSetOrSetDefault('fileid');
+	$deleteOrRestore = ($submitAction == 'delete-file') ? 1 : (($submitAction == 'restore-file') ? 2 : 0);
+	
+	// Save metadata of the file in the database
+	$mysqli = $db->Connect();
+
+	// Create the query
+	$query 	= <<< EOD
+CALL {$db->_['PFileDetailsDeleted']}({$fileid}, '{$userId}', '{$deleteOrRestore}', @success);
+SELECT @success AS success;
+EOD;
+
+	// Perform the query and manage results
+	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
+	
+	$row = $results[1]->fetch_object();
+	if($row->success) {
+		$pc->SetSessionMessage('failed', $db->_['FFileCheckPermissionMessages'][$row->success]);
+		$pc->RedirectTo($redirectFail);
+	}
+
+	$results[1]->close();
+	$mysqli->close();
+	
+	$pc->SetSessionMessage('success', $pc->lang['FILE_DETAILS_UPDATED']);
+	$pc->RedirectTo($redirect);
+*/
 }
 
 

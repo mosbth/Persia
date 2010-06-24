@@ -54,7 +54,6 @@ $db = CDatabaseController::GetInstance();
 //
 $if->FrontControllerIsVisitedOrDie();
 $if->UserIsSignedInOrRedirectToSignIn();
-//$if->UserIsCurrentUserOrMemberOfGroupAdminOr403($uc->GetAccountId());
 $if->UserIsMemberOfGroupAdminOrDie();
 
 
@@ -71,7 +70,7 @@ $if->UserIsMemberOfGroupAdminOrDie();
 //
 $mysqli = $db->Connect();
 $query 	= <<< EOD
-CALL {$db->_['PAdminGetGroups']}();
+CALL {$db->_['PGroupsAndNoMembers']}();
 EOD;
 
 // Perform the query
