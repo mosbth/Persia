@@ -27,8 +27,8 @@ $query = <<<EOD
 --
 -- Add default groups
 --
-CALL {$db->_['PCreateGroup']}('admin', '{$pc->lang['SITE_ADMINISTRATORS']}', @aStatus);
-CALL {$db->_['PCreateGroup']}('user', '{$pc->lang['LOCAL_USERS']}', @aStatus);
+CALL {$db->_['PGroupAdd']}(@id, 'admin', '{$pc->lang['SITE_ADMINISTRATORS']}');
+CALL {$db->_['PGroupAdd']}(@id, 'user', '{$pc->lang['LOCAL_USERS']}');
 
 EOD;
 

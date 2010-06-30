@@ -77,6 +77,7 @@ $cp = Array(
 		'acp-groups' => Array(
 			'acp-groups' => $pc->lang['ACP_MENU_GROUPS'],
 			'acp-groupdetails' => $pc->lang['ACP_MENU_GROUPDETAILS'],
+			'acp-groupmembers' => $pc->lang['ACP_MENU_GROUPDETAILS'],
 		),
 	),
 );

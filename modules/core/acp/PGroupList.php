@@ -89,7 +89,7 @@ while($row = $results[0]->fetch_object()) {
 	$htmlRows .= <<<EOD
 <td class='center'><a href='{$editDetails}{$row->id}' title='{$pc->lang['GROUPS_EDIT_DETAILS']}'>{$row->name}</a></td>
 <td>{$row->description}</td>
-<td class='center'><a href='{$editMembers}{$row->id}' title='{$pc->lang['GROUPS_EDIT_MEMBERS']}'>{$noMembers}</a></td>
+<td class='center'><a href='{$editMembers}{$row->id}#smembers' title='{$pc->lang['GROUPS_EDIT_MEMBERS']}'>{$noMembers}</a></td>
 </tr>
 EOD;
 }
@@ -111,7 +111,13 @@ require(dirname(__FILE__) . '/IAdminControlPanel.php');
 //
 // Create HTML for page
 //
-$createGroup = "?m={$gModule}&amp;p=acp-groupcreate";
+$createGroup = "?m={$gModule}&amp;p=acp-groupcreatep&do-submit=add-group";
+
+// Get and format messages from session if they are set
+$helpers = new CHTMLHelpers();
+$messages = $helpers->GetHTMLForSessionMessages(
+	Array('successDetails'), 
+	Array('failedDetails'));
 
 $htmlMain = <<< EOD
 {$htmlCp}
@@ -131,6 +137,8 @@ $htmlMain = <<< EOD
 		<tbody>{$htmlRows}</tbody>
 		<tfoot></tfoot>
 	</table>
+	
+	<div class='form-status'>{$messages['successDetails']}{$messages['failedDetails']}</div> 
 
 	<ul class='nav-standard nav-links'>
 		<li><a href='{$createGroup}' title='{$pc->lang['GROUP_ADD_TITLE']}'>{$pc->lang['GROUP_ADD']}</a>

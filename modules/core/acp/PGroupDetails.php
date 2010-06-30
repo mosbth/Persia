@@ -72,17 +72,30 @@ $id	= $pc->IsNumericOrDie(strip_tags($pc->GETisSetOrSetDefault('id')), 1);
 $mysqli = $db->Connect();
 $query 	= <<< EOD
 CALL {$db->_['PGroupDetails']}('{$id}');
+CALL {$db->_['PGroupMembers']}('{$id}');
 EOD;
 $results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 
 // Fetch and use the results
+// First details of the group
 $row = $results[0]->fetch_object();
 $id 					= $row->id;
 $name 				= $row->name;
 $description 	= $row->description;
 $members 			= $row->members;
 
+// Then the members
+global $gModule;
+$removeLink = "?m={$gModule}&amp;p=acp-groupmemberremovep&amp;do-submit=remove-member&amp;gid={$id}&amp;mid=%d";
+$memberList = '';
+while($row = $results[2]->fetch_object()) {
+	$title = sprintf($pc->lang['REMOVE_MEMBER'], $row->account, (empty($row->name) ? '' : "({$row->name})"));
+	$memberList .= "<a href='{$removeLink}{$row->id}' title='{$title}'>{$row->account}</a>, ";
+}
+$memberList = substr($memberList, 0, -2);
+
 $results[0]->close();
+$results[2]->close();
 $mysqli->close();
 
 
@@ -98,46 +111,94 @@ require(dirname(__FILE__) . '/IAdminControlPanel.php');
 //
 // Create the HTML
 //
-global $gModule;
-
 $action 	= "?m={$gModule}&amp;p=acp-groupdetailsp";
 $redirect = "?m={$gModule}&amp;p=acp-groupdetails&amp;id={$id}";
+
+// Link to delete group
+$delGroup = "?m={$gModule}&amp;p=acp-groupdelp&amp;do-submit=del-group&amp;id={$id}";
+$delGroup = <<<EOD
+	<ul class='nav-standard nav-links'>
+		<li><a href='{$delGroup}' title='{$pc->lang['CLICK_TO_DELETE']}'>{$pc->lang['GROUP_DELETE']}</a>
+	</ul>
+EOD;
+
+// Only delete available if empty group
+if($members != 0) {
+	$delGroup = "<p>" . sprintf($pc->lang['NO_DELETE_HAS_MEMBERS'], $members) . "</p>";
+}
+
+// No edit/delete of system groups
+$readonly = '';
+if($id <= $db->_['CNrOfSystemGroups']) {
+	$delGroup = "<p>{$pc->lang['NO_DELETE_SYSTEM_GROUP']}</p>";
+	$readonly = "readonly='readonly'";
+	$disabled = "disabled='disabled'";
+}
 
 // Get and format messages from session if they are set
 $helpers = new CHTMLHelpers();
 $messages = $helpers->GetHTMLForSessionMessages(
-	Array('success'), 
-	Array('failed'));
+	Array('successDetails', 'successMember'), 
+	Array('failedDetails', 'failedMember'));
 
 $htmlMain = <<<EOD
 {$htmlCp}
 
-<div class='section'>
+<div id='sdetails' class='section'>
 	<form action='{$action}' method='post'>
 		<input type='hidden' name='redirect' 				value='{$redirect}'>
 		<input type='hidden' name='redirect-fail' 	value='{$redirect}'>
 		<input type='hidden' name='id' 							value='{$id}'>
 		
 		<fieldset class='standard type-2'>
-	 		<legend>{$pc->lang['GROUP_DETAILS_CAPTION']}</legend>
+	 		<legend>{$pc->lang['GROUP_DETAILS_LEGEND']}</legend>
 		 	<div class='form-wrapper'>
 
 				<label for="name">{$pc->lang['GROUP_DETAILS_NAME']}</label>
-				<input name='name' type='text' value='{$name}' maxlength='{$db->_['CSizeGroupName']}' autofocus>
+				<input {$readonly} name='name' type='text' value='{$name}' maxlength='{$db->_['CSizeGroupName']}'>
 
 				<label for='description'>{$pc->lang['GROUP_DETAILS_DESCRIPTION']}</label>
-				<textarea name='description' rows='2' maxlength='{$db->_['CSizeGroupDescription']}'>{$description}</textarea>
+				<textarea {$readonly} name='description' rows='2' maxlength='{$db->_['CSizeGroupDescription']}'>{$description}</textarea>
 
 				<div class='buttonbar'>
-					<button type='submit' class='delete' name='do-submit' value='delete-group'>{$pc->lang['GROUP_DELETE']}</button>
-					<button type='submit' class='save' name='do-submit' value='save-group'>{$pc->lang['GROUP_SAVE']}</button>
+					<button {$disabled} type='submit' class='save' name='do-submit' value='save-group'>{$pc->lang['GROUP_SAVE']}</button>
 				</div> <!-- buttonbar -->
 
-				<div class='form-status'>{$messages['success']}{$messages['failed']}</div> 
+				<div class='form-status'>{$messages['successDetails']}{$messages['failedDetails']}</div> 
+		 </div> <!-- wrapper -->
+
+		{$delGroup}
+		
+		</fieldset>
+	</form>
+</div> <!-- section -->
+
+
+<div id='smembers' class='section'>
+	<form action='{$action}' method='post'>
+		<input type='hidden' name='redirect' 				value='{$redirect}'>
+		<input type='hidden' name='redirect-fail' 	value='{$redirect}'>
+		<input type='hidden' name='id' 							value='{$id}'>
+		
+		<fieldset class='standard type-3'>
+	 		<legend>{$pc->lang['GROUP_MEMBERS_LEGEND']}</legend>
+		 	<div class='form-wrapper'>
+
+				<p>{$pc->lang['GROUP_MEMBERS_TITLE']}<br>{$memberList}</p>
+				
+				<label for="new-member">{$pc->lang['ADD_MEMBERS_BY_ACCOUNT']}</label>
+				<input name='new-member' type='text'>
+
+				<div class='buttonbar'>
+					<button type='submit' class='add' name='do-submit' value='add-members'>{$pc->lang['GROUP_MEMBERS_ADD']}</button>
+				</div> <!-- buttonbar -->
+
+				<div class='form-status'>{$messages['successMember']}{$messages['failedMember']}</div> 
 		 </div> <!-- wrapper -->
 		</fieldset>
 	</form>
 </div> <!-- section -->
+
 
 EOD;
 

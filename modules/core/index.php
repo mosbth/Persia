@@ -100,7 +100,10 @@ switch($gPage) {
 	// Groups
 	case 'acp-groups':				require_once(TP_PAGESPATH . 'acp/PGroupList.php'); break;
 	case 'acp-groupdetails':	require_once(TP_PAGESPATH . 'acp/PGroupDetails.php'); break;
+	case 'acp-groupmembers':	require_once(TP_PAGESPATH . 'acp/PGroupDetails.php'); break;
 	case 'acp-groupdetailsp':	require_once(TP_PAGESPATH . 'acp/PGroupDetailsProcess.php'); break;
+	case 'acp-groupcreatep':	require_once(TP_PAGESPATH . 'acp/PGroupDetailsProcess.php'); break;
+	case 'acp-groupdelp':			require_once(TP_PAGESPATH . 'acp/PGroupDetailsProcess.php'); break;
 
 
 	// -------------------------------------------------------------------------------------------

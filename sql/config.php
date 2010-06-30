@@ -32,8 +32,9 @@ $DB_Tables_And_Procedures = Array(
 	//
 	// Module Core: Accounts, users, groups, profile
 	//
-	'CSizeGroupName' 						=> 8,
-	'CSizeGroupDescription'			=> 80,
+	'CNrOfSystemGroups'					=> 2,
+	'CSizeGroupName' 						=> 16,
+	'CSizeGroupDescription'			=> 255,
 
 	'User'					 						=> DB_PREFIX . 'User',
 	'Group'					 						=> DB_PREFIX . 'Group',
@@ -54,11 +55,15 @@ $DB_Tables_And_Procedures = Array(
 	'FGetAvatar' 								=> DB_PREFIX . 'FGetAvatar',
 
 	// For Group and Groupmembers
-	'PCreateGroup' 							=> DB_PREFIX . 'PCreateGroup',
+//	'PCreateGroup' 							=> DB_PREFIX . 'PCreateGroup',
 	'PGroupMemberAdd' 					=> DB_PREFIX . 'PGroupMemberAdd',
 	'FCheckUserIsAdmin' 				=> DB_PREFIX . 'FCheckUserIsAdmin',
 	'PGroupsAndNoMembers'	 			=> DB_PREFIX . 'PGroupsAndNoMembers',
 	'PGroupDetails'				 			=> DB_PREFIX . 'PGroupDetails',
+	'PGroupDetailsUpdate'	 			=> DB_PREFIX . 'PGroupDetailsUpdate',
+	'PGroupAdd'						 			=> DB_PREFIX . 'PGroupAdd',
+	'PGroupDelete'				 			=> DB_PREFIX . 'PGroupDelete',
+	'PGroupMembers'				 			=> DB_PREFIX . 'PGroupMembers',
 
 
 	// For supporting gravatar from gratavar.com
@@ -79,9 +84,9 @@ $DB_Tables_And_Procedures = Array(
 	//
 	// Module Core: File
 	//
-	'CSizeFileName' 					=> 256,
+	'CSizeFileName' 					=> 255,
 	'CSizeFileNameUnique' 		=> 13, // Smallest size of PHP uniq().
-	'CSizePathToDisk' 				=> 256,
+	'CSizePathToDisk' 				=> 255,
 	
 	 // Max 127 chars according http://tools.ietf.org/html/rfc4288#section-4.2
 	'CSizeMimetype'		 				=> 127,

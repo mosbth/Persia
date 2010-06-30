@@ -178,6 +178,18 @@ class CPageController {
 
 	// ------------------------------------------------------------------------------------
 	//
+	// Check the $_POST first and then the $_GET for a value. 
+	//
+	public static function POSTorGETisSetOrSetDefault($aEntry, $aDefault = '') {
+
+		$post = self::POSTisSetOrSetDefault($aEntry, '');		
+		$get 	= self::GETisSetOrSetDefault($aEntry, '');
+		return (!empty($post) ? $post : (!empty($get) ? $get : $aDefault));
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
 	// Check the $_POST first and then the $_SESSION for a value. 
 	// Unset the value in the $_SESSION.
 	//

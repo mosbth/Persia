@@ -60,7 +60,7 @@ $if->UserIsMemberOfGroupAdminOrDie();
 // Take care of _GET/_POST variables. Store them in a variable (if they are set).
 // Always check whats coming in...
 //
-$submitAction	= $pc->POSTisSetOrSetDefault('do-submit');
+$submitAction	= $pc->POSTorGETisSetOrSetDefault('do-submit');
 $redirect			= $pc->POSTisSetOrSetDefault('redirect');
 $redirectFail	= $pc->POSTisSetOrSetDefault('redirect-fail');
 
@@ -81,131 +81,237 @@ if(false) {
 // 
 else if($submitAction == 'save-group') {
 
-/*
 	// Get the input
-	$fileid		= $pc->POSTisSetOrSetDefault('fileid');
-	$name 		= $pc->POSTisSetOrSetDefault('name');
-	$mimetype = $pc->POSTisSetOrSetDefault('mimetype');
+	$id						= $pc->POSTisSetOrSetDefault('id');
+	$name 				= $pc->POSTisSetOrSetDefault('name');
+	$description 	= $pc->POSTisSetOrSetDefault('description');
 
 	// Check boundaries for whats coming in
-	// is name within size?
-	if(!(is_numeric($fileid) && $fileid > 0)) {
-		$pc->SetSessionMessage('failed', $pc->lang['FILEID_INVALID']);
+	// is id unisgned int?
+	if(!(is_numeric($id) && $id > 0)) {
+		$pc->SetSessionMessage('failedDetails', $pc->lang['ID_INVALID']);
+		$pc->RedirectTo($redirectFail);
+	}
+
+	// trying to change a system defined group?
+	if($id <= $db->_['CNrOfSystemGroups']) {
+		$pc->SetSessionMessage('failedDetails', $pc->lang['SYSTEM_GROUP']);
 		$pc->RedirectTo($redirectFail);
 	}
 
 	// is name within size?
-	if(mb_strlen($name) > $db->_['CSizeFileName']) {
-		$pc->SetSessionMessage('failed', sprintf($pc->lang['FILENAME_TO_LONG'], $db->_['CSizeFileName']));
+	if(mb_strlen($name) > $db->_['CSizeGroupName']) {
+		$pc->SetSessionMessage('failedDetails', sprintf($pc->lang['NAME_TO_LONG'], $db->_['CSizeGroupName']));
 		$pc->RedirectTo($redirectFail);
 	}
 
-	// is mimetype within size?
-	if(mb_strlen($mimetype) > $db->_['CSizeMimetype']) {
-		$pc->SetSessionMessage('failed', sprintf($pc->lang['MIMETYPE_TO_LONG'], $db->_['CSizeMimetype']));
+	// is description within size?
+	if(mb_strlen($description) > $db->_['CSizeGroupDescription']) {
+		$pc->SetSessionMessage('failedDetails', sprintf($pc->lang['DESCRIPTION_TO_LONG'], $db->_['CSizeGroupDescription']));
 		$pc->RedirectTo($redirectFail);
 	}
-	
-	// Save metadata of the file in the database
+
+	// Connect and prepare arguments
 	$mysqli = $db->Connect();
+	$name 				= $mysqli->real_escape_string($name);
+	$description 	= $mysqli->real_escape_string($description);
 
-	// Create the query
+	// Perform the query and ignore results
 	$query 	= <<< EOD
-CALL {$db->_['PFileDetailsUpdate']}({$fileid}, '{$userId}', '{$name}', '{$mimetype}', @success);
-SELECT @success AS success;
+CALL {$db->_['PGroupDetailsUpdate']}({$id}, '{$name}', '{$description}');
 EOD;
-
-	// Perform the query and manage results
-	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
-	
-	$row = $results[1]->fetch_object();
-	if($row->success) {
-		$pc->SetSessionMessage('failed', $db->_['FFileCheckPermissionMessages'][$row->success]);
-		$pc->RedirectTo($redirectFail);
-	}
-
-	$results[1]->close();
+	$db->DoMultiQueryRetrieveAndStoreResultset($query);
 	$mysqli->close();
 	
-*/
-	$pc->SetSessionMessage('success', $pc->lang['FILE_DETAILS_UPDATED']);
+	$pc->SetSessionMessage('successDetails', $pc->lang['ITEM_UPDATED']);
 	$pc->RedirectTo($redirect);
 }
 
 
 // -------------------------------------------------------------------------------------------
 //
-// Add a group
+// Add a group through a GET request
 // 
 else if($submitAction == 'add-group') {
 
-/*
+	// What are the actions?
+	global $gModule;
+	$redirect = empty($redirect) ? "?m={$gModule}&p=acp-groupdetails&id=%d" : $redirect;
+
 	// Get the input
-	$fileid		= $pc->POSTisSetOrSetDefault('fileid');
-	$deleteOrRestore = ($submitAction == 'delete-file') ? 1 : (($submitAction == 'restore-file') ? 2 : 0);
-	
-	// Save metadata of the file in the database
-	$mysqli = $db->Connect();
+	$name 				= $pc->lang['DEFAULT_NAME'];
+	$description 	= $pc->lang['DEFAULT_DESCRIPTION'];
 
-	// Create the query
-	$query 	= <<< EOD
-CALL {$db->_['PFileDetailsDeleted']}({$fileid}, '{$userId}', '{$deleteOrRestore}', @success);
-SELECT @success AS success;
-EOD;
-
-	// Perform the query and manage results
-	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
-	
-	$row = $results[1]->fetch_object();
-	if($row->success) {
-		$pc->SetSessionMessage('failed', $db->_['FFileCheckPermissionMessages'][$row->success]);
+	// Check boundaries for whats coming in
+	// is name within size?
+	if(mb_strlen($name) > $db->_['CSizeGroupName']) {
+		$pc->SetSessionMessage('failedDetails', sprintf($pc->lang['NAME_TO_LONG'], $db->_['CSizeGroupName']));
 		$pc->RedirectTo($redirectFail);
 	}
 
+	// is description within size?
+	if(mb_strlen($description) > $db->_['CSizeGroupDescription']) {
+		$pc->SetSessionMessage('failedDetails', sprintf($pc->lang['DESCRIPTION_TO_LONG'], $db->_['CSizeGroupDescription']));
+		$pc->RedirectTo($redirectFail);
+	}
+
+	// Connect and prepare arguments
+	$mysqli = $db->Connect();
+	$name 				= $mysqli->real_escape_string($name);
+	$description 	= $mysqli->real_escape_string($description);
+
+	// Perform the query and manage results
+	$query 	= <<< EOD
+CALL {$db->_['PGroupAdd']}(@id, '{$name}', '{$description}');
+SELECT @id AS id;
+EOD;
+	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
+	
+	$row = $results[1]->fetch_object();
+	$id = $row->id;
 	$results[1]->close();
 	$mysqli->close();
 	
-	$pc->SetSessionMessage('success', $pc->lang['FILE_DETAILS_UPDATED']);
-	$pc->RedirectTo($redirect);
-*/
+	$pc->SetSessionMessage('successDetails', $pc->lang['ITEM_ADDED']);
+	$pc->RedirectTo(sprintf($redirect, $id));
 }
 
 
 // -------------------------------------------------------------------------------------------
 //
-// Delete a group
+// Delete a group through a GET request
 // 
-else if($submitAction == 'delete-group') {
+else if($submitAction == 'del-group') {
 
-/*
 	// Get the input
-	$fileid		= $pc->POSTisSetOrSetDefault('fileid');
-	$deleteOrRestore = ($submitAction == 'delete-file') ? 1 : (($submitAction == 'restore-file') ? 2 : 0);
-	
-	// Save metadata of the file in the database
-	$mysqli = $db->Connect();
+	$id = $pc->GETisSetOrSetDefault('id');
 
-	// Create the query
-	$query 	= <<< EOD
-CALL {$db->_['PFileDetailsDeleted']}({$fileid}, '{$userId}', '{$deleteOrRestore}', @success);
-SELECT @success AS success;
-EOD;
+	// What are the actions?
+	global $gModule;
+	$redirect 		= empty($redirect) ? "?m={$gModule}&p=acp-groups" : $redirect;
+	$redirectFail = empty($redirectFail) ? "?m={$gModule}&p=acp-groupdetails&id={$id}" : $redirect;
 
-	// Perform the query and manage results
-	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
-	
-	$row = $results[1]->fetch_object();
-	if($row->success) {
-		$pc->SetSessionMessage('failed', $db->_['FFileCheckPermissionMessages'][$row->success]);
+	// Check boundaries for whats coming in
+	// is id unisgned int?
+	if(!(is_numeric($id) && $id > 0)) {
+		$pc->SetSessionMessage('failedDetails', $pc->lang['ID_INVALID']);
 		$pc->RedirectTo($redirectFail);
 	}
 
-	$results[1]->close();
+	// trying to change a system defined group?
+	if($id <= $db->_['CNrOfSystemGroups']) {
+		$pc->SetSessionMessage('failedDetails', $pc->lang['SYSTEM_GROUP']);
+		$pc->RedirectTo($redirectFail);
+	}
+
+	// Connect and perform query, ignore results
+	$mysqli = $db->Connect();
+	$query 	= <<< EOD
+CALL {$db->_['PGroupDelete']}({$id});
+EOD;
+	$db->DoMultiQueryRetrieveAndStoreResultset($query);
 	$mysqli->close();
 	
-	$pc->SetSessionMessage('success', $pc->lang['FILE_DETAILS_UPDATED']);
+	$pc->SetSessionMessage('successDetails', $pc->lang['ITEM_DELETED']);
+	$pc->RedirectTo($redirect);
+}
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Add groupmembers by GET request
+// 
+else if($submitAction == 'add-members') {
+
+/*
+	// Get the input
+	$id						= $pc->POSTisSetOrSetDefault('id');
+	$name 				= $pc->POSTisSetOrSetDefault('name');
+	$description 	= $pc->POSTisSetOrSetDefault('description');
+
+	// Check boundaries for whats coming in
+	// is id unisgned int?
+	if(!(is_numeric($id) && $id > 0)) {
+		$pc->SetSessionMessage('failedDetails', $pc->lang['ID_INVALID']);
+		$pc->RedirectTo($redirectFail);
+	}
+
+	// trying to change a system defined group?
+	if($id <= $db->_['CNrOfSystemGroups']) {
+		$pc->SetSessionMessage('failedDetails', $pc->lang['SYSTEM_GROUP']);
+		$pc->RedirectTo($redirectFail);
+	}
+
+	// is name within size?
+	if(mb_strlen($name) > $db->_['CSizeGroupName']) {
+		$pc->SetSessionMessage('failedDetails', sprintf($pc->lang['NAME_TO_LONG'], $db->_['CSizeGroupName']));
+		$pc->RedirectTo($redirectFail);
+	}
+
+	// is description within size?
+	if(mb_strlen($description) > $db->_['CSizeGroupDescription']) {
+		$pc->SetSessionMessage('failedDetails', sprintf($pc->lang['DESCRIPTION_TO_LONG'], $db->_['CSizeGroupDescription']));
+		$pc->RedirectTo($redirectFail);
+	}
+
+	// Connect and prepare arguments
+	$mysqli = $db->Connect();
+	$name 				= $mysqli->real_escape_string($name);
+	$description 	= $mysqli->real_escape_string($description);
+
+	// Perform the query and ignore results
+	$query 	= <<< EOD
+CALL {$db->_['PGroupDetailsUpdate']}({$id}, '{$name}', '{$description}');
+EOD;
+	$db->DoMultiQueryRetrieveAndStoreResultset($query);
+	$mysqli->close();
+	
+	$pc->SetSessionMessage('successDetails', $pc->lang['ITEM_UPDATED']);
 	$pc->RedirectTo($redirect);
 */
+
+}
+
+
+// -------------------------------------------------------------------------------------------
+//
+// Remove a groupmember by GET request
+// 
+else if($submitAction == 'remove-member') {
+
+	// Get the input
+	$gid = $pc->POSTisSetOrSetDefault('gid');
+	$mid = $pc->POSTisSetOrSetDefault('mid');
+
+	// Check boundaries for whats coming in
+	// is gid unisgned int?
+	if(!(is_numeric($id) && $id > 0)) {
+		$pc->SetSessionMessage('failedMembers', $pc->lang['ID_INVALID']);
+		$pc->RedirectTo($redirectFail);
+	}
+	
+	// is mid unisgned int?
+	if(!(is_numeric($id) && $id > 0)) {
+		$pc->SetSessionMessage('failedMembers', $pc->lang['MEMBER_ID_INVALID']);
+		$pc->RedirectTo($redirectFail);
+	}
+
+	// Connect and prepare arguments
+	$mysqli = $db->Connect();
+	$name 				= $mysqli->real_escape_string($name);
+	$description 	= $mysqli->real_escape_string($description);
+
+	// Perform the query and ignore results
+	$query 	= <<< EOD
+CALL {$db->_['PGroupDetailsUpdate']}({$id}, '{$name}', '{$description}');
+EOD;
+	$db->DoMultiQueryRetrieveAndStoreResultset($query);
+	$mysqli->close();
+	
+	$pc->SetSessionMessage('successDetails', $pc->lang['ITEM_UPDATED']);
+	$pc->RedirectTo($redirect);
+*/
+
 }
 
 

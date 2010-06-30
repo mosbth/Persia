@@ -100,70 +100,6 @@ CREATE TABLE {$db->_['GroupMember']} (
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
--- SP to show details on all groups, including number of members in each group
---
-DROP PROCEDURE IF EXISTS {$db->_['PGroupsAndNoMembers']};
-CREATE PROCEDURE {$db->_['PGroupsAndNoMembers']}
-()
-BEGIN
-	
-	-- All details on the groups, including number of members
-	SELECT 
-		G.idGroup AS id,
-		G.nameGroup AS name,
-		G.descriptionGroup AS description,
-		G1.members AS members
-	FROM {$db->_['Group']} AS G
-		LEFT OUTER JOIN 
-			(
-				SELECT 
-					GroupMember_idGroup, 
-					COUNT(GroupMember_idGroup) AS members 
-				FROM {$db->_['GroupMember']}
-				GROUP BY GroupMember_idGroup
-			) AS G1
-			ON G1.GroupMember_idGroup = G.idGroup;
-	
-END;
-
-
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---
--- SP to show details on a group, including number of members
---
-DROP PROCEDURE IF EXISTS {$db->_['PGroupDetails']};
-CREATE PROCEDURE {$db->_['PGroupDetails']}
-(
-	aGroupId INT UNSIGNED
-)
-BEGIN
-	
-	-- All details on the groups, including number of members
-	SELECT 
-		G.idGroup AS id,
-		G.nameGroup AS name,
-		G.descriptionGroup AS description,
-		G1.members AS members
-	FROM {$db->_['Group']} AS G
-		LEFT OUTER JOIN 
-			(
-				SELECT 
-					GroupMember_idGroup, 
-					COUNT(GroupMember_idGroup) AS members 
-				FROM {$db->_['GroupMember']}
-				WHERE
-					GroupMember_idGroup = aGroupId
-				GROUP BY GroupMember_idGroup
-			) AS G1
-			ON G1.GroupMember_idGroup = G.idGroup
-	WHERE
-		idGroup = aGroupId;
-	
-END;
-
-
--- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
---
 -- Table for the Statistics
 --
 DROP TABLE IF EXISTS {$db->_['Statistics']};
@@ -773,35 +709,163 @@ END;
 --
 -- =============================================================================================
 
+
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
--- SP to insert new groups.
+-- SP to show details on all groups, including number of members in each group
 --
--- Sets aStatus to show success/failed.
--- aStatus=0: Success, new group added.
--- aStatus=1: Failed, no group added (duplicate key).
+DROP PROCEDURE IF EXISTS {$db->_['PGroupsAndNoMembers']};
+CREATE PROCEDURE {$db->_['PGroupsAndNoMembers']}
+()
+BEGIN
+	
+	-- All details on the groups, including number of members
+	SELECT 
+		G.idGroup AS id,
+		G.nameGroup AS name,
+		G.descriptionGroup AS description,
+		G1.members AS members
+	FROM {$db->_['Group']} AS G
+		LEFT OUTER JOIN 
+			(
+				SELECT 
+					GroupMember_idGroup, 
+					COUNT(GroupMember_idGroup) AS members 
+				FROM {$db->_['GroupMember']}
+				GROUP BY GroupMember_idGroup
+			) AS G1
+			ON G1.GroupMember_idGroup = G.idGroup;
+	
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
-DROP PROCEDURE IF EXISTS {$db->_['PCreateGroup']};
-CREATE PROCEDURE {$db->_['PCreateGroup']}
+-- SP to show details on a group, including number of members
+--
+DROP PROCEDURE IF EXISTS {$db->_['PGroupDetails']};
+CREATE PROCEDURE {$db->_['PGroupDetails']}
 (
-	IN aGroupName CHAR({$db->_['CSizeGroupName']}),
-	IN aGroupDescription CHAR({$db->_['CSizeGroupDescription']}),
-	OUT aStatus INT
+	aGroupId INT UNSIGNED
 )
 BEGIN
 	
-	-- Insert the group, ignore if name already exists
-	INSERT IGNORE INTO {$db->_['Group']} 
-		(nameGroup, descriptionGroup) 
-		VALUES 
-		(aGroupName, aGroupDescription);
-
-	-- Set status value to "return"
-	CASE ROW_COUNT()
-		WHEN 0 THEN SET aStatus = 1; -- Failed
-		WHEN 1 THEN SET aStatus = 0; -- Success
-	END CASE;
+	-- All details on the groups, including number of members
+	SELECT 
+		G.idGroup AS id,
+		G.nameGroup AS name,
+		G.descriptionGroup AS description,
+		G1.members AS members
+	FROM {$db->_['Group']} AS G
+		LEFT OUTER JOIN 
+			(
+				SELECT 
+					GroupMember_idGroup, 
+					COUNT(GroupMember_idGroup) AS members 
+				FROM {$db->_['GroupMember']}
+				WHERE
+					GroupMember_idGroup = aGroupId
+				GROUP BY GroupMember_idGroup
+			) AS G1
+			ON G1.GroupMember_idGroup = G.idGroup
+	WHERE
+		idGroup = aGroupId;
 	
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to display all members of a group
+--
+DROP PROCEDURE IF EXISTS {$db->_['PGroupMembers']};
+CREATE PROCEDURE {$db->_['PGroupMembers']}
+(
+	aGroupId INT UNSIGNED
+)
+BEGIN
+	
+	-- All members of a group
+	SELECT 
+		U.idUser AS id,
+		U.accountUser AS account,
+		U.nameUser AS name
+	FROM {$db->_['GroupMember']} AS Gm
+		INNER JOIN {$db->_['User']} AS U
+			ON Gm.GroupMember_idUser = U.idUser
+	WHERE
+		Gm.GroupMember_idGroup = aGroupId;
+	
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to update details on a group
+--
+DROP PROCEDURE IF EXISTS {$db->_['PGroupDetailsUpdate']};
+CREATE PROCEDURE {$db->_['PGroupDetailsUpdate']}
+(
+	aId INT UNSIGNED,
+	aName CHAR({$db->_['CSizeGroupName']}),
+	aDescription CHAR({$db->_['CSizeGroupDescription']})
+)
+BEGIN
+
+	-- Update group details
+	UPDATE {$db->_['Group']}
+	SET
+		nameGroup = aName,
+		descriptionGroup = aDescription
+	WHERE	
+		idGroup = aId
+	LIMIT 1;
+	
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to add a group
+--
+DROP PROCEDURE IF EXISTS {$db->_['PGroupAdd']};
+CREATE PROCEDURE {$db->_['PGroupAdd']}
+(
+	OUT aId INT UNSIGNED,
+	aName CHAR({$db->_['CSizeGroupName']}),
+	aDescription CHAR({$db->_['CSizeGroupDescription']})
+)
+BEGIN
+
+	-- Update group details
+	INSERT INTO  {$db->_['Group']}
+		(nameGroup, descriptionGroup)
+	VALUES
+		(aName, aDescription);
+		
+	-- Get id of new group
+	SELECT LAST_INSERT_ID() INTO aId;
+	
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to delete a group
+--
+DROP PROCEDURE IF EXISTS {$db->_['PGroupDelete']};
+CREATE PROCEDURE {$db->_['PGroupDelete']}
+(
+	aId INT UNSIGNED
+)
+BEGIN
+
+	-- Update group details
+	DELETE FROM {$db->_['Group']}
+	WHERE 
+		idGroup = aId
+	LIMIT 1;
+
 END;
 
 

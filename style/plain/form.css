@@ -16,9 +16,13 @@ fieldset.standard {
 
 /* Wrapper around form items */
 fieldset.standard div.form-wrapper {}
-
-/* Wrapper around button bar */
-/*fieldset.standard div.buttonbar {}  IS REALLY NEEDED? */
+fieldset.standard div.form-wrapper:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
 
 /* Status output from form being submitted */
 fieldset.standard div.form-status {}
@@ -46,12 +50,13 @@ fieldset.standard label {
 fieldset.standard input {
 	width: 24em;
 	height: 2em;
-	font-size: 1.3em;
+	font-size: 1.2em;
 }
 
 /* textarea */
 fieldset.standard textarea {
-	font-size: 1.3em;
+	font-family: inherit;
+	font-size: 1.2em;
 	min-width: 24em;
 	padding-top: 0.5em;
 	padding-bottom: 0.5em;
@@ -79,6 +84,12 @@ fieldset.standard button.save {
 	text-indent: 18px; 
 }
 
+/* add button */
+fieldset.standard button.add {
+	background: url('../../img/silk/add.png') no-repeat 3px 4px;
+	text-indent: 18px; 
+}
+
 /* delete button */
 fieldset.standard button.delete {
 	background: url('../../img/silk/delete.png') no-repeat 3px 4px;
@@ -92,7 +103,10 @@ fieldset.standard div.form-status {
 }
 
 fieldset.standard p { margin-bottom: 2em; }
-fieldset.standard input[readonly] { color: #999; }
+
+/* readonly items */
+fieldset.standard input[readonly],
+fieldset.standard textarea[readonly] { color: #999; }
 
 /* To hide a element */
 .hide {display: none;}
@@ -144,6 +158,42 @@ fieldset.type-2 input {
 fieldset.type-2 textarea {
 	float: right;
 	min-width: 100%;
+}
+
+
+/* -------------------------------------------------------------------------------------
+/* type-3, centered, input has full width, label above, button at end of input */
+/* useful for one input with button, a bit like search (type-s)*/
+
+fieldset.type-3 {}
+
+fieldset.type-3 div.form-wrapper {
+	margin: auto;
+	width: 90%;
+}
+
+fieldset.type-3 label {
+	float: left;
+	display: block;
+	width: 100%;
+	padding-left: 0;
+}
+
+fieldset.type-3 input {
+	float: left;
+	height: 1.6em;
+	width: 80%;
+}
+
+fieldset.type-3 div.buttonbar {
+	clear: none;
+	float: left;
+	margin: 0 0 0 0.5em;
+}
+
+fieldset.type-3 div.form-status {
+	clear: both;
+	float: left;
 }
 
 

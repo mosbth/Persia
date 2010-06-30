@@ -125,6 +125,7 @@ class CDatabaseController {
 	// ------------------------------------------------------------------------------------
 	//
 	// Retrieve and store results from multiquery in an array.
+	// OBSOLETE? replaced by DoMultiQueryRetrieveAndStoreResultset
 	//
 	public function RetrieveAndStoreResultsFromMultiQuery(&$aResults) {
 
