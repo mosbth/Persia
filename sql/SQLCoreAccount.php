@@ -41,7 +41,7 @@ CREATE TABLE {$db->_['User']} (
   idUser INT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
 
   -- Attributes
-  accountUser CHAR(32) NOT NULL UNIQUE,
+  accountUser CHAR({$db->_['CSizeUserAccount']}) NOT NULL UNIQUE,
   nameUser CHAR(100) NULL,
   emailUser CHAR(100) NULL UNIQUE,
   
@@ -205,6 +205,37 @@ BEGIN
 	END IF;
 	
 	RETURN link;		
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to show/display details of an account/user.
+--
+DROP PROCEDURE IF EXISTS {$db->_['PGetAccountList']};
+CREATE PROCEDURE {$db->_['PGetAccountList']}
+()
+BEGIN
+	
+	-- All details on all accounts
+	SELECT
+		U.idUser AS id,
+		U.accountUser AS account,
+		U.nameUser AS name,
+		U.emailUser AS email,
+		{$db->_['FGetGravatarLinkFromEmail']}(U.gravatarUser, 15) AS gravatarmicro,
+		Gm.memberships AS memberships
+	FROM {$db->_['User']} AS U
+		LEFT OUTER JOIN
+			(
+				SELECT 
+					GroupMember_idUser,
+					COUNT(GroupMember_idUser) AS memberships
+				FROM {$db->_['GroupMember']}
+				GROUP BY GroupMember_idUser
+			) AS Gm
+			ON Gm.GroupMember_idUser = U.idUser;
+	
 END;
 
 
@@ -512,6 +543,28 @@ END;
 
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
+-- SP to get account id from account name. 
+--
+-- aUserId is the id of the user.
+-- aUserAccount is the name of the account.
+--
+DROP PROCEDURE IF EXISTS {$db->_['PGetAccountId']};
+CREATE PROCEDURE {$db->_['PGetAccountId']}
+(
+	IN aUserAccount CHAR({$db->_['CSizeUserAccount']})
+)
+BEGIN
+
+	-- Get account id
+	SELECT idUser As id
+	FROM {$db->_['User']} 
+	WHERE accountUser = aUserAccount;
+
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
 -- SP to get account id from account name. If the name does not exists then create a new account
 -- for that account name.
 -- This is ordinary used to silently create new accounts when using an external authentication
@@ -596,7 +649,7 @@ BEGIN
 		--
 		-- Insert default group memberships
 		--
-		CALL {$db->_['PGroupMemberAdd']}(aUserId, 2); -- Member of group Users
+		CALL {$db->_['PGroupMemberAdd']}({$db->_['CIdOfUserGroup']}, aUserId); -- Member of group Users
 	
 		SET aStatus = 0; -- SUCCESS
 	
@@ -872,20 +925,46 @@ END;
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 --
 -- SP to insert new member of a group.
+-- Selects number of affected rows. No duplicates inserted if already there.'
 --
 DROP PROCEDURE IF EXISTS {$db->_['PGroupMemberAdd']};
 CREATE PROCEDURE {$db->_['PGroupMemberAdd']}
 (
-	IN aUserId INT UNSIGNED,
-	IN aGroupId INT UNSIGNED
+	IN aGroupId INT UNSIGNED,
+	IN aUserId INT UNSIGNED
+)
+BEGIN
+
+	-- Add new member, ignore if already member
+	INSERT IGNORE INTO {$db->_['GroupMember']} 
+		(GroupMember_idUser, GroupMember_idGroup) 
+		VALUES
+		(aUserId, aGroupId);
+	
+	-- Check if member was added
+	SELECT ROW_COUNT() AS affected_rows;
+	
+END;
+
+
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--
+-- SP to remove a member from a group.
+--
+DROP PROCEDURE IF EXISTS {$db->_['PGroupMemberRemove']};
+CREATE PROCEDURE {$db->_['PGroupMemberRemove']}
+(
+	IN aGroupId INT UNSIGNED,
+	IN aUserId INT UNSIGNED
 )
 BEGIN
 
 	--
-	INSERT INTO {$db->_['GroupMember']} 
-		(GroupMember_idUser, GroupMember_idGroup) 
-		VALUES 
-		(aUserId, aGroupId);
+	DELETE FROM {$db->_['GroupMember']} 
+	WHERE
+		GroupMember_idUser = aUserId AND
+		GroupMember_idGroup = aGroupId
+	LIMIT 1;
 	
 END;
 

@@ -78,6 +78,7 @@ $silent				= $pc->SESSIONIsSetOrSetDefault('silentLoginAccount');
 //
 if(!empty($silent)) {
 
+	$submit = 'login-local';
 	$account 			= $pc->SESSIONIsSetOrSetDefault('silentLoginAccount');
 	$password 		= $pc->SESSIONIsSetOrSetDefault('silentLoginPassword');
 	$redirect 		= $pc->SESSIONIsSetOrSetDefault('silentLoginRedirect');

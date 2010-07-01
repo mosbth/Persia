@@ -1,36 +1,58 @@
 <?php
 // ===========================================================================================
 //
+//		Persia (http://phpersia.org), software to build webbapplications.
+//    Copyright (C) 2010  Mikael Roos (mos@bth.se)
+//
+//    This file is part of Persia.
+//
+//    Persia is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Persia is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Persia. If not, see <http://www.gnu.org/licenses/>.
+//
 // File: PAccountCreateProcess.php
 //
 // Description: Create a new account.
 //
 // Author: Mikael Roos, mos@bth.se
 //
+// Known issues:
+// -
+//
+// History: 
+// 2010-07-01: New structure for instantiating controllers. Included license message.
+//
 
 
 // -------------------------------------------------------------------------------------------
 //
-// Get pagecontroller helpers. Useful methods to use in most pagecontrollers
+// Get common controllers, uncomment if not used in current pagecontroller.
 //
-$pc = CPageController::GetInstance();
-$pc->LoadLanguage(__FILE__);
+// $pc, Page Controller helpers. Useful methods to use in most pagecontrollers
+// $uc, User Controller. Keeps information/permission on user currently signed in.
+// $if, Interception Filter. Useful to check constraints before entering a pagecontroller.
+// $db, Database Controller. Manages all database access.
+//
+$pc = CPageController::GetInstanceAndLoadLanguage(__FILE__);
+$uc = CUserController::GetInstance();
+$if = CInterceptionFilter::GetInstance();
+$db = CDatabaseController::GetInstance();
 
 
 // -------------------------------------------------------------------------------------------
 //
-// User controller, get info about the current user
+// Perform checks before continuing, what's to be fullfilled to enter this controller?
 //
-$uc 		= CUserController::GetInstance();
-$userId	= $uc->GetAccountId();
-
-
-// -------------------------------------------------------------------------------------------
-//
-// Interception Filter, controlling access, authorithy and other checks.
-//
-$intFilter = CInterceptionFilter::GetInstance();
-$intFilter->FrontControllerIsVisitedOrDie();
+$if->FrontControllerIsVisitedOrDie();
 
 
 // -------------------------------------------------------------------------------------------
@@ -104,7 +126,6 @@ else if($submitAction == 'account-create') {
 	//
 	// Execute the database query to make the update
 	//
-	$db = CDatabaseController::GetInstance();
 	$mysqli = $db->Connect();
 
 	// Prepare query
@@ -123,14 +144,14 @@ EOD;
 	$results = $db->DoMultiQueryRetrieveAndStoreResultset($query);
 
 	// Get details from resultset
-	$row = $results[1]->fetch_object();
+	$row = $results[2]->fetch_object();
 
 	if($row->status == 1) {
 		$pc->SetSessionMessage('createAccountFailed', $pc->lang['ACCOUNTNAME_ALREADY_EXISTS']);
 		$pc->RedirectTo($redirectFail);	
 	}
 	
-	$results[1]->close();
+	$results[2]->close();
 	$mysqli->close();
 
 	//

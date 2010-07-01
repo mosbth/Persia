@@ -71,6 +71,8 @@ $if->FrontControllerIsVisitedOrDie();
 //
 // Always check whats coming in...
 //strip_tags($item)
+//trim($account);
+//if(preg_replace('/[a-zA-Z0-9]/', '', $account)) {
 //$pc->IsNumericOrDie($item, 0, 2);
 //$account = $mysqli->real_escape_string($account);
 

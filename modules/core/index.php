@@ -61,11 +61,11 @@ switch($gPage) {
 
 	// Process for aid with resetting password
 	case 'account-forgot-pwd':		if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword1.php'); break;
-	case 'account-forgot-pwdp':		if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword1Process.php'); break;
+	case 'account-forgot-pwdp':		if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPasswordProcess.php'); break;
 	case 'account-forgot-pwd2':		if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword2.php'); break;
-	case 'account-forgot-pwd2p':	if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword2Process.php'); break;
+	case 'account-forgot-pwd2p':	if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPasswordProcess.php'); break;
 	case 'account-forgot-pwd3':		if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword3.php'); break;
-	case 'account-forgot-pwd3p':	if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword3Process.php'); break;
+	case 'account-forgot-pwd3p':	if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPasswordProcess.php'); break;
 	case 'account-forgot-pwd4':		if(FORGOT_PASSWORD) require_once(TP_PAGESPATH . 'account/PAccountForgotPassword4.php'); break;
 
 
@@ -97,6 +97,9 @@ switch($gPage) {
 	//
 	case 'acp':			require_once(TP_PAGESPATH . 'acp/PAdminControlPanel.php'); break;
 
+	// Accounts
+	case 'acp-accounts':			require_once(TP_PAGESPATH . 'acp/PAccountList.php'); break;
+
 	// Groups
 	case 'acp-groups':				require_once(TP_PAGESPATH . 'acp/PGroupList.php'); break;
 	case 'acp-groupdetails':	require_once(TP_PAGESPATH . 'acp/PGroupDetails.php'); break;
@@ -104,6 +107,7 @@ switch($gPage) {
 	case 'acp-groupdetailsp':	require_once(TP_PAGESPATH . 'acp/PGroupDetailsProcess.php'); break;
 	case 'acp-groupcreatep':	require_once(TP_PAGESPATH . 'acp/PGroupDetailsProcess.php'); break;
 	case 'acp-groupdelp':			require_once(TP_PAGESPATH . 'acp/PGroupDetailsProcess.php'); break;
+	case 'acp-groupmemremp':	require_once(TP_PAGESPATH . 'acp/PGroupDetailsProcess.php'); break;
 
 
 	// -------------------------------------------------------------------------------------------

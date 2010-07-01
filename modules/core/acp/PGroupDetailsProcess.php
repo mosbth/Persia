@@ -83,11 +83,11 @@ else if($submitAction == 'save-group') {
 
 	// Get the input
 	$id						= $pc->POSTisSetOrSetDefault('id');
-	$name 				= $pc->POSTisSetOrSetDefault('name');
-	$description 	= $pc->POSTisSetOrSetDefault('description');
+	$name 				= trim(strip_tags($pc->POSTisSetOrSetDefault('name')));
+	$description 	= strip_tags($pc->POSTisSetOrSetDefault('description'));
 
 	// Check boundaries for whats coming in
-	// is id unisgned int?
+	// is id unsigned int?
 	if(!(is_numeric($id) && $id > 0)) {
 		$pc->SetSessionMessage('failedDetails', $pc->lang['ID_INVALID']);
 		$pc->RedirectTo($redirectFail);
@@ -103,6 +103,12 @@ else if($submitAction == 'save-group') {
 	if(mb_strlen($name) > $db->_['CSizeGroupName']) {
 		$pc->SetSessionMessage('failedDetails', sprintf($pc->lang['NAME_TO_LONG'], $db->_['CSizeGroupName']));
 		$pc->RedirectTo($redirectFail);
+	}
+
+	// Only valid characters in groupname
+	if(preg_replace('/[a-zA-Z0-9]/', '', $name)) {
+		$pc->SetSessionMessage('failedDetails', $pc->lang['INVALID_GROUP_NAME']);
+		$pc->RedirectTo($redirectFail);		
 	}
 
 	// is description within size?
@@ -137,6 +143,7 @@ else if($submitAction == 'add-group') {
 	// What are the actions?
 	global $gModule;
 	$redirect = empty($redirect) ? "?m={$gModule}&p=acp-groupdetails&id=%d" : $redirect;
+	$redirectFail = $redirect;
 
 	// Get the input
 	$name 				= $pc->lang['DEFAULT_NAME'];
@@ -189,10 +196,10 @@ else if($submitAction == 'del-group') {
 	// What are the actions?
 	global $gModule;
 	$redirect 		= empty($redirect) ? "?m={$gModule}&p=acp-groups" : $redirect;
-	$redirectFail = empty($redirectFail) ? "?m={$gModule}&p=acp-groupdetails&id={$id}" : $redirect;
+	$redirectFail = empty($redirectFail) ? "?m={$gModule}&p=acp-groupdetails&id={$id}" : $redirectFail;
 
 	// Check boundaries for whats coming in
-	// is id unisgned int?
+	// is id unsigned int?
 	if(!(is_numeric($id) && $id > 0)) {
 		$pc->SetSessionMessage('failedDetails', $pc->lang['ID_INVALID']);
 		$pc->RedirectTo($redirectFail);
@@ -219,57 +226,78 @@ EOD;
 
 // -------------------------------------------------------------------------------------------
 //
-// Add groupmembers by GET request
+// Add groupmembers by POST request
 // 
 else if($submitAction == 'add-members') {
 
-/*
 	// Get the input
-	$id						= $pc->POSTisSetOrSetDefault('id');
-	$name 				= $pc->POSTisSetOrSetDefault('name');
-	$description 	= $pc->POSTisSetOrSetDefault('description');
+	$id 				= $pc->POSTisSetOrSetDefault('id');
+	$prospects	= strip_tags($pc->POSTisSetOrSetDefault('prospects'));
 
 	// Check boundaries for whats coming in
-	// is id unisgned int?
+	// is id unsigned int?
 	if(!(is_numeric($id) && $id > 0)) {
-		$pc->SetSessionMessage('failedDetails', $pc->lang['ID_INVALID']);
+		$pc->SetSessionMessage('failedMembers', $pc->lang['ID_INVALID']);
 		$pc->RedirectTo($redirectFail);
 	}
-
-	// trying to change a system defined group?
-	if($id <= $db->_['CNrOfSystemGroups']) {
-		$pc->SetSessionMessage('failedDetails', $pc->lang['SYSTEM_GROUP']);
-		$pc->RedirectTo($redirectFail);
-	}
-
-	// is name within size?
-	if(mb_strlen($name) > $db->_['CSizeGroupName']) {
-		$pc->SetSessionMessage('failedDetails', sprintf($pc->lang['NAME_TO_LONG'], $db->_['CSizeGroupName']));
-		$pc->RedirectTo($redirectFail);
-	}
-
-	// is description within size?
-	if(mb_strlen($description) > $db->_['CSizeGroupDescription']) {
-		$pc->SetSessionMessage('failedDetails', sprintf($pc->lang['DESCRIPTION_TO_LONG'], $db->_['CSizeGroupDescription']));
-		$pc->RedirectTo($redirectFail);
-	}
-
-	// Connect and prepare arguments
+	
+	// Walkthrough prospectlist, create array of prospect accounts
+	//echo $prospects . "<br>";
+	$prospects = preg_replace(Array('/,/', '/\s\s+/', '/\s/'), Array(' ', ' ', ','), $prospects);
+	//$prospects = preg_replace('/\s\s+/', ',', $prospects);
+	//echo $prospects . "<br>";
+	$prospects = explode(',', $prospects);	
+	//print_r($prospects);exit;
+	
+	// For each prospect, find its id
 	$mysqli = $db->Connect();
-	$name 				= $mysqli->real_escape_string($name);
-	$description 	= $mysqli->real_escape_string($description);
-
-	// Perform the query and ignore results
-	$query 	= <<< EOD
-CALL {$db->_['PGroupDetailsUpdate']}({$id}, '{$name}', '{$description}');
-EOD;
-	$db->DoMultiQueryRetrieveAndStoreResultset($query);
+	$mapToId = Array();
+	foreach($prospects as $val) {
+		$prospect = $mysqli->real_escape_string($val);
+		$query = "CALL {$db->_['PGetAccountId']}('{$prospect}');";
+		$res = $db->DoMultiQueryRetrieveAndStoreResultset($query);
+		$row = $res[0]->fetch_object();
+		$mapToId[$prospect] = $row->id;		
+		$res[0]->close();
+	}
+	
+	// For each prospect with id, add as groupmember, keep track on success/failure
+	$added = '';
+	$alreadyMembers = '';
+	$failed = '';
+	foreach($mapToId as $key => $val) {
+		if(empty($val)) {
+			$failed .= "{$key}, ";
+		} else {
+			$query = "CALL {$db->_['PGroupMemberAdd']}({$id}, {$val});";
+			$res = $db->DoMultiQueryRetrieveAndStoreResultset($query);
+			$row = $res[0]->fetch_object();
+			echo $row->affected_rows;
+			if($row->affected_rows == 1) {
+				$added .= "{$key}, ";
+			} else {
+				$alreadyMembers .= "{$key}, ";
+			}
+			$res[0]->close();
+		}
+	}
+	$added 					= substr($added, 0, -2);
+	$alreadyMembers = substr($alreadyMembers, 0, -2);
+	$failed 				= substr($failed, 0, -2);
 	$mysqli->close();
 	
-	$pc->SetSessionMessage('successDetails', $pc->lang['ITEM_UPDATED']);
-	$pc->RedirectTo($redirect);
-*/
+	// Set status messages
+	if(!empty($added)) {
+		$pc->SetSessionMessage('successMembers', sprintf($pc->lang['MEMBER_ADDED'], $added));
+	}
+	if(!empty($alreadyMembers)) {
+		$pc->SetSessionMessage('successMembers', sprintf($pc->lang['MEMBER_ALREADY_MEMBER'], $alreadyMembers));
+	}
+	if(!empty($failed)) {
+		$pc->SetSessionMessage('failedMembers', sprintf($pc->lang['MEMBER_NOT_EXIST'], $failed));
+	}
 
+	$pc->RedirectTo($redirect);
 }
 
 
@@ -280,38 +308,43 @@ EOD;
 else if($submitAction == 'remove-member') {
 
 	// Get the input
-	$gid = $pc->POSTisSetOrSetDefault('gid');
-	$mid = $pc->POSTisSetOrSetDefault('mid');
+	$gid = $pc->GETisSetOrSetDefault('gid');
+	$mid = $pc->GETisSetOrSetDefault('mid');
+
+	// What are the actions?
+	global $gModule;
+	$redirect 		= empty($redirect) ? "?m={$gModule}&p=acp-groupdetails&id={$gid}#smembers" : $redirect;
+	$redirectFail = $redirect;
 
 	// Check boundaries for whats coming in
-	// is gid unisgned int?
-	if(!(is_numeric($id) && $id > 0)) {
+	// is gid unsigned int?
+	if(!(is_numeric($gid) && $gid > 0)) {
 		$pc->SetSessionMessage('failedMembers', $pc->lang['ID_INVALID']);
 		$pc->RedirectTo($redirectFail);
 	}
 	
-	// is mid unisgned int?
-	if(!(is_numeric($id) && $id > 0)) {
+	// is gid user group?
+	if($gid == $db->_['CIdOfUserGroup']) {
+		$pc->SetSessionMessage('failedMembers', $pc->lang['NO_REMOVE_USER_GROUP']);
+		$pc->RedirectTo($redirectFail);
+	}
+	
+	// is mid unsigned int?
+	if(!(is_numeric($mid) && $mid > 0)) {
 		$pc->SetSessionMessage('failedMembers', $pc->lang['MEMBER_ID_INVALID']);
 		$pc->RedirectTo($redirectFail);
 	}
 
-	// Connect and prepare arguments
-	$mysqli = $db->Connect();
-	$name 				= $mysqli->real_escape_string($name);
-	$description 	= $mysqli->real_escape_string($description);
-
 	// Perform the query and ignore results
+	$mysqli = $db->Connect();
 	$query 	= <<< EOD
-CALL {$db->_['PGroupDetailsUpdate']}({$id}, '{$name}', '{$description}');
+CALL {$db->_['PGroupMemberRemove']}({$gid}, {$mid});
 EOD;
 	$db->DoMultiQueryRetrieveAndStoreResultset($query);
 	$mysqli->close();
 	
-	$pc->SetSessionMessage('successDetails', $pc->lang['ITEM_UPDATED']);
+	$pc->SetSessionMessage('successMembers', $pc->lang['MEMBER_REMOVED']);
 	$pc->RedirectTo($redirect);
-*/
-
 }
 
 

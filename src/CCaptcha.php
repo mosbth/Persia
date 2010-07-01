@@ -77,16 +77,18 @@ var RecaptchaOptions = {
 </script>
 
 <div id="recaptcha_widget" style="display:none">
-<div id="recaptcha_image"></div>
-<input type="text" id="recaptcha_response_field" class="captcha width300px" name="recaptcha_response_field" />
-<br />
-<span class="recaptcha_only_if_image">Enter the words above:</span>
-<span class="recaptcha_only_if_audio">Enter the numbers you hear:</span>
-<div><a href="javascript:Recaptcha.reload()">Get another CAPTCHA</a></div>
-<div class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type('audio')">Get an audio CAPTCHA</a></div>
-<div class="recaptcha_only_if_audio"><a href="javascript:Recaptcha.switch_type('image')">Get an image CAPTCHA</a></div>
-
-<div><a href="javascript:Recaptcha.showhelp()">Help</a>
+	<div class='image' id="recaptcha_image"></div>
+	<div class='menu'>
+		<a href="javascript:Recaptcha.reload()">Reload</a>
+		<div class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type('audio')">Audio</a></div>
+		<div class="recaptcha_only_if_audio"><a href="javascript:Recaptcha.switch_type('image')">Image</a></div>
+		<a href="javascript:Recaptcha.showhelp()">Help</a>
+	</div>
+	<div class='label'>
+		<span class="recaptcha_only_if_image">Enter the words above:</span>
+		<span class="recaptcha_only_if_audio">Enter the numbers you hear:</span>
+	</div>
+	<input type="text" id="recaptcha_response_field" name="recaptcha_response_field" />
 </div>
 
 <script type="text/javascript"

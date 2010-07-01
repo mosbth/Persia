@@ -32,6 +32,12 @@ $DB_Tables_And_Procedures = Array(
 	//
 	// Module Core: Accounts, users, groups, profile
 	//
+	
+	// User
+	'CSizeUserAccount'					=> 32,
+
+	// Groups	
+	'CIdOfUserGroup'						=> 1,
 	'CNrOfSystemGroups'					=> 2,
 	'CSizeGroupName' 						=> 16,
 	'CSizeGroupDescription'			=> 255,
@@ -41,8 +47,10 @@ $DB_Tables_And_Procedures = Array(
 	'GroupMember'								=> DB_PREFIX . 'GroupMember',
 	'Statistics'					 			=> DB_PREFIX . 'Statistics',
 	'PCreateAccount' 						=> DB_PREFIX . 'PCreateAccount',
+	'PGetAccountId' 						=> DB_PREFIX . 'PGetAccountId',
 	'PAuthenticateAccount' 			=> DB_PREFIX . 'PAuthenticateAccount',
 	'PGetAccountDetails'				=> DB_PREFIX . 'PGetAccountDetails',
+	'PGetAccountList'						=> DB_PREFIX . 'PGetAccountList',
 	'PChangeAccountPassword' 		=> DB_PREFIX . 'PChangeAccountPassword',
 	'PChangeAccountEmail' 			=> DB_PREFIX . 'PChangeAccountEmail',
 	'PChangeAccountAvatar' 			=> DB_PREFIX . 'PChangeAccountAvatar',
@@ -56,7 +64,6 @@ $DB_Tables_And_Procedures = Array(
 
 	// For Group and Groupmembers
 //	'PCreateGroup' 							=> DB_PREFIX . 'PCreateGroup',
-	'PGroupMemberAdd' 					=> DB_PREFIX . 'PGroupMemberAdd',
 	'FCheckUserIsAdmin' 				=> DB_PREFIX . 'FCheckUserIsAdmin',
 	'PGroupsAndNoMembers'	 			=> DB_PREFIX . 'PGroupsAndNoMembers',
 	'PGroupDetails'				 			=> DB_PREFIX . 'PGroupDetails',
@@ -64,6 +71,9 @@ $DB_Tables_And_Procedures = Array(
 	'PGroupAdd'						 			=> DB_PREFIX . 'PGroupAdd',
 	'PGroupDelete'				 			=> DB_PREFIX . 'PGroupDelete',
 	'PGroupMembers'				 			=> DB_PREFIX . 'PGroupMembers',
+	'PGroupMemberAdd' 					=> DB_PREFIX . 'PGroupMemberAdd',
+	'PGroupMemberRemove'	 			=> DB_PREFIX . 'PGroupMemberRemove',
+
 
 
 	// For supporting gravatar from gratavar.com

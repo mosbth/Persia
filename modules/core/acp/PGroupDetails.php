@@ -86,10 +86,16 @@ $members 			= $row->members;
 
 // Then the members
 global $gModule;
-$removeLink = "?m={$gModule}&amp;p=acp-groupmemberremovep&amp;do-submit=remove-member&amp;gid={$id}&amp;mid=%d";
+$removeLink = "?m={$gModule}&amp;p=acp-groupmemremp&amp;do-submit=remove-member&amp;gid={$id}&amp;mid=";
 $memberList = '';
+
+// Change link if users can not be removed
+$titleBase = $pc->lang['REMOVE_MEMBER'];
+if($id == $db->_['CIdOfUserGroup']) {
+	$titleBase = "%1s%2s";
+}
 while($row = $results[2]->fetch_object()) {
-	$title = sprintf($pc->lang['REMOVE_MEMBER'], $row->account, (empty($row->name) ? '' : "({$row->name})"));
+	$title = sprintf($titleBase, $row->account, (empty($row->name) ? '' : "({$row->name})"));
 	$memberList .= "<a href='{$removeLink}{$row->id}' title='{$title}'>{$row->account}</a>, ";
 }
 $memberList = substr($memberList, 0, -2);
@@ -129,17 +135,27 @@ if($members != 0) {
 
 // No edit/delete of system groups
 $readonly = '';
+$disabled = '';
 if($id <= $db->_['CNrOfSystemGroups']) {
-	$delGroup = "<p>{$pc->lang['NO_DELETE_SYSTEM_GROUP']}</p>";
+	$delGroup = "<p><em>{$pc->lang['NO_DELETE_SYSTEM_GROUP']}</em></p>";
 	$readonly = "readonly='readonly'";
 	$disabled = "disabled='disabled'";
+}
+
+// Show no-members message if suitable
+$noMembers = ($members == 0 ? "<em>{$pc->lang['NO_MEMBERS']}</em>" : '');
+
+// No delete of accounts from the user-group
+$noRemove = '';
+if($id == $db->_['CIdOfUserGroup']) {
+	$noRemove = "<p><em>{$pc->lang['NO_REMOVE_USER_GROUP']}</em></p>";
 }
 
 // Get and format messages from session if they are set
 $helpers = new CHTMLHelpers();
 $messages = $helpers->GetHTMLForSessionMessages(
-	Array('successDetails', 'successMember'), 
-	Array('failedDetails', 'failedMember'));
+	Array('successDetails', 'successMembers'), 
+	Array('failedDetails', 'failedMembers'));
 
 $htmlMain = <<<EOD
 {$htmlCp}
@@ -176,25 +192,29 @@ $htmlMain = <<<EOD
 
 <div id='smembers' class='section'>
 	<form action='{$action}' method='post'>
-		<input type='hidden' name='redirect' 				value='{$redirect}'>
-		<input type='hidden' name='redirect-fail' 	value='{$redirect}'>
+		<input type='hidden' name='redirect' 				value='{$redirect}#smembers'>
+		<input type='hidden' name='redirect-fail' 	value='{$redirect}#smembers'>
 		<input type='hidden' name='id' 							value='{$id}'>
 		
 		<fieldset class='standard type-3'>
 	 		<legend>{$pc->lang['GROUP_MEMBERS_LEGEND']}</legend>
 		 	<div class='form-wrapper'>
 
-				<p>{$pc->lang['GROUP_MEMBERS_TITLE']}<br>{$memberList}</p>
+				<p>{$pc->lang['GROUP_MEMBERS_TITLE']}<br>{$memberList}{$noMembers}</p>
 				
-				<label for="new-member">{$pc->lang['ADD_MEMBERS_BY_ACCOUNT']}</label>
-				<input name='new-member' type='text'>
+				<label for="prospects">{$pc->lang['ADD_MEMBERS_BY_ACCOUNT']}</label>
+				<input name='prospects' type='text'>
 
 				<div class='buttonbar'>
 					<button type='submit' class='add' name='do-submit' value='add-members'>{$pc->lang['GROUP_MEMBERS_ADD']}</button>
 				</div> <!-- buttonbar -->
 
-				<div class='form-status'>{$messages['successMember']}{$messages['failedMember']}</div> 
+				<div class='form-status'>{$messages['successMembers']}</div> 
+				<div class='form-status'>{$messages['failedMembers']}</div> 
 		 </div> <!-- wrapper -->
+		 
+		 {$noRemove}
+		 
 		</fieldset>
 	</form>
 </div> <!-- section -->

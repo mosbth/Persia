@@ -15,7 +15,7 @@ $lang = Array(
 	'INSTALL_DATABASE_HOST' => "Database host: '%s'",
 	'INSTALL_DATABASE_NAME' => "Database name: '%s'",
 	'INSTALL_DATABASE_PREFIX' => "Prefix for tables: '%s'",
-	'INSTALL_CHANGE_CONFIG' => "date the database config-file (usually config.php) to change the values.",
+	'INSTALL_CHANGE_CONFIG' => "Update the database config-file (usually config.php) to change the values.",
 	'INSTALL_PROCESS_LINK' => "&not; <a href='%s'>Destroy current database and create from scratch</a>",
 
 );

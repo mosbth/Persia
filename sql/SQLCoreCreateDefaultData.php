@@ -27,8 +27,11 @@ $query = <<<EOD
 --
 -- Add default groups
 --
-CALL {$db->_['PGroupAdd']}(@id, 'admin', '{$pc->lang['SITE_ADMINISTRATORS']}');
+-- Group with id 1 is always the user group where all accounts must be member of.
+-- Group with id 2 is always the admin group with accounts having full admin authority.
+--
 CALL {$db->_['PGroupAdd']}(@id, 'user', '{$pc->lang['LOCAL_USERS']}');
+CALL {$db->_['PGroupAdd']}(@id, 'admin', '{$pc->lang['SITE_ADMINISTRATORS']}');
 
 EOD;
 
@@ -70,7 +73,7 @@ CALL {$db->_['PChangeAccountAvatar']}(@aUserId, '{$avatar}');
 --
 -- Add first user as member of admin group.
 --
-CALL {$db->_['PGroupMemberAdd']}(1, 1);
+CALL {$db->_['PGroupMemberAdd']}(2, 1);
 
 
 EOD;

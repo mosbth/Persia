@@ -29,8 +29,8 @@ $lang = Array(
 	'GROUP_MEMBERS_TITLE' => "Members:",
 	'REMOVE_MEMBER' => "Remove member %1s %2s",
 	'ADD_MEMBERS_BY_ACCOUNT' => "Add groupmembers by accountname (separate with space or ,):",
-
-
+	'NO_MEMBERS' => "There are no members in this group.",
+	'NO_REMOVE_USER_GROUP' => "The members of this group can not be removed. All users must belong to this group.",
 	'GROUP_MEMBERS_ADD' => "Add",
 
 

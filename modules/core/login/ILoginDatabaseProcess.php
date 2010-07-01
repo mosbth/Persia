@@ -29,7 +29,12 @@
 
 // -------------------------------------------------------------------------------------------
 //
-// General settings for this file.
+// Get common controllers, uncomment if not used in current pagecontroller.
+//
+// $pc, Page Controller helpers. Useful methods to use in most pagecontrollers
+// $uc, User Controller. Keeps information/permission on user currently signed in.
+// $if, Interception Filter. Useful to check constraints before entering a pagecontroller.
+// $db, Database Controller. Manages all database access.
 //
 $pc = CPageController::GetInstanceAndLoadLanguage(__FILE__);
 

@@ -96,11 +96,11 @@ $loginButton = LOCAL_LOGIN ? $loginButton : '';
 $ldapButton = "<button type='submit' name='submit' value='login-ldap'>{$pc->lang['LOGIN_LDAP']}</button>";
 $ldapButton = defined('LDAP_AUTH_SERVER') ? $ldapButton : '';
 
-// Only display if enabled
+// Only display create new user if enabled
 $createNewUser = "[<a href='?m={$gModule}&amp;p=account-create'>{$pc->lang['CREATE_NEW_ACCOUNT']}</a>] ";
 $createNewUser = CREATE_NEW_ACCOUNT ? $createNewUser : '';
 
-// Only display if enabled
+// Only display aid when forgot password if enabled
 $forgotPassword = "[<a href='?m={$gModule}&amp;p=account-forgot-pwd'>{$pc->lang['FORGOT_PASSWORD']}</a>] ";
 $forgotPassword = FORGOT_PASSWORD ? $forgotPassword : '';
 

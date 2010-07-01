@@ -12,6 +12,7 @@
 
 fieldset.standard {
 	border: 2px #ccc solid;
+	padding-top: 1em;
 }
 
 /* Wrapper around form items */
@@ -107,6 +108,13 @@ fieldset.standard p { margin-bottom: 2em; }
 /* readonly items */
 fieldset.standard input[readonly],
 fieldset.standard textarea[readonly] { color: #999; }
+
+/* Captha, as in CCaptcha.php */
+fieldset.standard div.captcha { float: right; }
+fieldset.standard div.captcha div.image { float: left;}
+fieldset.standard div.captcha div.menu { float: right;}
+fieldset.standard div.captcha div.label { clear: both; }
+fieldset.standard div.captcha input { }
 
 /* To hide a element */
 .hide {display: none;}
