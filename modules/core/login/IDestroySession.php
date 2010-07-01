@@ -19,9 +19,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Persia. If not, see <http://www.gnu.org/licenses/>.
 //
-// File: FDestroySession.php
+// File: IDestroySession.php
 //
-// Description: Destroys the current session.
+// Description: Destroys the current session and creates a new one.
 //
 // Author: Mikael Roos, mos@bth.se
 //
@@ -29,6 +29,7 @@
 // -
 //
 // History: 
+// 2010-07-01: Moved from src to core/login and changed name to IDestroySession from FDestroySession.
 // 2010-06-23: Creates new session. Included license message.
 //
 

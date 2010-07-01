@@ -73,7 +73,7 @@ $redirectTo = $pc->SESSIONisSetOrSetDefault('history2');
 //
 // Destroy the current session (logout user), if it exists. 
 //
-require_once(TP_SOURCEPATH . 'FDestroySession.php');
+require_once(dirname(__FILE__) . '/IDestroySession.php');
 
 
 // -------------------------------------------------------------------------------------------

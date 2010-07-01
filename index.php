@@ -1,21 +1,46 @@
 <?php
-// ===========================================================================================
 //
-// index.php
+//		Persia (http://phpersia.org), software to build webbapplications.
+//    Copyright (C) 2010  Mikael Roos (mos@bth.se)
 //
+//    This file is part of Persia.
+//
+//    Persia is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    Persia is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Persia. If not, see <http://www.gnu.org/licenses/>.
+//
+// File: index.php
+//
+// Description:
 // An implementation of a PHP frontcontroller for a web-site.
-//
-// All requests passes through this page, for each request a pagecontroller is choosen.
+// All requests passes through this page, for each request a module frontcontroller is choosen.
+// The module frontcontroller choosen which pagecontroller to use.
 // The pagecontroller results in a response or a redirect.
 //
 // Author: Mikael Roos, mos@bth.se
 //
+// Known issues:
+// -
+//
+// History: 
+// 2010-07-01: Changed error_reporting to -1. Included license message.
+//
+
 
 // -------------------------------------------------------------------------------------------
 //
 // Require the files and actions that are common for all modules and pagecontrollers.
 //
-error_reporting(E_ALL);
+error_reporting(-1);
 
 //
 // Get global config-files with template structure

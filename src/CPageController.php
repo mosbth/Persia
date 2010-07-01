@@ -87,29 +87,6 @@ class CPageController {
 
 	// ------------------------------------------------------------------------------------
 	//
-	// OBSOLETE. Replaced by SetSessionMessage.
-	//
-	//
-	// Set global error message/notice, used and cleared by CHTMLPage
-	//
-	public static function SetSessionErrorMessage($aMessage) {
-		self::SetSessionMessage('errorMessage', $aMessage);
-	}
-
-
-	// ------------------------------------------------------------------------------------
-	//
-	// OBSOLETE. Replaced by SetSessionMessage.
-	//
-	// Set global success message/notice, used and cleared by CHTMLPage
-	//
-	public static function SetSessionSuccessMessage($aMessage) {
-		self::SetSessionMessage('successMessage', $aMessage);
-	}
-
-
-	// ------------------------------------------------------------------------------------
-	//
 	// Set message in session, get and clear the message by using GetSessionMessage
 	//
 	public static function SetSessionMessage($aVar, $aMessage) {
@@ -227,30 +204,6 @@ class CPageController {
 			die(sprintf("The variable value '$s' is not a string.", $aVar));
 		}
 	}
-
-
-/* OBSOLETE?
-	// ------------------------------------------------------------------------------------
-	//
-	// Static function, HTML helper
-	// Create a horisontal sidebar menu
-	//
-	public static function GetSidebarMenu($aMenuitems, $aTarget="") {
-
-		global $gPage;
-
-		$target = empty($aTarget) ? $gPage : $aTarget;
-
-		$menu = "<ul>";
-		foreach($aMenuitems as $key => $value) {
-			$selected = (strcmp($target, substr($value, 3)) == 0) ? " class='sel'" : "";
-			$menu .= "<li{$selected}><a href='{$value}'>{$key}</a></li>";
-		}
-		$menu .= '</ul>';
-		
-		return $menu;
-	}
-*/
 
 
 	// ------------------------------------------------------------------------------------
@@ -408,6 +361,30 @@ class CPageController {
 		$l = strlen(DIRECTORY_SEPARATOR);
 		return $aPath . (substr_compare($aPath, DIRECTORY_SEPARATOR, strlen($aPath)-$l, $l) == 0 ? '' : DIRECTORY_SEPARATOR);
 	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// OBSOLETE. Replaced by SetSessionMessage.
+	//
+	//
+	// Set global error message/notice, used and cleared by CHTMLPage
+	//
+	public static function SetSessionErrorMessage($aMessage) {
+		self::SetSessionMessage('errorMessage', $aMessage);
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// OBSOLETE. Replaced by SetSessionMessage.
+	//
+	// Set global success message/notice, used and cleared by CHTMLPage
+	//
+	public static function SetSessionSuccessMessage($aMessage) {
+		self::SetSessionMessage('successMessage', $aMessage);
+	}
+
 
 
 } // End of Of Class

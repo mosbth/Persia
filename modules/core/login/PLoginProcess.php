@@ -253,13 +253,8 @@ $mysqli->close();
 // even after several unsuccessfull login attempts.
 //
 
-// Destroy current session
-require_once(TP_SOURCEPATH . 'FDestroySession.php');
-
-// Start a named session (do not share sessions on same host)
-session_name(preg_replace('/[:\.\/-_]/', '', WS_SITELINK));
-session_start();
-session_regenerate_id(); 	// To avoid problems 
+// Destroy current session and restart it
+require_once(dirname(__FILE__) . '/IDestroySession.php');
 
 // Populate the session with the user (object)
 $uc = new CUserController();
