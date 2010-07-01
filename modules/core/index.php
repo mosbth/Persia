@@ -29,6 +29,9 @@ switch($gPage) {
 	//
 	case 'home':			require_once(TP_PAGESPATH . 'home/PIndex.php'); break;
 	case 'about':			require_once(TP_PAGESPATH . 'home/PAbout.php'); break;
+	case 'credits':		require_once(TP_PAGESPATH . 'home/PAbout.php'); break;
+	case 'legal':			require_once(TP_PAGESPATH . 'home/PAbout.php'); break;
+	case 'privacy':		require_once(TP_PAGESPATH . 'home/PAbout.php'); break;
 	case 'template':	require_once(TP_PAGESPATH . 'home/PTemplate.php'); break;
 	case 'empty':			require_once(TP_PAGESPATH . 'home/PEmpty.php'); break;
 	

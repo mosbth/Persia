@@ -207,6 +207,11 @@ div.section {
 a, a:visited {}
 a:hover {}
 
+a.footer:link    { text-decoration:none; }
+a.footer:visited { }
+a.footer:hover   { text-decoration:underline; }
+a.footer:active  { }
+
 a.noUnderline:link    { text-decoration:none; }
 a.noUnderline:visited { text-decoration:none; }
 a.noUnderline:hover   { text-decoration:underline; }

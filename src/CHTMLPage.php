@@ -62,12 +62,12 @@ class CHTMLPage {
 		$charset		= WS_CHARSET;
 		$stylesheet	= WS_STYLESHEET;
 		$favicon 		= WS_FAVICON;
-		$footer			= WS_FOOTER;
 		
 		$apps		= $this->PrepareApplicationMenu();
 		$login	= $this->PrepareLoginLogoutMenu();
 		$nav 		= $this->PrepareNavigationBar();
 		$body		= $this->PreparePageBody($aHTMLLeft, $aHTMLMain, $aHTMLRight);
+		$footer	= $this->PrepareFooter();
 		$w3c		= $this->PrepareValidatorTools();
 		$timer	= $this->PrepareTimer();
 		$track	= $this->PrepareGoogleAnalytics();
@@ -129,6 +129,22 @@ EOD;
 		$apps .= "</p></div>";
 	
 		return $apps;	
+	}
+
+
+	// ------------------------------------------------------------------------------------
+	//
+	// Prepare the footer
+	//
+	public function PrepareFooter() {
+	
+		$footItems 	= unserialize(WS_FOOTER_MENU);
+		$footer 		= WS_FOOTER;
+		foreach($footItems as $key => $value) {
+			$footer .= " <a class='noUnderline' href='{$value}'>{$key}</a> ";
+		}
+	
+		return $footer;	
 	}
 
 
@@ -202,6 +218,9 @@ EOD;
 			parse_str(parse_url(htmlspecialchars_decode($value), PHP_URL_QUERY), $urlNav);
 			if(!isset($urlNav['m'])) {
 				$urlNav['m'] = $gModule;	
+			}
+			if(!isset($urlNav['p'])) {
+				$urlNav['p'] = $gPage;	
 			}
 			if($urlNav['m'] == $gModule) {
 				if($urlNav['p'] == $gPage) {

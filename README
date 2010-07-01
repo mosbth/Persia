@@ -1,5 +1,5 @@
 #
-# README
+# Persia README
 #
 # By Mikael Roos, mos@bth.se
 #
@@ -90,7 +90,7 @@ Each file should have the following statement attached to it:
 
 // ===========================================================================================
 //
-//		Persia (http://phpersia.org), software to build webbapplications.
+//    Persia (http://phpersia.org), software to build web applications.
 //    Copyright (C) 2010  Mikael Roos (mos@bth.se)
 //
 //    This file is part of Persia.

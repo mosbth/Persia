@@ -1,7 +1,7 @@
 <?php
 // ===========================================================================================
 //
-//		Persia (http://phpersia.org), software to build webbapplications.
+//		Persia (http://phpersia.org), software to build web applications.
 //    Copyright (C) 2010  Mikael Roos (mos@bth.se)
 //
 //    This file is part of Persia.
@@ -175,20 +175,22 @@ EOD;
 // Create HTML for the page.
 //
 $htmlMain = <<<EOD
-<h1>Template</h1>
-<h2>Introduction</h2>
-<p>
-Copy this file, PTemplate.php, to create new pacecontrollers.
-</p>
-<p>
-<a href='?p=ls&amp;dir=modules/core/home&amp;file=PTemplate.php'>Review sourcecode for PTemplate.php</a>.
-</p>
-<p>
-{$pc->lang['TEXT1']}
-</p>
-<p>
-<a href='?p=template&amp;showLeft=1&amp;showRight=1'>Show all 3 columns</a>
-</p>
+<div class='section'>
+	<h1>Template</h1>
+	<h2>Introduction</h2>
+	<p>
+	Copy this file, PTemplate.php, to create new pacecontrollers.
+	</p>
+	<p>
+	<a href='?p=ls&amp;dir=modules/core/home&amp;file=PTemplate.php'>Review sourcecode for PTemplate.php</a>.
+	</p>
+	<p>
+	{$pc->lang['TEXT1']}
+	</p>
+	<p>
+	<a href='?p=template&amp;showLeft=1&amp;showRight=1'>Show all 3 columns</a>
+	</p>
+</div> <!-- section -->
 
 {$htmlModuleAndPage}
 

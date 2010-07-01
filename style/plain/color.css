@@ -50,7 +50,8 @@ div#title p {
 div#footer {
 	background: #811212 /* darklight */ /* url(nav-tab.png) repeat */;
 }
-div#footer p {
+div#footer p,
+div#footer a {
 	color: #DDDDDD;
 }
 
