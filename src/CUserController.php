@@ -31,7 +31,7 @@ class CUserController {
 	//
 	// Constructor
 	//
-	public function __construct() { ;	}
+	protected function __construct() { ;	}
 
 
 	// ------------------------------------------------------------------------------------
@@ -133,7 +133,7 @@ class CUserController {
 	// Is the user a administrator?
 	//
 	public function IsAdministrator() {
-		return $this->IsMemberOFGroup('admin');
+		return $this->IsMemberOfGroup('admin');
 	}
 
 

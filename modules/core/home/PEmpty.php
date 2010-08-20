@@ -1,7 +1,7 @@
 <?php
 // ===========================================================================================
 //
-//		Persia (http://phpersia.org), software to build webbapplications.
+//    Persia (http://phpersia.org), software to build webbapplications.
 //    Copyright (C) 2010  Mikael Roos (mos@bth.se)
 //
 //    This file is part of Persia.

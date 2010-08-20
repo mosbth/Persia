@@ -26,11 +26,9 @@ class CInterceptionFilter {
 	//
 	// Constructor
 	//
-	public function __construct() { 
+	protected function __construct() { 
 		$this->iUc = CUserController::GetInstance();
-
-		$this->iPc = CPageController::GetInstance();
-		$this->iPc->LoadLanguage(__FILE__);	
+		$this->iPc = CPageController::GetInstanceAndLoadLanguage(__FILE__);
 	}
 
 

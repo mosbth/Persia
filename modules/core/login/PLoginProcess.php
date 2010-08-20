@@ -257,7 +257,7 @@ $mysqli->close();
 require_once(dirname(__FILE__) . '/IDestroySession.php');
 
 // Populate the session with the user (object)
-$uc = new CUserController();
+$uc = CUserController::GetInstance();
 $uc->Populate($accountId, $account, $groups, (empty($gravatarmicro) ? '' : $gravatarmicro));
 $uc->StoreInSession();
 

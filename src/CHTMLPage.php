@@ -23,6 +23,7 @@ class CHTMLPage {
 	//
 	// Constructor
 	//
+	//protected function __construct() { 
 	public function __construct() { 
 	
 		$this->iPc = CPageController::GetInstance();
