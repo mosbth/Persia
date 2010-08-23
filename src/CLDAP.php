@@ -69,7 +69,7 @@ class CLDAP {
 		// Escape characters
 		$basedn 	= $aBaseDn;
 		$uid 			= $aUid;
-		$password	= self::EscapeChars($aPassword);
+		$password	= $aPassword; // Do NOT escape characters, self::EscapeChars($aPassword);
 		
 		// Do anonmomous bind and check that id exists
 		$r 	= ldap_bind($aDs);
